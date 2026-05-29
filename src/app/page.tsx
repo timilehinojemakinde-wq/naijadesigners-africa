@@ -89,7 +89,7 @@ export default function Home() {
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-col gap-4">
             <button className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700">
-              Explore Designers →
+              Find Designers →
             </button>
 
             <button className="flex h-14 items-center justify-center rounded-xl border border-red-200 bg-white text-base font-medium text-red-700 transition hover:bg-red-50">
