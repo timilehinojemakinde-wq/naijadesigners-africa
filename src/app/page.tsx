@@ -46,11 +46,11 @@ export default function Home() {
           {/* Right side */}
           <div className="flex items-center gap-3">
             <button className="border-0 bg-transparent p-1">
-              <Search size={24} />
+              <Search size={10} />
             </button>
 
             <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100 md:hidden">
-              <Menu size={24} />
+              <Menu size={10} />
             </button>
 
             <button className="rounded-md bg-red-600 px-5 py-2 text-white hover:bg-red-700">
@@ -66,24 +66,23 @@ export default function Home() {
 
           {/* Small Label */}
           <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-red-600">
-            ✦ Africa’s Home of Fashion
+            The Global Marketplace for African Fashion
           </p>
 
           {/* Headline */}
           <h1 className="text-[52px] font-semibold leading-[0.95] tracking-tight text-black">
-            Fashion,
+            Discover Africa's,
             <br />
             <span className="text-red-600">
-              Tailored
+              Finest Fashion
               <br />
-              Around You
+              Designers.
             </span>
           </h1>
 
           {/* Description */}
           <p className="mt-6 max-w-sm text-lg leading-9 text-gray-600">
-            Discover elite fashion designers,
-            custom-made outfits, and premium
+            Connect top Africa's fashion Designers. Shop custom-made outfits from top designers accross Africa with AI-powered measurement - no physical fitting required. designers, premium
             ready-to-wear collections.
           </p>
 
