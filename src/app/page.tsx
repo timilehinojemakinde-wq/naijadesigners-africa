@@ -1,3 +1,5 @@
+import { Search, Menu } from "lucide-react";
+
 export default function Home() {
   const categories = [
     "Aso Ebi",
@@ -25,32 +27,61 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white text-black">
+
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+
           <h1 className="text-xl font-bold">
             NaijaDesigners<span className="text-red-600">.africa</span>
           </h1>
 
-          <div className="hidden gap-8 md:flex">
-            <button>Explore</button>
-            <button>Designers</button>
-            <button>Pricing</button>
+          {/* Desktop links */}
+          <div className="hidden items-center gap-6 md:flex">
+            <button className="hover:text-red-600">Explore</button>
+            <button className="hover:text-red-600">Designers</button>
+            <button className="hover:text-red-600">Pricing</button>
           </div>
 
-          <button className="rounded-full bg-red-600 px-5 py-2 text-white">
-            Become a Designer
-          </button>
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100">
+              <Search size={18} />
+            </button>
+
+            <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100 md:hidden">
+              <Menu size={18} />
+            </button>
+
+            <button className="rounded-md bg-red-600 px-5 py-2 text-white hover:bg-red-700">
+              Become a Designer
+            </button>
+          </div>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="overflow-hidden px-6 pb-16 pt-10 md:pb-24 md:pt-20">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
+      <section className="relative overflow-hidden px-6 pb-16 pt-10 md:pb-24 md:pt-20">
 
-          {/* LEFT CONTENT */}
+        {/* BACKGROUND IMAGE */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/hero.png"
+            alt="hero background"
+            className="h-full w-full object-cover"
+          />
+
+          {/* overlay */}
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+
+        {/* CONTENT */}
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 text-white">
+
+          {/* LEFT */}
           <div className="text-center lg:text-left">
-            <span className="inline-flex rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-600">
+
+            <span className="inline-flex rounded-md bg-white/10 px-4 py-2 text-sm font-medium text-white">
               Africa’s Global Fashion Marketplace
             </span>
 
@@ -58,37 +89,42 @@ export default function Home() {
               Find Top Fashion Designers Across Africa
             </h1>
 
-            <p className="mx-auto mt-6 max-w-xl text-lg text-gray-600 lg:mx-0 md:text-xl">
+            <p className="mx-auto mt-6 max-w-xl text-lg text-gray-200 lg:mx-0 md:text-xl">
               Discover stunning fashion, connect with trusted designers,
               and order custom outfits from anywhere in the world —
               no physical measurement needed.
             </p>
 
+            {/* buttons */}
             <div className="mt-8 flex flex-col gap-4 sm:flex-row lg:justify-start justify-center">
-              <button className="rounded-full bg-red-600 px-8 py-4 text-white transition hover:scale-105 hover:bg-red-700">
+
+              <button className="rounded-md bg-red-600 px-8 py-4 text-white transition hover:scale-105 hover:bg-red-700">
                 Find Designers
               </button>
 
-              <button className="rounded-full border border-gray-300 px-8 py-4 transition hover:bg-gray-100">
+              <button className="rounded-md border border-white/30 px-8 py-4 text-white hover:bg-white/10 transition">
                 Become a Designer
               </button>
             </div>
 
-            <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500 lg:justify-start">
+            {/* stats */}
+            <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-300 lg:justify-start">
+
               <div>
-                <span className="font-bold text-black">500+</span>
+                <span className="font-bold text-white">500+</span>
                 <p>Designers</p>
               </div>
 
               <div>
-                <span className="font-bold text-black">10k+</span>
+                <span className="font-bold text-white">10k+</span>
                 <p>Happy Clients</p>
               </div>
 
               <div>
-                <span className="font-bold text-black">Global</span>
+                <span className="font-bold text-white">Global</span>
                 <p>Delivery</p>
               </div>
+
             </div>
           </div>
 
@@ -105,9 +141,10 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col gap-4">
+
                 <div className="overflow-hidden rounded-[32px] shadow-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=80"
+                    src="/hero.png"
                     alt="Fashion designer"
                     className="h-[200px] w-full object-cover"
                   />
@@ -120,15 +157,15 @@ export default function Home() {
                     className="h-[200px] w-full object-cover"
                   />
                 </div>
+
               </div>
             </div>
 
-            {/* Floating card */}
-            <div className="absolute bottom-4 left-4 rounded-[28px] bg-white p-4 shadow-xl">
+            {/* floating card */}
+            <div className="absolute bottom-4 left-4 rounded-[24px] bg-white p-4 shadow-xl text-black">
               <p className="text-sm text-gray-500">
                 Easy body measurement
               </p>
-
               <p className="font-semibold">
                 No tailor visit needed
               </p>
@@ -148,7 +185,7 @@ export default function Home() {
             {categories.map((category) => (
               <button
                 key={category}
-                className="whitespace-nowrap rounded-full border border-gray-200 px-6 py-3 transition hover:border-red-500 hover:text-red-600"
+                className="whitespace-nowrap rounded-md border border-gray-200 px-6 py-3 transition hover:border-red-500 hover:text-red-600"
               >
                 {category}
               </button>
@@ -160,6 +197,7 @@ export default function Home() {
       {/* FEATURED DESIGNERS */}
       <section className="px-6 py-16">
         <div className="mx-auto max-w-6xl">
+
           <div className="mb-8 flex items-center justify-between">
             <h2 className="text-2xl font-bold">
               Featured Designers
@@ -198,6 +236,7 @@ export default function Home() {
       {/* HOW IT WORKS */}
       <section className="bg-red-50 px-6 py-16">
         <div className="mx-auto max-w-6xl text-center">
+
           <h2 className="text-3xl font-bold">
             How It Works
           </h2>
@@ -216,17 +255,18 @@ export default function Home() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
                   ✓
                 </div>
-
                 <h3 className="font-semibold">{step}</h3>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* DESIGNER CTA */}
+      {/* CTA */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl rounded-[40px] bg-black px-8 py-16 text-center text-white">
+
           <h2 className="text-4xl font-bold">
             Are You a Fashion Designer?
           </h2>
@@ -236,11 +276,13 @@ export default function Home() {
             fashion business globally.
           </p>
 
-          <button className="mt-8 rounded-full bg-red-600 px-8 py-4">
+          <button className="mt-8 rounded-md bg-red-600 px-8 py-4">
             Become a Designer
           </button>
+
         </div>
       </section>
+
     </main>
   );
 }
