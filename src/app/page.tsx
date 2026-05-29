@@ -45,12 +45,12 @@ export default function Home() {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100">
-              <Search size={18} />
+            <button className="border-0 bg-transparent p-1">
+              <Search size={24} />
             </button>
 
             <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100 md:hidden">
-              <Menu size={18} />
+              <Menu size={24} />
             </button>
 
             <button className="rounded-md bg-red-600 px-5 py-2 text-white hover:bg-red-700">
@@ -61,116 +61,97 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden px-6 pb-16 pt-10 md:pb-24 md:pt-20">
+      <section className="bg-[#fafafa] px-5 pt-6 pb-0 overflow-hidden">
+        <div className="mx-auto max-w-md">
 
-        {/* BACKGROUND IMAGE */}
-        <div className="absolute inset-0 overflow-hidden">
-          <img
-            src="/hero.png"
-            alt="hero background"
-            className="h-full w-full object-cover transistion-transform duration-1000 hover:scale-110"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from black/70 via-black/40 to-black/20" />
-        </div>
+          {/* Small Label */}
+          <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-red-600">
+            ✦ Africa’s Home of Fashion
+          </p>
 
-        {/* overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
-
-        {/* CONTENT */}
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 text-white">
-
-          {/* LEFT */}
-          <div className="text-center lg:text-left">
-
-            <span className="inline-flex rounded-md bg-white/10 px-4 py-2 text-sm font-medium text-white">
-              Africa’s Global Fashion Marketplace
+          {/* Headline */}
+          <h1 className="text-[52px] font-semibold leading-[0.95] tracking-tight text-black">
+            Fashion,
+            <br />
+            <span className="text-red-600">
+              Tailored
+              <br />
+              Around You
             </span>
+          </h1>
 
-            <h1 className="mt-6 text-5xl font-bold leading-tight tracking-tight md:text-7xl">
-              Find Top Fashion Designers Across Africa
-            </h1>
+          {/* Description */}
+          <p className="mt-6 max-w-sm text-lg leading-9 text-gray-600">
+            Discover elite fashion designers,
+            custom-made outfits, and premium
+            ready-to-wear collections.
+          </p>
 
-            <p className="mx-auto mt-6 max-w-xl text-lg text-gray-200 lg:mx-0 md:text-xl">
-              Discover stunning fashion, connect with trusted designers,
-              and order custom outfits from anywhere in the world —
-              no physical measurement needed.
-            </p>
+          {/* CTA Buttons */}
+          <div className="mt-8 flex flex-col gap-4">
+            <button className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700">
+              Explore Designers →
+            </button>
 
-            {/* buttons */}
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row lg:justify-start justify-center">
-
-              <button className="rounded-md bg-red-600 px-8 py-4 text-white transition hover:scale-105 hover:bg-red-700">
-                Find Designers
-              </button>
-
-              <button className="rounded-md border border-white/30 px-8 py-4 text-white hover:bg-white/10 transition">
-                Become a Designer
-              </button>
-            </div>
-
-            {/* stats */}
-            <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-300 lg:justify-start">
-
-              <div>
-                <span className="font-bold text-white">500+</span>
-                <p>Designers</p>
-              </div>
-
-              <div>
-                <span className="font-bold text-white">10k+</span>
-                <p>Happy Clients</p>
-              </div>
-
-              <div>
-                <span className="font-bold text-white">Global</span>
-                <p>Delivery</p>
-              </div>
-
-            </div>
+            <button className="flex h-14 items-center justify-center rounded-xl border border-red-200 bg-white text-base font-medium text-red-700 transition hover:bg-red-50">
+              Become a Designer
+            </button>
           </div>
 
-          {/* RIGHT IMAGES */}
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
+          {/* HERO IMAGE AREA */}
+          <div className="relative mt-14">
 
-              <div className="overflow-hidden rounded-[32px] shadow-lg">
-                <img
-                  src="https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=900&q=80"
-                  alt="African fashion"
-                  className="h-[420px] w-full object-cover"
-                />
-              </div>
+            {/* Hero Image */}
+            <img
+              src="/hero.png"
+              alt="Fashion models"
+              className="w-full object-contain"
+            />
 
-              <div className="flex flex-col gap-4">
+            {/* Floating Trust Card */}
+            <div className="absolute bottom-10 left-1/2 z-20 w-[92%] -translate-x-1/2 rounded-[28px] bg-white p-5 shadow-2xl backdrop-blur-sm">
 
-                <div className="overflow-hidden rounded-[32px] shadow-lg">
-                  <img
-                    src="/hero.png"
-                    alt="Fashion designer"
-                    className="h-[200px] w-full object-cover"
-                  />
+              <div className="grid grid-cols-3 gap-3 text-center">
+
+                <div className="flex flex-col items-center">
+                  <div className="mb-2 text-red-600 text-2xl">
+                    🛡️
+                  </div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Verified
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Designers
+                  </p>
                 </div>
 
-                <div className="overflow-hidden rounded-[32px] shadow-lg">
-                  <img
-                    src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&q=80"
-                    alt="Luxury outfit"
-                    className="h-[200px] w-full object-cover"
-                  />
+                <div className="flex flex-col items-center border-x border-gray-100">
+                  <div className="mb-2 text-red-600 text-2xl">
+                    🔒
+                  </div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Secure
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Payments
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <div className="mb-2 text-red-600 text-2xl">
+                    🚚
+                  </div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Fast
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Delivery
+                  </p>
                 </div>
 
               </div>
             </div>
 
-            {/* floating card */}
-            <div className="absolute bottom-4 left-4 rounded-[24px] bg-white p-4 shadow-xl text-black">
-              <p className="text-sm text-gray-500">
-                Easy body measurement
-              </p>
-              <p className="font-semibold">
-                No tailor visit needed
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -277,7 +258,7 @@ export default function Home() {
             fashion business globally.
           </p>
 
-          <button className="mt-8 rounded-md bg-red-600 px-8 py-4">
+          <button className="mt-8 rounded-md bg-red-600 px-8 3">
             Become a Designer
           </button>
 
