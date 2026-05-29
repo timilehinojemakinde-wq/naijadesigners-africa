@@ -29,7 +29,7 @@ export default function Home() {
     <main className="min-h-screen bg-white text-black">
 
       {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
+      <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
           <h1 className="text-xl font-bold">
@@ -66,7 +66,7 @@ export default function Home() {
 
           {/* Small Label */}
           <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-red-600">
-            The Global Marketplace for African Fashion
+            Global Marketplace for African Fashion
           </p>
 
           {/* Headline */}
