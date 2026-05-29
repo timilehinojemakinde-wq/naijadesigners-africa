@@ -46,11 +46,11 @@ export default function Home() {
           {/* Right side */}
           <div className="flex items-center gap-3">
             <button className="border-0 bg-transparent p-1">
-              <Search size={10} />
+              <Search size={14} />
             </button>
 
             <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100 md:hidden">
-              <Menu size={10} />
+              <Menu size={14} />
             </button>
 
             <button className="rounded-md bg-red-600 px-5 py-2 text-white hover:bg-red-700">
