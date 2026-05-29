@@ -45,30 +45,94 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="px-6 py-20 md:py-28">
-        <div className="mx-auto max-w-6xl text-center">
-          <span className="rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-600">
-            Africa’s Fashion Marketplace
-          </span>
+      <section className="overflow-hidden px-6 pb-16 pt-10 md:pb-24 md:pt-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
 
-          <h1 className="mt-6 text-5xl font-bold tracking-tight md:text-7xl">
-            Discover Africa’s Finest Fashion Designers
-          </h1>
+          {/* LEFT CONTENT */}
+          <div className="text-center lg:text-left">
+            <span className="inline-flex rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-600">
+              Africa’s Global Fashion Marketplace
+            </span>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 md:text-xl">
-            Shop custom-made fashion from top African designers —
-            powered by AI body measurement for the perfect fit,
-            anywhere in the world.
-          </p>
+            <h1 className="mt-6 text-5xl font-bold leading-tight tracking-tight md:text-7xl">
+              Find Top Fashion Designers Across Africa
+            </h1>
 
-          <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <button className="rounded-full bg-red-600 px-8 py-4 text-white transition hover:scale-105">
-              Explore Designers
-            </button>
+            <p className="mx-auto mt-6 max-w-xl text-lg text-gray-600 lg:mx-0 md:text-xl">
+              Discover stunning fashion, connect with trusted designers,
+              and order custom outfits from anywhere in the world —
+              no physical measurement needed.
+            </p>
 
-            <button className="rounded-full border border-black px-8 py-4 transition hover:bg-gray-100">
-              Become a Designer
-            </button>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row lg:justify-start justify-center">
+              <button className="rounded-full bg-red-600 px-8 py-4 text-white transition hover:scale-105 hover:bg-red-700">
+                Find Designers
+              </button>
+
+              <button className="rounded-full border border-gray-300 px-8 py-4 transition hover:bg-gray-100">
+                Become a Designer
+              </button>
+            </div>
+
+            <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500 lg:justify-start">
+              <div>
+                <span className="font-bold text-black">500+</span>
+                <p>Designers</p>
+              </div>
+
+              <div>
+                <span className="font-bold text-black">10k+</span>
+                <p>Happy Clients</p>
+              </div>
+
+              <div>
+                <span className="font-bold text-black">Global</span>
+                <p>Delivery</p>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT IMAGES */}
+          <div className="relative">
+            <div className="grid grid-cols-2 gap-4">
+
+              <div className="overflow-hidden rounded-[32px] shadow-lg">
+                <img
+                  src="https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=900&q=80"
+                  alt="African fashion"
+                  className="h-[420px] w-full object-cover"
+                />
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="overflow-hidden rounded-[32px] shadow-lg">
+                  <img
+                    src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=80"
+                    alt="Fashion designer"
+                    className="h-[200px] w-full object-cover"
+                  />
+                </div>
+
+                <div className="overflow-hidden rounded-[32px] shadow-lg">
+                  <img
+                    src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&q=80"
+                    alt="Luxury outfit"
+                    className="h-[200px] w-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Floating card */}
+            <div className="absolute bottom-4 left-4 rounded-[28px] bg-white p-4 shadow-xl">
+              <p className="text-sm text-gray-500">
+                Easy body measurement
+              </p>
+
+              <p className="font-semibold">
+                No tailor visit needed
+              </p>
+            </div>
           </div>
         </div>
       </section>
