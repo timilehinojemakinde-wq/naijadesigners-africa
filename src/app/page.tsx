@@ -64,16 +64,17 @@ export default function Home() {
       <section className="relative overflow-hidden px-6 pb-16 pt-10 md:pb-24 md:pt-20">
 
         {/* BACKGROUND IMAGE */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 overflow-hidden">
           <img
             src="/hero.png"
             alt="hero background"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transistion-transform duration-1000 hover:scale-110"
           />
-
-          {/* overlay */}
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-r from black/70 via-black/40 to-black/20" />
         </div>
+
+        {/* overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
 
         {/* CONTENT */}
         <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 text-white">
@@ -283,6 +284,6 @@ export default function Home() {
         </div>
       </section>
 
-    </main>
+    </main >
   );
 }
