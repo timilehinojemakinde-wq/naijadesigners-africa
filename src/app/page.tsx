@@ -62,7 +62,7 @@ export default function Home() {
 
           {/* Headline */}
           <h1 className="text-[52px] font-semibold leading-[0.95] tracking-tight text-black">
-            Global Marketplace,
+            Global Marketplace
             <br />
             <span className="text-red-600">
               For Africa's Finest
@@ -86,7 +86,6 @@ export default function Home() {
             With AI-powered measurement - no physical measurement required.
             <br /> Shop custom-made outfits from top designers accross Africa from anywhere you are in the world.
           </p>
-
 
           {/* HERO IMAGE AREA */}
           <div className="relative mt-14">
@@ -170,37 +169,54 @@ export default function Home() {
       <section className="px-6 py-16">
         <div className="mx-auto max-w-6xl">
 
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold">
               Featured Designers
             </h2>
-
             <button className="text-red-600">
               View all →
             </button>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          {/* Carousel */}
+          <div className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4">
+
             {designers.map((designer) => (
               <div
                 key={designer.name}
-                className="rounded-[32px] border border-gray-200 p-5 shadow-sm transition hover:shadow-lg"
+                className="relative min-w-[75%] md:min-w-[30%] snap-start overflow-hidden rounded-[28px]"
               >
-                <div className="h-60 rounded-[24px] bg-gray-100" />
 
-                <h3 className="mt-4 text-xl font-semibold">
-                  {designer.name}
-                </h3>
+                {/* Image */}
+                <img
+                  src="https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800&q=80"
+                  alt={designer.name}
+                  className="h-72 w-full object-cover"
+                />
 
-                <p className="text-gray-500">
-                  {designer.specialty}
-                </p>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                <button className="mt-5 text-red-600">
-                  View Store →
-                </button>
+                {/* Content overlay */}
+                <div className="absolute bottom-0 p-4 text-white">
+
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    {designer.name}
+
+                    {/* FLAG (future dynamic) */}
+                    <span className="text-sm">
+                      {designer.name === "House of Tife" ? "🇳🇬" : ""}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-200">
+                    {designer.specialty}
+                  </p>
+
+                </div>
               </div>
             ))}
+
           </div>
         </div>
       </section>
