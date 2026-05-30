@@ -33,7 +33,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
           <h1 className="text-xl font-bold">
-            NaijaDesigners<span className="text-red-600">.africa</span>
+            FitHouse<span className="text-red-600">Africa</span>
           </h1>
 
           {/* Desktop links */}
@@ -52,10 +52,6 @@ export default function Home() {
             <button className="rounded-md border border-gray-300 p-2 hover:bg-gray-100 md:hidden">
               <Menu size={14} />
             </button>
-
-            <button className="rounded-md bg-red-600 px-5 py-2 text-white hover:bg-red-700">
-              Become a Designer
-            </button>
           </div>
         </div>
       </nav>
@@ -64,38 +60,34 @@ export default function Home() {
       <section className="bg-[#fafafa] px-5 pt-6 pb-0 overflow-hidden">
         <div className="mx-auto max-w-md">
 
-          {/* Small Label */}
-          <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-red-600">
-            Global Marketplace for African Fashion
-          </p>
-
           {/* Headline */}
           <h1 className="text-[52px] font-semibold leading-[0.95] tracking-tight text-black">
-            Discover Africa's,
+            Global Marketplace,
             <br />
             <span className="text-red-600">
-              Finest Fashion
+              For Africa's Finest
               <br />
               Designers.
             </span>
           </h1>
-
-          {/* Description */}
-          <p className="mt-6 max-w-sm text-lg leading-9 text-gray-600">
-            Connect top Africa's fashion Designers. Shop custom-made outfits from top designers accross Africa with AI-powered measurement - no physical fitting required. designers, premium
-            ready-to-wear collections.
-          </p>
-
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-col gap-4">
             <button className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700">
-              Find Designers →
+              Become a Designer →
             </button>
 
             <button className="flex h-14 items-center justify-center rounded-xl border border-red-200 bg-white text-base font-medium text-red-700 transition hover:bg-red-50">
-              Become a Designer
+              Find Designer
             </button>
           </div>
+
+
+
+          {/* Description */}
+          <p className="mt-6 max-w-sm text-lg leading-9 text-gray-600">
+            With AI-powered measurement - no physical measurement required. Shop custom-made outfits from top designers accross Africa from anywhere you are in the world.
+          </p>
+
 
           {/* HERO IMAGE AREA */}
           <div className="relative mt-14">
