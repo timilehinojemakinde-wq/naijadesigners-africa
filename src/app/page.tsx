@@ -2,14 +2,31 @@ import { Search, Menu } from "lucide-react";
 
 export default function Home() {
   const categories = [
-    "Aso Ebi",
-    "Wedding",
-    "Native Wear",
-    "Corporate",
-    "Luxury",
-    "Casual",
+    {
+      name: "Aso Ebi",
+      image: "/occasion-asoebi.jpg",
+    },
+    {
+      name: "Wedding",
+      image: "/occasion-wedding.jpg",
+    },
+    {
+      name: "Native Wear",
+      image: "/occasion-native.jpg",
+    },
+    {
+      name: "Corporate",
+      image: "/occasion-corporate.jpg",
+    },
+    {
+      name: "Luxury",
+      image: "/occasion-luxury.jpg",
+    },
+    {
+      name: "Casual",
+      image: "/occasion-casual.jpg",
+    },
   ];
-
   const designers = [
     {
       name: "House of Tife",
@@ -145,25 +162,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="px-6 py-8">
+      {/* SHOP BY OCCASION */}
+      <section className="px-6 py-10">
         <div className="mx-auto max-w-6xl">
-          <h2 className="mb-5 text-2xl font-bold">
-            Shop by Occasion
-          </h2>
 
-          <div className="flex gap-3 overflow-x-auto pb-2">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold">
+              Shop by Occasion
+            </h2>
+
+            <button className="text-red-600">
+              View all →
+            </button>
+          </div>
+
+          {/* Carousel */}
+          <div className="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4">
+
             {categories.map((category) => (
-              <button
-                key={category}
-                className="whitespace-nowrap rounded-md border border-gray-200 px-6 py-3 transition hover:border-red-500 hover:text-red-600"
+              <div
+                key={category.name}
+                className="relative min-w-[31%] md:min-w-[18%] snap-start overflow-hidden rounded-[24px]"
               >
-                {category}
-              </button>
+
+                {/* Image */}
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  className="h-40 w-full object-cover"
+                />
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/30" />
+
+                {/* Text */}
+                <div className="absolute bottom-3 left-3">
+                  <h3 className="text-sm font-semibold text-white">
+                    {category.name}
+                  </h3>
+                </div>
+
+              </div>
             ))}
+
           </div>
         </div>
       </section>
+
 
       {/* FEATURED DESIGNERS */}
       <section className="px-6 py-16">
