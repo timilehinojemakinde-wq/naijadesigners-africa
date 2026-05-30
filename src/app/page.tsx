@@ -3,25 +3,26 @@ import { Search, Menu } from "lucide-react";
 export default function Home() {
   const categories = [
     {
-      name: "Aso Ebi",
-      image: "/occasion-asoebi.jpg",
+      name: "Bridals",
+      image: "/occasion-wedding.png",
     },
     {
-      name: "Wedding",
-      image: "/occasion-wedding.jpg",
+      name: "Aso Ebi",
+      image: "/occasion-asoebi.png",
+    },
+    {
+      name: "Luxury",
+      image: "/occasion-luxury.png",
     },
     {
       name: "Native Wear",
-      image: "/occasion-native.jpg",
+      image: "/occasion-native.png",
     },
     {
       name: "Corporate",
       image: "/occasion-corporate.jpg",
     },
-    {
-      name: "Luxury",
-      image: "/occasion-luxury.jpg",
-    },
+
     {
       name: "Casual",
       image: "/occasion-casual.jpg",
