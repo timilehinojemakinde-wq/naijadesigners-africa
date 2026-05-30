@@ -77,15 +77,14 @@ export default function Home() {
             </button>
 
             <button className="flex h-14 items-center justify-center rounded-xl border border-red-200 bg-white text-base font-medium text-red-700 transition hover:bg-red-50">
-              Find Designer
+              Find Designers
             </button>
           </div>
 
-
-
           {/* Description */}
           <p className="mt-6 max-w-sm text-lg leading-9 text-gray-600">
-            With AI-powered measurement - no physical measurement required. Shop custom-made outfits from top designers accross Africa from anywhere you are in the world.
+            With AI-powered measurement - no physical measurement required.
+            <br /> Shop custom-made outfits from top designers accross Africa from anywhere you are in the world.
           </p>
 
 
