@@ -1,3 +1,4 @@
+import { BridalsIcon } from "@/components/icons";
 import { Search, Menu } from "lucide-react";
 
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
     {
       name: "Bridals",
       image: "/occasion-wedding.png",
+
     },
     {
       name: "Aso Ebi",
@@ -91,7 +93,7 @@ export default function Home() {
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-col gap-4">
             <button className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700">
-              Become a Designer →
+              Setup your Online Store →
             </button>
 
             <button className="flex h-14 items-center justify-center rounded-xl border border-red-200 bg-white text-base font-medium text-red-700 transition hover:bg-red-50">
@@ -116,7 +118,7 @@ export default function Home() {
             />
 
             {/* Floating Trust Card */}
-            <div className="absolute bottom-10 left-1/2 z-20 w-[92%] -translate-x-1/2 rounded-[28px] bg-white p-5 shadow-2xl backdrop-blur-sm">
+            <div className="absolute bottom-10 left-1/2 z-20 w-[92%] -translate-x-1/2 rounded-[8px] bg-white p-5 shadow-2xl backdrop-blur-sm">
 
               <div className="grid grid-cols-3 gap-3 text-center">
 
@@ -168,7 +170,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
 
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-semibold">
               Shop by Occasion
             </h2>
 
@@ -183,7 +185,7 @@ export default function Home() {
             {categories.map((category) => (
               <div
                 key={category.name}
-                className="relative min-w-[31%] md:min-w-[18%] snap-start overflow-hidden rounded-[24px]"
+                className="relative min-w-[31%] md:min-w-[18%] snap-start overflow-hidden rounded-[6px]"
               >
 
                 {/* Image */}
@@ -216,7 +218,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
 
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-semibold">
               Featured Designers
             </h2>
             <button className="text-red-600">
@@ -230,14 +232,14 @@ export default function Home() {
             {designers.map((designer) => (
               <div
                 key={designer.name}
-                className="relative min-w-[75%] md:min-w-[30%] snap-start overflow-hidden rounded-[28px]"
+                className="relative min-w-[75%] md:min-w-[30%] snap-start overflow-hidden rounded-[6px]"
               >
 
                 {/* Image */}
                 <img
                   src="https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800&q=80"
                   alt={designer.name}
-                  className="h-72 w-full object-cover"
+                  className="h-40 w-30 object-cover"
                 />
 
                 {/* Gradient overlay */}
