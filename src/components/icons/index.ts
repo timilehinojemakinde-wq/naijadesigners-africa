@@ -1,1 +1,9 @@
-export { default as BridalsIcon } from "./BridalsIcon"
+export { BridalsIcon } from "./BridalsIcon";
+export { AsoEbiIcon } from "./AsoEbiIcon";
+export { LuxuryIcon } from "./LuxuryIcon";
+export { NativeWearIcon } from "./NativeWearIcon";
+export { CorporateIcon } from "./CorporateIcon";
+export { CasualIcon } from "./CasualIcon";
+export { VerifiedIcon } from "./VerifiedIcon";
+export { PaymentIcon } from "./PaymentIcon";
+export { DeliveryIcon } from "./DeliveryIcon";

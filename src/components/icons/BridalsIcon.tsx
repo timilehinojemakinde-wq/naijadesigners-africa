@@ -1,25 +1,9 @@
-interface IconProps {
-    className?: string;
-}
-
-export default function BridalsIcon({
-    className = "h-6 w-6",
-}: IconProps) {
+export function BridalsIcon({ className = "w-5 h-5" }) {
     return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
-        >
-            <path d="M12 4c1.2 0 2-.8 2-2s-.8-2-2-2-2 .8-2 2 .8 2 2 2Z" />
-
-            <path d="M12 4 8 10l-3 8h14l-3-8-4-6Z" />
-
-            <path d="M9 10h6" />
+        <svg viewBox="0 0 24 24" fill="none" className={className} stroke="currentColor" strokeWidth="1.8">
+            <path d="M12 3c1.5 0 2.5 1 2.5 2.3S13.5 7.6 12 7.6 9.5 6.6 9.5 5.3 10.5 3 12 3Z" />
+            <path d="M8 21l4-12 4 12" />
+            <path d="M6 21h12" />
         </svg>
     );
 }
