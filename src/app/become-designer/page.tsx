@@ -72,7 +72,7 @@ export default function BecomeDesigner() {
 
             {/* HERO */}
             <section className="relative overflow-hidden px-5 pb-10 pt-8">
-                <div className="mx-auto max-w-6xl">
+                <div className="mx-auto mw-full max-w-[1200px] px-6">
                     <div className="relative rounded-[12px] bg-white p-6 shadow-sm md:p-10">
 
                         {/* Hero Content */}
@@ -82,7 +82,7 @@ export default function BecomeDesigner() {
                             <div className="max-w-[70%]">
 
 
-                                <h1 className="mt-5 text-[46px] font-semibold leading-[0.92] tracking-tight md:text-[70px]">
+                                <h1 className="mt-5 text-[36px] font-semibold leading-[1.05] tracking-tight md:text-[50px]">
                                     Sell Fashion
                                     <br />
                                     <span className="text-red-700">
@@ -114,7 +114,7 @@ export default function BecomeDesigner() {
 
             {/* BENEFITS */}
             <section className="px-5 pb-20">
-                <div className="mx-auto max-w-6xl">
+                <div className="mx-auto w-full max-w-[1200px] px-6">
 
                     <h2 className="mb-6 text-2xl font-bold">
                         Why Join FitHouse Africa?

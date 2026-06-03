@@ -81,9 +81,9 @@ export default function SignupPage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl font-bold tracking-tight">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
                         Create your
-                        <span className="text-red-600">
+                        <span className="text-red-700">
                             {" "}designer account
                         </span>
                     </h1>

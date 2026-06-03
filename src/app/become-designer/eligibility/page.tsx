@@ -103,9 +103,9 @@ export default function EligibilityPage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl font-bold tracking-tight">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
                         Tell us about your
-                        <span className="text-red-600">
+                        <span className="text-red-700">
                             {" "}fashion business
                         </span>
                     </h1>
@@ -129,8 +129,8 @@ export default function EligibilityPage() {
                                         setDesignerType(option)
                                     }
                                     className={`rounded-[24px] border p-5 text-left transition ${designerType === option
-                                            ? "border-red-500 bg-red-50 text-red-600"
-                                            : "border-gray-200 bg-white hover:border-red-300"
+                                        ? "border-red-500 bg-red-50 text-red-600"
+                                        : "border-gray-200 bg-white hover:border-red-300"
                                         }`}
                                 >
                                     <p className="font-medium">
@@ -156,8 +156,8 @@ export default function EligibilityPage() {
                                             setExperience(option)
                                         }
                                         className={`rounded-xl border px-5 py-3 transition ${experience === option
-                                                ? "border-red-500 bg-red-600 text-white"
-                                                : "border-gray-300 bg-white hover:border-red-400"
+                                            ? "border-red-500 bg-red-600 text-white"
+                                            : "border-gray-300 bg-white hover:border-red-400"
                                             }`}
                                     >
                                         {option}
@@ -196,8 +196,8 @@ export default function EligibilityPage() {
                                         setClients(option)
                                     }
                                     className={`rounded-[24px] border p-5 text-left transition ${clients === option
-                                            ? "border-red-500 bg-red-50 text-red-600"
-                                            : "border-gray-200 bg-white hover:border-red-300"
+                                        ? "border-red-500 bg-red-50 text-red-600"
+                                        : "border-gray-200 bg-white hover:border-red-300"
                                         }`}
                                 >
                                     <p className="font-medium">

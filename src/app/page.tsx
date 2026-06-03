@@ -90,15 +90,15 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-[#fafafa] px-5 py-15 lg:py-40">
-        <div className="mx-auto max-w-7xl">
+      <section className="bg-[#fafafa] px-6 py-16 lg:py-24">
+        <div className="mx-auto max-w-[1200px]">
 
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="grid items-center gap-16 lg:grid-cols-2">
             {/* LEFT SIDE */}
           </div>
         </div>
         {/* Headline */}
-        <h1 className="text-[48px] font-semibold leading-[0.95] tracking-tight text-black md:text-[60px]">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
           Shop Custom-Made
           <br />
           <span className="text-red-700">
@@ -121,7 +121,7 @@ export default function Home() {
         </div>
 
         {/* Description */}
-        <p className="mt-6 max-w-md text-lg leading-8 text-gray-600">
+        <p className="mt-6 max-w-[560px] text-gray-600">
           AI-powered body measurement lets you order perfectly fitted outfits without visiting a tailor. Shop from verified designers across Africa and get your outfits delivered anywhere in the world.
         </p>
         <div className="mt-6 overflow-hidden">
@@ -150,61 +150,7 @@ export default function Home() {
                 className="w-full object-contain"
               />
 
-              {/* Floating Trust Card */}
             </div>
-            <div className="absolute bottom-8 left-1/2 z-20 w-[92%] -translate-x-1/2 rounded-[8px] border border-gray-100 bg-white/95 p-4 shadow-2xl backdrop-blur-md">
-
-              <div className="grid grid-cols-3 gap-2 text-center">
-
-                {/* Verified */}
-                <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-50">
-                    <VerifiedIcon className="h-5 w-5 text-red-600" />
-                  </div>
-
-                  <p className="text-sm font-medium text-gray-800">
-                    Verified
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    Designers
-                  </p>
-                </div>
-
-                {/* Payments */}
-                <div className="flex flex-col items-center border-x border-gray-100">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-50">
-                    <PaymentIcon className="h-5 w-5 text-red-600" />
-                  </div>
-
-                  <p className="text-sm font-medium text-gray-800">
-                    Secure
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    Payments
-                  </p>
-                </div>
-
-                {/* Delivery */}
-                <div className="flex flex-col items-center">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-red-50">
-                    <DeliveryIcon className="h-5 w-5 text-red-600" />
-                  </div>
-
-                  <p className="text-sm font-medium text-gray-800">
-                    Fast
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    Delivery
-                  </p>
-                </div>
-
-              </div>
-            </div>
-          </div>
-          <div>
           </div>
         </div>
       </section>
@@ -225,7 +171,7 @@ export default function Home() {
               return (
                 <div
                   key={category.name}
-                  className="relative h-56 md:h-72 rounded-[6px] overflow-hidden"
+                  className="relative h-36 md:h-50 rounded-[6px] overflow-hidden"
                 >
                   <img
                     src={category.image}
@@ -266,7 +212,7 @@ export default function Home() {
               <h2 className="text-2xl font-semibold">
                 Featured Designs
               </h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-6 max-w-[560px] text-gray-600">
                 Discover handcrafted premium fashion.
               </p>
             </div>
@@ -282,7 +228,7 @@ export default function Home() {
             {featuredDesigns.map((design) => (
               <div
                 key={design.id}
-                className="min-w-[48%] md:min-w-[260px] snap-start cursor-pointer"
+                className="min-w-[45%] lg:min-w-[280px] snap-start cursor-pointer"
               >
                 {/* Card */}
                 <div className="overflow-hidden rounded-[6px] border border-gray-100 bg-white">
@@ -558,7 +504,7 @@ export default function Home() {
       {/* FOLLOW US + FOOTER */}
       <footer className="border-t border-gray-100 bg-white px-6 pt-16 pb-10">
 
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto w-full max-w-[1200px] px-6">
 
           {/* FOLLOW US */}
           <div className="mb-14 rounded-[28px] bg-[#fafafa] p-8">
@@ -662,7 +608,7 @@ export default function Home() {
           </div>
 
           {/* Bottom Footer */}
-          <div className="mt-14 border-t border-gray-100 pt-8 text-center text-sm text-gray-400">
+          <div className="mt-6 max-w-[560px] text-gray-600">
             © 2026 FitHouseAfrica. All rights reserved.
           </div>
 

@@ -74,3 +74,19 @@ body {
     transform: translateX(-50%);
   }
 }
+
+html {
+  font-size: 15px;
+}
+
+body {
+  zoom: 0.95;
+  /*subtle global breathing room */
+}
+
+@media (min-width:1024px) {
+  body {
+    font-size: 15.5px;
+
+  }
+}
