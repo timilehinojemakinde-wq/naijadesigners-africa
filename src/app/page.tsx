@@ -90,7 +90,7 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="overflow-hidden bg-[#fafafa] px-5 py-12 lg:py-20">
+      <section className="relative overflow-hidden bg-[#fafafa] px-5 py-15 lg:py-40">
         <div className="mx-auto max-w-7xl">
 
           <div className="grid items-center gap-12 lg:grid-cols-2">
@@ -98,7 +98,7 @@ export default function Home() {
           </div>
         </div>
         {/* Headline */}
-        <h1 className="text-[36px] font-semibold leading-[0.95] tracking-tight text-black md:text-[64px]">
+        <h1 className="text-[48px] font-semibold leading-[0.95] tracking-tight text-black md:text-[60px]">
           Shop Custom-Made
           <br />
           <span className="text-red-700">
@@ -384,6 +384,7 @@ export default function Home() {
       </section>
 
 
+
       {/* HOW IT WORKS */}
       <section className="bg-red-50 px-6 py-16">
         <div className="mx-auto max-w-6xl text-center">
@@ -416,9 +417,9 @@ export default function Home() {
 
       {/* DESIGNER CTA */}
       <section className="px-6 py-16">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-[#f8f8f8]">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-[6px] bg-[#f8f8f8]">
 
-          <div className="relative min-h-[460px] overflow-hidden rounded-[28px]">
+          <div className="relative min-h-[160px] overflow-hidden rounded-[28px]">
 
             {/* Background image */}
             <img
@@ -426,6 +427,7 @@ export default function Home() {
               alt="Become a designer"
               className="absolute inset-0 h-full w-full object-cover"
             />
+
 
             {/* Overlay gradient for text readability */}
             <div className="absolute inset-0 bg-gradient-to-r from-red-700/55 via-red-600/20 to-transparent" />
