@@ -1,19 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import {
-    Search,
-    Menu,
-    Eye,
-    EyeOff,
-    ArrowRight,
-} from "lucide-react";
+import { Menu, Search, ArrowRight } from "lucide-react";
 
-export default function SignupPage() {
-    const [showPassword, setShowPassword] =
-        useState(false);
-
+export default function ProfilePage() {
     return (
         <main className="min-h-screen bg-[#fafafa]">
             {/* NAVBAR */}
@@ -45,112 +35,92 @@ export default function SignupPage() {
                     <div className="mb-8">
                         <div className="mb-2 flex justify-between">
                             <p className="text-sm font-medium text-red-600">
-                                Account Setup • 40%
+                                Brand Profile • 60%
                             </p>
 
                             <p className="text-sm text-gray-500">
-                                Step 2 of 5
+                                Step 3 of 5
                             </p>
                         </div>
 
                         <div className="h-2 rounded-full bg-gray-200">
-                            <div className="h-2 w-[40%] rounded-full bg-red-600" />
+                            <div className="h-2 w-[60%] rounded-full bg-red-600" />
                         </div>
                     </div>
 
                     {/* Heading */}
                     <h1 className="text-4xl font-bold leading-tight">
-                        Create your
+                        Tell us about
                         <span className="text-red-600">
-                            {" "}designer account
+                            {" "}your brand
                         </span>
                     </h1>
 
                     <p className="mt-3 text-lg text-gray-600">
-                        Let’s get you set up in under
-                        2 minutes.
+                        This helps customers trust
+                        and discover your fashion
+                        business.
                     </p>
 
                     {/* FORM */}
                     <div className="mt-8 space-y-5">
-                        <Input
-                            label="Full Name"
-                            placeholder="John Doe"
-                        />
-
                         <Input
                             label="Brand Name"
                             placeholder="House of Tife"
                         />
 
                         <Input
-                            label="Email Address"
-                            placeholder="hello@email.com"
+                            label="Instagram Handle"
+                            placeholder="@houseoftife"
                         />
 
                         <Input
-                            label="Phone Number"
-                            placeholder="+234..."
+                            label="Business Location"
+                            placeholder="Lagos, Nigeria"
                         />
 
-                        {/* Password */}
+                        {/* Brand Description */}
                         <div>
                             <label className="mb-2 block text-sm font-medium">
-                                Password
+                                Brand Description
                             </label>
 
-                            <div className="relative">
-                                <input
-                                    type={
-                                        showPassword
-                                            ? "text"
-                                            : "password"
-                                    }
-                                    placeholder="Create password"
-                                    className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-5 pr-14 outline-none focus:border-red-500"
-                                />
+                            <textarea
+                                placeholder="Tell customers about your style, specialty and brand..."
+                                rows={5}
+                                className="w-full rounded-2xl border border-gray-200 bg-white p-5 outline-none focus:border-red-500"
+                            />
+                        </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setShowPassword(
-                                            !showPassword
-                                        )
-                                    }
-                                    className="absolute right-4 top-1/2 -translate-y-1/2"
-                                >
-                                    {showPassword ? (
-                                        <EyeOff size={20} />
-                                    ) : (
-                                        <Eye size={20} />
-                                    )}
-                                </button>
+                        {/* Specialties */}
+                        <div>
+                            <label className="mb-3 block text-sm font-medium">
+                                What do you specialize in?
+                            </label>
+
+                            <div className="flex flex-wrap gap-3">
+                                {[
+                                    "Aso Ebi",
+                                    "Wedding",
+                                    "Luxury",
+                                    "Native Wear",
+                                    "Corporate",
+                                    "Casual",
+                                ].map((item) => (
+                                    <button
+                                        key={item}
+                                        className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm hover:border-red-500"
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
 
-                    {/* Social */}
-                    <div className="my-8 flex items-center gap-3">
-                        <div className="h-px flex-1 bg-gray-200" />
-                        <p className="text-sm text-gray-500">
-                            or continue with
-                        </p>
-                        <div className="h-px flex-1 bg-gray-200" />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <button className="h-14 rounded-2xl border border-gray-200 bg-white font-medium">
-                            Google
-                        </button>
-
-                        <button className="h-14 rounded-2xl border border-gray-200 bg-white font-medium">
-                            Apple
-                        </button>
-                    </div>
-
                     {/* CTA */}
                     <Link
-                        href="/become-designer/profile"
+                        href="/become-designer/portfolio"
                         className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-white"
                     >
                         Continue
@@ -162,7 +132,7 @@ export default function SignupPage() {
     );
 }
 
-/* Reusable Input */
+/* Input Component */
 function Input({
     label,
     placeholder,
