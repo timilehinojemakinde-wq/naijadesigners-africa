@@ -286,14 +286,11 @@ export default function Home() {
               WHAT OUR CUSTOMERS SAY
             </p>
 
-            <h2 className="text-3xl font-semibold text-black">
+            <h2 className="text-2xl font-semibold text-black">
               Loved by fashion lovers
             </h2>
 
-            <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-gray-500">
-              Thousands trust FitHouseAfrica for premium African fashion,
-              custom-made outfits, and seamless delivery.
-            </p>
+
           </div>
 
           {/* Reviews */}
