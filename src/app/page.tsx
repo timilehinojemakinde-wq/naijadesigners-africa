@@ -118,7 +118,7 @@ export default function Home() {
 
           <Link
             href="/become-designer"
-            className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700"
+            className="flex h-14 items-center justify-center rounded-xl bg-white text-black font-medium shadow-md border border-gray-300 hover:bg-gray-100 transistion-colors"
           >
             Become a Designer →
           </Link>
