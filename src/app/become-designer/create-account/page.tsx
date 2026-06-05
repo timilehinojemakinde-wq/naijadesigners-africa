@@ -217,11 +217,11 @@ export default function SignupPage() {
                     {/* CTA */}
                     <Link
                         href="/become-designer/profile"
-                        className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-base font-semibold text-white transition hover:bg-red-700"
+                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-white"
                     >
                         Continue
-                        <ArrowRight size={18} />
                     </Link>
+
                 </div>
             </section>
         </main>

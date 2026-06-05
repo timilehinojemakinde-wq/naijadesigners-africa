@@ -144,10 +144,14 @@ export default function BecomeDesigner() {
                     </div>
 
                     {/* Bottom CTA */}
-                    <button className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-base font-semibold text-white transition hover:bg-red-700">
-                        Become a Designer
-                        <ArrowRight size={18} />
-                    </button>
+                    <Link
+                        href="/become-designer/eligibility"
+                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-white"
+                    >
+                        Apply as a Designer
+                    </Link>
+
+
                 </div>
             </section>
         </main>

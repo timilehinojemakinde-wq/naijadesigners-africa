@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   BridalsIcon,
   AsoEbiIcon,
@@ -99,10 +100,10 @@ export default function Home() {
         </div>
         {/* Headline */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
-          Shop Custom-Made
+          Global marketplace
           <br />
           <span className="text-red-700">
-            African Fashion
+            for African Fashion
           </span>
           <br />
           From Top Designers
@@ -112,12 +113,16 @@ export default function Home() {
         {/* CTA Buttons */}
         <div className="mt-8 flex flex-col gap-4">
           <button className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700">
-            Become a Designer →
+            Find Designers →
           </button>
 
-          <button className="flex h-14 items-center justify-center rounded-xl border border-red-200 bg-white text-base font-medium text-red-700 transition hover:bg-red-50">
-            Find Designers
-          </button>
+          <Link
+            href="/become-designer"
+            className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700"
+          >
+            Become a Designer →
+          </Link>
+
         </div>
 
         {/* Description */}

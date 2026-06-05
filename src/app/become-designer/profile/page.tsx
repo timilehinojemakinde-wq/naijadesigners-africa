@@ -121,11 +121,11 @@ export default function ProfilePage() {
                     {/* CTA */}
                     <Link
                         href="/become-designer/portfolio"
-                        className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-white"
+                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-white"
                     >
                         Continue
-                        <ArrowRight size={18} />
                     </Link>
+
                 </div>
             </section>
         </main>

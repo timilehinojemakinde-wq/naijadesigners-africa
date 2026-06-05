@@ -210,12 +210,12 @@ export default function EligibilityPage() {
 
                     {/* CTA */}
                     <Link
-                        href="/become-designer/signup"
-                        className="mt-12 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-base font-semibold text-white transition hover:bg-red-700"
+                        href="/become-designer/create-account"
+                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-white"
                     >
                         Continue
-                        <ArrowRight size={18} />
                     </Link>
+
                 </div>
             </section>
         </main>
