@@ -109,6 +109,11 @@ export default function Home() {
           From Top Designers
           <br />
           Across Africa.
+
+          <p className="mt-6 max-w-[560px] text-sm text-gray-600 leading-relaxed">
+            With AI-powered body measurement that lets you order perfectly fitted outfits without visiting a tailor. Shop from verified designers across Africa and get your outfits delivered anywhere in the world.
+          </p>
+
         </h1>
         {/* CTA Buttons */}
         <div className="mt-8 flex flex-col gap-4">
@@ -126,9 +131,7 @@ export default function Home() {
         </div>
 
         {/* Description */}
-        <p className="mt-6 max-w-[560px] text-gray-600">
-          AI-powered body measurement lets you order perfectly fitted outfits without visiting a tailor. Shop from verified designers across Africa and get your outfits delivered anywhere in the world.
-        </p>
+
         <div className="mt-6 overflow-hidden">
           <div className="hero-ticker">
             <span>✓ AI Measurement</span>
