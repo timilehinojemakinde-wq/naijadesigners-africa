@@ -49,14 +49,14 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl font-bold leading-tight">
+                    <h1 className="text-2xl font-bold leading-tight">
                         Tell us about
                         <span className="text-red-600">
                             {" "}your brand
                         </span>
                     </h1>
 
-                    <p className="mt-3 text-lg text-gray-600">
+                    <p className="mt-3 text-sm text-gray-600">
                         This helps customers trust
                         and discover your fashion
                         business.
@@ -66,12 +66,12 @@ export default function ProfilePage() {
                     <div className="mt-8 space-y-5">
                         <Input
                             label="Brand Name"
-                            placeholder="House of Tife"
+                            placeholder="Mode & Cedar"
                         />
 
                         <Input
                             label="Instagram Handle"
-                            placeholder="@houseoftife"
+                            placeholder="@official_modencedar"
                         />
 
                         <Input

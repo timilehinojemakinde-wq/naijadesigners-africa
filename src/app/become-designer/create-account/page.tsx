@@ -71,7 +71,7 @@ export default function SignupPage() {
                             </p>
 
                             <p className="text-sm text-gray-500">
-                                Step 2 of 5
+                                Step 2 of 4
                             </p>
                         </div>
 
@@ -81,14 +81,14 @@ export default function SignupPage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
+                    <h1 className="text-2xl md:text-5xl lg:text-6xl leading-[1.05]">
                         Create your
                         <span className="text-red-700">
                             {" "}designer account
                         </span>
                     </h1>
 
-                    <p className="mt-3 text-lg leading-8 text-gray-600">
+                    <p className="mt-3 text-sm leading-8 text-gray-600">
                         Let’s set up your account in
                         under 2 minutes.
                     </p>
@@ -104,7 +104,7 @@ export default function SignupPage() {
                             <input
                                 type="text"
                                 placeholder="Timilehin Ojemakinde"
-                                className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-5 outline-none transition focus:border-red-500"
+                                className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-6 outline-none transition focus:border-red-500"
                             />
                         </div>
 

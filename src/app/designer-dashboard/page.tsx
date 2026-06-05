@@ -42,7 +42,7 @@ export default function DesignerDashboard() {
             <section className="px-5 py-6">
                 {/* Greeting */}
                 <div>
-                    <h2 className="text-3xl font-bold leading-tight">
+                    <h2 className="text-2xl font-bold leading-tight">
                         Welcome to your
                         <span className="text-red-600">
                             {" "}Designer Hub
@@ -77,7 +77,7 @@ export default function DesignerDashboard() {
                     ].map((item) => (
                         <div
                             key={item.title}
-                            className="rounded-[28px] bg-white p-5 shadow-sm"
+                            className="rounded-[8px] bg-white p-5 shadow-sm"
                         >
                             <p className="text-sm text-gray-500">
                                 {item.title}
@@ -105,7 +105,7 @@ export default function DesignerDashboard() {
                         ].map((action) => (
                             <button
                                 key={action}
-                                className="rounded-[24px] border border-gray-200 bg-white p-5 text-left font-medium transition hover:border-red-400"
+                                className="rounded-[8px] border border-gray-200 bg-white p-5 text-left font-medium transition hover:border-red-400"
                             >
                                 {action}
                             </button>
@@ -141,7 +141,7 @@ export default function DesignerDashboard() {
                             ].map((item) => (
                                 <div
                                     key={item.title}
-                                    className="min-w-[150px] rounded-[24px] bg-white p-5 shadow-sm"
+                                    className="min-w-[150px] rounded-[8px] bg-white p-5 shadow-sm"
                                 >
                                     <p className="text-gray-500">
                                         {item.title}
@@ -166,7 +166,7 @@ export default function DesignerDashboard() {
                         {[1, 2].map((item) => (
                             <div
                                 key={item}
-                                className="rounded-[24px] bg-white p-5 shadow-sm"
+                                className="rounded-[8px] bg-white p-5 shadow-sm"
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
@@ -249,8 +249,8 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                    ? "text-red-600"
-                    : "text-gray-500"
+                ? "text-red-600"
+                : "text-gray-500"
                 }`}
         >
             {icon}

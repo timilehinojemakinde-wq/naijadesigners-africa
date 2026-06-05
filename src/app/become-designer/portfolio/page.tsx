@@ -49,20 +49,20 @@ export default function PortfolioPage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl font-bold leading-tight">
+                    <h1 className="text-2xl font-bold leading-tight">
                         Upload your
                         <span className="text-red-600">
                             {" "}best designs
                         </span>
                     </h1>
 
-                    <p className="mt-3 text-lg text-gray-600">
+                    <p className="mt-3 text-sm text-gray-600">
                         Show customers your best work.
                         Upload at least 3 fashion photos.
                     </p>
 
                     {/* Upload Box */}
-                    <div className="mt-8 rounded-[28px] border-2 border-dashed border-red-200 bg-white p-10 text-center">
+                    <div className="mt-8 rounded-[6px] border-2 border-dashed border-red-200 bg-white p-10 text-center">
                         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
                             <Upload
                                 size={28}
@@ -88,7 +88,7 @@ export default function PortfolioPage() {
                         {[1, 2, 3].map((item) => (
                             <div
                                 key={item}
-                                className="aspect-square rounded-[24px] bg-gray-200"
+                                className="aspect-square rounded-[6px] bg-gray-200"
                             />
                         ))}
                     </div>

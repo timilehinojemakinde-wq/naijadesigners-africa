@@ -54,14 +54,14 @@ export default function ReviewPage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl font-bold leading-tight">
+                    <h1 className="text-2xl font-bold leading-tight">
                         Review your
                         <span className="text-red-600">
                             {" "}application
                         </span>
                     </h1>
 
-                    <p className="mt-3 text-lg text-gray-600">
+                    <p className="mt-3 text-sm text-gray-600">
                         Confirm everything looks good
                         before submitting.
                     </p>
@@ -88,7 +88,7 @@ export default function ReviewPage() {
                         ].map((item) => (
                             <div
                                 key={item.title}
-                                className="rounded-[24px] border border-gray-200 bg-white p-5"
+                                className="rounded-[6px] border border-gray-200 bg-white p-5"
                             >
                                 <p className="text-sm text-gray-500">
                                     {item.title}
@@ -102,7 +102,7 @@ export default function ReviewPage() {
                     </div>
 
                     {/* Approval Notice */}
-                    <div className="mt-8 rounded-[28px] bg-red-50 p-5">
+                    <div className="mt-8 rounded-[6px] bg-red-50 p-5">
                         <div className="flex gap-3">
                             <CircleCheck className="mt-1 text-red-600" />
 

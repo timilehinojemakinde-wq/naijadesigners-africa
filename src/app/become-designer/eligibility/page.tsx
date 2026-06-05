@@ -103,21 +103,21 @@ export default function EligibilityPage() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]">
+                    <h1 className="text-2xl md:text-5xl lg:text-6xl leading-[1.05]">
                         Tell us about your
                         <span className="text-red-700">
                             {" "}fashion business
                         </span>
                     </h1>
 
-                    <p className="mt-3 text-lg leading-8 text-gray-600">
+                    <p className="mt-3 text-sm leading-8 text-gray-600">
                         This helps us personalize your
                         onboarding experience.
                     </p>
 
                     {/* QUESTION 1 */}
                     <div className="mt-10">
-                        <h2 className="mb-4 text-lg font-semibold">
+                        <h2 className="mb-4 text-sm font-semibold">
                             What best describes you?
                         </h2>
 
@@ -128,12 +128,12 @@ export default function EligibilityPage() {
                                     onClick={() =>
                                         setDesignerType(option)
                                     }
-                                    className={`rounded-[24px] border p-5 text-left transition ${designerType === option
+                                    className={`rounded-[6px] border p-5 text-left transition ${designerType === option
                                         ? "border-red-500 bg-red-50 text-red-600"
                                         : "border-gray-200 bg-white hover:border-red-300"
                                         }`}
                                 >
-                                    <p className="font-medium">
+                                    <p className="font-small">
                                         {option}
                                     </p>
                                 </button>
@@ -143,7 +143,7 @@ export default function EligibilityPage() {
 
                     {/* QUESTION 2 */}
                     <div className="mt-10">
-                        <h2 className="mb-4 text-lg font-semibold">
+                        <h2 className="mb-4 text-sm font-semibold">
                             How long have you been designing?
                         </h2>
 
@@ -169,11 +169,11 @@ export default function EligibilityPage() {
 
                     {/* QUESTION 3 */}
                     <div className="mt-10">
-                        <h2 className="mb-4 text-lg font-semibold">
+                        <h2 className="mb-4 text-sm font-semibold">
                             Where are you based?
                         </h2>
 
-                        <div className="flex items-center justify-between rounded-[20px] border border-gray-200 bg-white px-5 py-4">
+                        <div className="flex items-center justify-between rounded-[6px] border border-gray-200 bg-white px-5 py-4">
                             <span className="text-gray-500">
                                 Select Country
                             </span>
@@ -184,7 +184,7 @@ export default function EligibilityPage() {
 
                     {/* QUESTION 4 */}
                     <div className="mt-10">
-                        <h2 className="mb-4 text-lg font-semibold">
+                        <h2 className="mb-4 text-sm font-semibold">
                             Do you currently have clients?
                         </h2>
 
@@ -195,7 +195,7 @@ export default function EligibilityPage() {
                                     onClick={() =>
                                         setClients(option)
                                     }
-                                    className={`rounded-[24px] border p-5 text-left transition ${clients === option
+                                    className={`rounded-[6px] border p-5 text-left transition ${clients === option
                                         ? "border-red-500 bg-red-50 text-red-600"
                                         : "border-gray-200 bg-white hover:border-red-300"
                                         }`}

@@ -91,7 +91,7 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="bg-[#fafafa] px-6 py-16 lg:py-24">
+      <section className="bg-[#fafafa] px-6 py-10 lg:py-24">
         <div className="mx-auto max-w-[1200px]">
 
           <div className="grid items-center gap-16 lg:grid-cols-2">
@@ -117,13 +117,10 @@ export default function Home() {
         </h1>
         {/* CTA Buttons */}
         <div className="mt-8 flex flex-col gap-4">
-          <button className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transition hover:bg-red-700">
-            Find Designers →
-          </button>
 
           <Link
-            href="/become-designer"
-            className="flex h-14 items-center justify-center rounded-xl bg-white text-black font-medium shadow-md border border-gray-300 hover:bg-gray-100 transistion-colors"
+            href="/become-designer/eligibility"
+            className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white shadow-md transistion hover:bg-red-700"
           >
             Become a Designer →
           </Link>
@@ -195,7 +192,7 @@ export default function Home() {
             ].map((brand) => (
               <div
                 key={brand}
-                className="mx-5 shrink-0 text-[20px] font-semibold tracking-[0.14em] text-black/80"
+                className="mx-5 shrink-0 text-[8px] font-semibold tracking-[0.14em] text-black/80"
               >
                 {brand}
               </div>
@@ -218,7 +215,7 @@ export default function Home() {
             ].map((brand) => (
               <div
                 key={brand}
-                className="mx-5 shrink-0 text-[20px] font-semibold tracking-[0.14em] text-black/80"
+                className="mx-5 shrink-0 text-[8px] font-semibold tracking-[0.14em] text-black/80"
               >
                 {brand}
               </div>
@@ -227,161 +224,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY OCCASION */}
-      <section className="px-6 py-10">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Shop by Occasion</h2>
-            <button className="text-red-600">View all →</button>
-          </div>
-
-          {/* GRID (mobile 2 rows, desktop single row scroll feel) */}
-          <div className="grid grid-cols-3 gap-3 auto-rows-fr">
-            {categories.map((category) => {
-              const Icon = category.icon;
-
-              return (
-                <div
-                  key={category.name}
-                  className="relative h-36 md:h-50 rounded-[6px] overflow-hidden"
-                >
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="h-full w-full object-cover"
-                  />
-
-                  {/* overlay */}
-                  <div className="absolute inset-0 bg-black/35" />
-
-                  {/* icon */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="rounded-full bg-white/90 p-3 backdrop-blur-sm">
-                      <Icon className="h-7 w-7 text-red-600" />
-                    </div>
-                  </div>
-
-                  {/* text */}
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
-                    <h3 className="text-sm font-semibold text-white">
-                      {category.name}
-                    </h3>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* FEATURED DESIGNS */}
-      <section className="px-6 py-14">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold">
-                Featured Designs
-              </h2>
-              <p className="mt-6 max-w-[560px] text-gray-600">
-                Discover handcrafted premium fashion.
-              </p>
-            </div>
-
-            <button className="text-red-600 text-sm font-medium">
-              View all →
-            </button>
-          </div>
-
-          {/* Horizontal ecommerce carousel */}
-          <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-
-            {featuredDesigns.map((design) => (
-              <div
-                key={design.id}
-                className="min-w-[45%] lg:min-w-[280px] snap-start cursor-pointer"
-              >
-                {/* Card */}
-                <div className="overflow-hidden rounded-[6px] border border-gray-100 bg-white">
-
-                  {/* Image */}
-                  <div className="relative">
-                    <img
-                      src={design.image}
-                      alt={design.name}
-                      className="h-60 w-full object-cover"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="space-y-1 p-3">
-
-                    <p className="text-sm font-semibold text-black">
-                      {design.price}
-                    </p>
-
-                    <p className="truncate text-sm font-medium text-gray-900">
-                      {design.store}
-                    </p>
-
-                    <p className="text-xs text-gray-500">
-                      {design.category}
-                    </p>
-
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-
-
-
-      {/* HOW IT WORKS */}
-      <section className="bg-red-50 px-6 py-16">
-        <div className="mx-auto max-w-6xl text-center">
-
-          <h2 className="text-3xl font-bold">
-            How It Works
-          </h2>
-
-          <div className="mt-10 grid gap-6 md:grid-cols-4">
-            {[
-              "Discover",
-              "Choose Outfit",
-              "AI Body Scan",
-              "Get Delivered",
-            ].map((step) => (
-              <div
-                key={step}
-                className="rounded-[28px] bg-white p-6"
-              >
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-white">
-                  ✓
-                </div>
-                <h3 className="font-semibold">{step}</h3>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
       {/* DESIGNER CTA */}
       <section className="px-6 py-16">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[6px] bg-[#f8f8f8]">
 
-          <div className="relative min-h-[160px] overflow-hidden rounded-[28px]">
+          <div className="relative min-h-[160px] overflow-hidden rounded-[8px]">
 
             {/* Background image */}
             <img
               src="/designer-cta.png"
               alt="Become a designer"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-wrap"
             />
 
 
@@ -421,7 +274,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
 
       {/* WHAT OUR CUSTOMERS SAY */}
       <section className="bg-[#fafafa] px-6 py-16">
