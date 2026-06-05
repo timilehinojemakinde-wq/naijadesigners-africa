@@ -163,6 +163,70 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FEATURED DESIGNER HOUSES */}
+      <section className="overflow-hidden py-14 bg-[#fafafa] border-y border-gray-100">
+
+        <div className="mb-10 text-center px-6">
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.18em] text-red-600">
+            Trusted By
+          </p>
+
+          <h2 className="text-2xl font-semibold text-black">
+            Africa's Emerging Fashion Houses
+          </h2>
+
+          <p className="mx-auto mt-3 max-w-md text-sm text-gray-500">
+            Premium designers shaping the future of African fashion.
+          </p>
+        </div>
+
+        {/* Row 1 */}
+        <div className="marquee mb-5">
+          <div className="marquee-content">
+            {[
+              "VEEKEE",
+              "MODE & CEDAR",
+              "ATELIER RED",
+              "STYLE TEMPLE",
+              "MODE & CEDAR",
+              "LUXE NATIVE",
+              "AÏDA",
+              "ELAN NOIR",
+            ].map((brand) => (
+              <div
+                key={brand}
+                className="mx-5 shrink-0 text-[20px] font-semibold tracking-[0.14em] text-black/80"
+              >
+                {brand}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 2 */}
+        <div className="marquee marquee-reverse">
+          <div className="marquee-content">
+            {[
+              "MAI ATAFO",
+              "VEEKEE JAMES",
+              "HOUSE OF LUXE",
+              "MODE & CEDAR",
+              "TEMPLE WEAR",
+              "ORÍ",
+              "ATELIER NOIR",
+              "MODE & CEDAR",
+            ].map((brand) => (
+              <div
+                key={brand}
+                className="mx-5 shrink-0 text-[20px] font-semibold tracking-[0.14em] text-black/80"
+              >
+                {brand}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* SHOP BY OCCASION */}
       <section className="px-6 py-10">
         <div className="mx-auto max-w-6xl">
@@ -273,69 +337,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED DESIGNER HOUSES */}
-      <section className="overflow-hidden py-14 bg-[#fafafa] border-y border-gray-100">
 
-        <div className="mb-10 text-center px-6">
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.18em] text-red-600">
-            Trusted By
-          </p>
-
-          <h2 className="text-2xl font-semibold text-black">
-            Africa's Emerging Fashion Houses
-          </h2>
-
-          <p className="mx-auto mt-3 max-w-md text-sm text-gray-500">
-            Premium designers shaping the future of African fashion.
-          </p>
-        </div>
-
-        {/* Row 1 */}
-        <div className="marquee mb-5">
-          <div className="marquee-content">
-            {[
-              "VEEKEE",
-              "HOUSE OF TIFE",
-              "ATELIER RED",
-              "STYLE TEMPLE",
-              "TUBO",
-              "LUXE NATIVE",
-              "AÏDA",
-              "ELAN NOIR",
-            ].map((brand) => (
-              <div
-                key={brand}
-                className="mx-5 shrink-0 text-[20px] font-semibold tracking-[0.14em] text-black/80"
-              >
-                {brand}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Row 2 */}
-        <div className="marquee marquee-reverse">
-          <div className="marquee-content">
-            {[
-              "MAI ATAFO",
-              "VEEKA",
-              "HOUSE OF LUXE",
-              "THREAD AFRICA",
-              "TEMPLE WEAR",
-              "ORÍ",
-              "ATELIER NOIR",
-              "STYLE DISTRICT",
-            ].map((brand) => (
-              <div
-                key={brand}
-                className="mx-5 shrink-0 text-[20px] font-semibold tracking-[0.14em] text-black/80"
-              >
-                {brand}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
 
 
