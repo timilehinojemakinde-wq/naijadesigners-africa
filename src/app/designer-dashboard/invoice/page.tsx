@@ -141,8 +141,8 @@ export default function InvoicesPage() {
 
                                     <span
                                         className={`rounded-full px-3 py-1 text-sm ${invoice.status === "Paid"
-                                                ? "bg-green-100 text-green-700"
-                                                : "bg-yellow-100 text-yellow-700"
+                                            ? "bg-green-100 text-green-700"
+                                            : "bg-yellow-100 text-yellow-700"
                                             }`}
                                     >
                                         {invoice.status}
@@ -224,8 +224,8 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                    ? "text-red-600"
-                    : "text-gray-500"
+                ? "text-red-600"
+                : "text-gray-500"
                 }`}
         >
             {icon}

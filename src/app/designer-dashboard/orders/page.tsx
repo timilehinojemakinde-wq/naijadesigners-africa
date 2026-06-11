@@ -79,8 +79,8 @@ export default function OrdersPage() {
                         <button
                             key={filter}
                             className={`whitespace-nowrap rounded-xl px-5 py-3 text-sm font-medium ${index === 0
-                                    ? "bg-red-600 text-white"
-                                    : "border border-gray-200 bg-white text-gray-700"
+                                ? "bg-red-600 text-white"
+                                : "border border-gray-200 bg-white text-gray-700"
                                 }`}
                         >
                             {filter}
@@ -117,10 +117,10 @@ export default function OrdersPage() {
 
                             <span
                                 className={`rounded-full px-3 py-1 text-sm ${order.status === "Production"
-                                        ? "bg-yellow-100 text-yellow-700"
-                                        : order.status === "Measurement"
-                                            ? "bg-blue-100 text-blue-700"
-                                            : "bg-green-100 text-green-700"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : order.status === "Measurement"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : "bg-green-100 text-green-700"
                                     }`}
                             >
                                 {order.status}
@@ -201,8 +201,8 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                    ? "text-red-600"
-                    : "text-gray-500"
+                ? "text-red-600"
+                : "text-gray-500"
                 }`}
         >
             {icon}

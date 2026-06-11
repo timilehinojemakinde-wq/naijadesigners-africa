@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -223,8 +222,8 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                    ? "text-red-600"
-                    : "text-gray-500"
+                ? "text-red-600"
+                : "text-gray-500"
                 }`}
         >
             {icon}
