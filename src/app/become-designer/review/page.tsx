@@ -122,7 +122,7 @@ export default function ReviewPage() {
 
                     {/* Submit */}
                     <Link
-                        href="/designer-dashboard"
+                        href="/auth"
                         className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-white"
                     >
                         Submit Application

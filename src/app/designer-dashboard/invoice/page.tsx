@@ -192,7 +192,7 @@ export default function InvoicesPage() {
                     />
 
                     <NavItem
-                        href="/designer-dashboard/invoices"
+                        href="/designer-dashboard/invoice"
                         icon={<Receipt size={20} />}
                         label="Invoice"
                         active

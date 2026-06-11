@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={'{plusJakarta.className} {playfair.variable}'} >
+      <body className={`${plusJakarta.className} ${plusJakarta.variable} ${playfair.variable}`}>
         {children}
       </body>
     </html>
