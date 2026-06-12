@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
     Home,
@@ -12,6 +13,8 @@ import {
 } from "lucide-react";
 
 export default function DesignerDashboard() {
+    const router = useRouter();
+
     return (
         <main className="min-h-screen bg-[#fafafa] pb-24">
             {/* TOP NAVBAR */}
@@ -20,11 +23,8 @@ export default function DesignerDashboard() {
                     <div>
                         <h1 className="text-xl font-bold">
                             FitHouse
-                            <span className="text-red-600">
-                                Africa
-                            </span>
+                            <span className="text-red-600">Africa</span>
                         </h1>
-
                         <p className="text-sm text-gray-500">
                             Welcome back 👋
                         </p>
@@ -32,7 +32,6 @@ export default function DesignerDashboard() {
 
                     <button className="relative rounded-xl border border-gray-200 bg-white p-3">
                         <Bell size={20} />
-
                         <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-600" />
                     </button>
                 </div>
@@ -43,37 +42,21 @@ export default function DesignerDashboard() {
                 {/* Greeting */}
                 <div>
                     <h2 className="text-2xl font-bold leading-tight">
-                        Welcome to your
-                        <span className="text-red-600">
-                            {" "}Designer Hub
-                        </span>
+                        Welcome to your{" "}
+                        <span className="text-red-600">Designer Hub</span>
                     </h2>
-
                     <p className="mt-2 text-gray-600">
-                        Manage orders, measurements,
-                        products, invoices and customers.
+                        Manage orders, measurements, products, invoices and customers.
                     </p>
                 </div>
 
                 {/* STATS */}
                 <div className="mt-8 grid grid-cols-2 gap-4">
                     {[
-                        {
-                            title: "Orders",
-                            value: "12",
-                        },
-                        {
-                            title: "Measurements",
-                            value: "7",
-                        },
-                        {
-                            title: "Revenue",
-                            value: "₦820k",
-                        },
-                        {
-                            title: "Invoices",
-                            value: "5",
-                        },
+                        { title: "Orders", value: "12" },
+                        { title: "Measurements", value: "7" },
+                        { title: "Revenue", value: "₦820k" },
+                        { title: "Invoices", value: "5" },
                     ].map((item) => (
                         <div
                             key={item.title}
@@ -82,7 +65,6 @@ export default function DesignerDashboard() {
                             <p className="text-sm text-gray-500">
                                 {item.title}
                             </p>
-
                             <h3 className="mt-2 text-3xl font-bold">
                                 {item.value}
                             </h3>
@@ -98,16 +80,29 @@ export default function DesignerDashboard() {
 
                     <div className="grid grid-cols-2 gap-4">
                         {[
-                            "Add Product",
-                            "Send Measurement Link",
-                            "Generate Invoice",
-                            "Share Store Link",
+                            {
+                                label: "Add Product",
+                                route: "/designer-dashboard/add-product",
+                            },
+                            {
+                                label: "Send Measurement Link",
+                                route: "/measurement/generate-link",
+                            },
+                            {
+                                label: "Generate Invoice",
+                                route: "/designer-dashboard/invoice",
+                            },
+                            {
+                                label: "Share Store Link",
+                                route: "/designer-dashboard/store",
+                            },
                         ].map((action) => (
                             <button
-                                key={action}
+                                key={action.label}
+                                onClick={() => router.push(action.route)}
                                 className="rounded-[8px] border border-gray-200 bg-white p-5 text-left font-medium transition hover:border-red-400"
                             >
-                                {action}
+                                {action.label}
                             </button>
                         ))}
                     </div>
@@ -122,22 +117,10 @@ export default function DesignerDashboard() {
                     <div className="overflow-x-auto">
                         <div className="flex gap-4">
                             {[
-                                {
-                                    title: "New",
-                                    count: 4,
-                                },
-                                {
-                                    title: "Measurement",
-                                    count: 2,
-                                },
-                                {
-                                    title: "Production",
-                                    count: 5,
-                                },
-                                {
-                                    title: "Delivery",
-                                    count: 1,
-                                },
+                                { title: "New", count: 4 },
+                                { title: "Measurement", count: 2 },
+                                { title: "Production", count: 5 },
+                                { title: "Delivery", count: 1 },
                             ].map((item) => (
                                 <div
                                     key={item.title}
@@ -146,7 +129,6 @@ export default function DesignerDashboard() {
                                     <p className="text-gray-500">
                                         {item.title}
                                     </p>
-
                                     <h4 className="mt-2 text-3xl font-bold">
                                         {item.count}
                                     </h4>
@@ -173,12 +155,10 @@ export default function DesignerDashboard() {
                                         <h4 className="font-semibold">
                                             Wedding Dress
                                         </h4>
-
                                         <p className="text-sm text-gray-500">
                                             Sarah A.
                                         </p>
                                     </div>
-
                                     <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
                                         Production
                                     </span>
@@ -198,31 +178,26 @@ export default function DesignerDashboard() {
                         label="Home"
                         active
                     />
-
                     <NavItem
                         href="/designer-dashboard/orders"
                         icon={<Package size={20} />}
                         label="Orders"
                     />
-
                     <NavItem
                         href="/designer-dashboard/measurements"
                         icon={<Ruler size={20} />}
                         label="Measure"
                     />
-
                     <NavItem
                         href="/designer-dashboard/store"
                         icon={<Store size={20} />}
                         label="Store"
                     />
-
                     <NavItem
                         href="/designer-dashboard/invoice"
                         icon={<Receipt size={20} />}
                         label="Invoice"
                     />
-
                     <NavItem
                         href="/designer-dashboard/profile"
                         icon={<User size={20} />}
@@ -248,16 +223,11 @@ function NavItem({
     return (
         <Link
             href={href}
-            className={`flex flex-col items-center gap-1 ${active
-                ? "text-red-600"
-                : "text-gray-500"
+            className={`flex flex-col items-center gap-1 ${active ? "text-red-600" : "text-gray-500"
                 }`}
         >
             {icon}
-
-            <span className="text-xs">
-                {label}
-            </span>
+            <span className="text-xs">{label}</span>
         </Link>
     );
 }
