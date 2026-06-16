@@ -15,6 +15,25 @@ import {
 export default function DesignerDashboard() {
     const router = useRouter();
 
+    const handleProtectedNavigation = (
+        path: string
+    ) => {
+        const storeSetup =
+            sessionStorage.getItem(
+                "storeSetup"
+            );
+
+        if (!storeSetup) {
+            router.push(
+                "/designer-dashboard/store-setup"
+            );
+            return;
+        }
+
+        router.push(path);
+    };
+
+
     return (
         <main className="min-h-screen bg-[#fafafa] pb-24">
             {/* TOP NAVBAR */}
@@ -73,6 +92,7 @@ export default function DesignerDashboard() {
                 </div>
 
                 {/* QUICK ACTIONS */}
+                {/* QUICK ACTIONS */}
                 <div className="mt-10">
                     <h3 className="mb-4 text-xl font-semibold">
                         Quick Actions
@@ -82,24 +102,45 @@ export default function DesignerDashboard() {
                         {[
                             {
                                 label: "Add Product",
-                                route: "/designer-dashboard/add-product",
+                                route:
+                                    "/designer-dashboard/add-product",
+                                requiresStore: true,
                             },
                             {
-                                label: "Send Measurement Link",
-                                route: "/measurement/generate-link",
+                                label:
+                                    "Send Measurement Link",
+                                route:
+                                    "/measurement/generate-link",
+                                requiresStore: false,
                             },
                             {
                                 label: "Generate Invoice",
-                                route: "/designer-dashboard/invoice",
+                                route:
+                                    "/designer-dashboard/invoice",
+                                requiresStore: false,
                             },
                             {
                                 label: "Share Store Link",
-                                route: "/designer-dashboard/store",
+                                route:
+                                    "/designer-dashboard/store",
+                                requiresStore: true,
                             },
                         ].map((action) => (
                             <button
                                 key={action.label}
-                                onClick={() => router.push(action.route)}
+                                onClick={() => {
+                                    if (
+                                        action.requiresStore
+                                    ) {
+                                        handleProtectedNavigation(
+                                            action.route
+                                        );
+                                    } else {
+                                        router.push(
+                                            action.route
+                                        );
+                                    }
+                                }}
                                 className="rounded-[8px] border border-gray-200 bg-white p-5 text-left font-medium transition hover:border-red-400"
                             >
                                 {action.label}
