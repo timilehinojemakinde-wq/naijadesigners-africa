@@ -13,13 +13,13 @@ export default function MeasurementWelcomePage() {
             <section className="flex min-h-screen flex-col px-5 py-8">
                 {/* TOP */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         FitHouse AI Measurement
                     </div>
 
                     <h1 className="mt-6 text-[42px] font-bold leading-[1]">
                         Get Your
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Perfect Fit
                         </span>
                     </h1>
@@ -77,9 +77,9 @@ export default function MeasurementWelcomePage() {
 
                 {/* FOOTER CTA */}
                 <div className="mt-auto pt-8">
-                    <div className="mb-4 rounded-[28px] bg-red-50 p-5">
+                    <div className="mb-4 rounded-[28px] bg-emerald-50 p-5">
                         <div>
-                            <p className="text-sm font-semibold text-red-700">
+                            <p className="text-sm font-semibold text-emerald-700">
                                 Before You Start
                             </p>
 
@@ -105,7 +105,7 @@ export default function MeasurementWelcomePage() {
 
                     <Link
                         href="/measurement/instructions"
-                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white"
+                        className="flex h-14 items-center justify-center rounded-xl bg-emerald-600 text-base font-medium text-white"
                     >
                         Start Measurement
                     </Link>
@@ -126,7 +126,7 @@ function BenefitCard({
 }) {
     return (
         <div className="rounded-[24px] bg-white p-5 shadow-sm">
-            <div className="mb-4 inline-flex rounded-xl bg-red-50 p-3 text-red-600">
+            <div className="mb-4 inline-flex rounded-xl bg-emerald-50 p-3 text-emerald-600">
                 {icon}
             </div>
 

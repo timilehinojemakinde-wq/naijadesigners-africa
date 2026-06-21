@@ -67,7 +67,7 @@ export default function InvoicesPage() {
                             Outstanding
                         </p>
 
-                        <h2 className="mt-2 text-3xl font-bold text-red-600">
+                        <h2 className="mt-2 text-3xl font-bold text-emerald-600">
                             ₦480k
                         </h2>
                     </div>
@@ -80,14 +80,14 @@ export default function InvoicesPage() {
                     </h3>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <button className="rounded-[24px] bg-red-600 p-5 text-left text-white">
+                        <button className="rounded-[24px] bg-emerald-600 p-5 text-left text-white">
                             <Plus size={22} />
 
                             <p className="mt-4 font-medium">
                                 Create Invoice
                             </p>
 
-                            <p className="text-sm text-red-100">
+                            <p className="text-sm text-emerald-100">
                                 Generate for customer
                             </p>
                         </button>
@@ -113,7 +113,7 @@ export default function InvoicesPage() {
                             Recent Invoices
                         </h3>
 
-                        <button className="text-sm text-red-600">
+                        <button className="text-sm text-emerald-600">
                             View All
                         </button>
                     </div>
@@ -134,7 +134,7 @@ export default function InvoicesPage() {
                                             {invoice.customer}
                                         </h4>
 
-                                        <p className="mt-2 font-semibold text-red-600">
+                                        <p className="mt-2 font-semibold text-emerald-600">
                                             {invoice.amount}
                                         </p>
                                     </div>
@@ -150,7 +150,7 @@ export default function InvoicesPage() {
                                 </div>
 
                                 <div className="mt-5 flex gap-3">
-                                    <button className="flex-1 rounded-xl bg-red-600 py-3 text-sm text-white">
+                                    <button className="flex-1 rounded-xl bg-emerald-600 py-3 text-sm text-white">
                                         View Invoice
                                     </button>
 
@@ -224,7 +224,7 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                ? "text-red-600"
+                ? "text-emerald-600"
                 : "text-gray-500"
                 }`}
         >

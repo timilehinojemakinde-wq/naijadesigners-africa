@@ -204,7 +204,7 @@ export default function AddProductPage() {
 
                             {heroMedia.status === "error" && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/60 px-4 text-center">
-                                    <AlertCircle className="text-red-400" size={28} />
+                                    <AlertCircle className="text-emerald-400" size={28} />
                                     <p className="text-xs text-white">{heroMedia.error}</p>
                                     <button
                                         onClick={() => retryUpload(heroMedia)}
@@ -216,7 +216,7 @@ export default function AddProductPage() {
                             )}
                         </div>
                     ) : (
-                        <label className="mt-5 flex h-[260px] cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-red-400">
+                        <label className="mt-5 flex h-[260px] cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-emerald-400">
                             <Plus size={32} />
                             <p className="mt-3 text-sm text-gray-600">Tap to upload product media</p>
                             <input
@@ -237,14 +237,14 @@ export default function AddProductPage() {
                                     {item.type === "video" ? (
                                         <video
                                             src={item.preview}
-                                            className={`h-[90px] w-[90px] rounded-[12px] border object-cover ${index === 0 ? "border-red-600" : "border-gray-200"
+                                            className={`h-[90px] w-[90px] rounded-[12px] border object-cover ${index === 0 ? "border-emerald-600" : "border-gray-200"
                                                 }`}
                                         />
                                     ) : (
                                         <img
                                             src={item.preview}
                                             alt=""
-                                            className={`h-[90px] w-[90px] rounded-[12px] border object-cover ${index === 0 ? "border-red-600" : "border-gray-200"
+                                            className={`h-[90px] w-[90px] rounded-[12px] border object-cover ${index === 0 ? "border-emerald-600" : "border-gray-200"
                                                 }`}
                                         />
                                     )}
@@ -272,7 +272,7 @@ export default function AddProductPage() {
                                     </button>
 
                                     {index === 0 && (
-                                        <span className="absolute bottom-1 left-1 rounded bg-red-600 px-2 py-1 text-[10px] text-white">
+                                        <span className="absolute bottom-1 left-1 rounded bg-emerald-600 px-2 py-1 text-[10px] text-white">
                                             Hero
                                         </span>
                                     )}
@@ -309,14 +309,14 @@ export default function AddProductPage() {
                         placeholder="Product Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                     />
 
                     <textarea
                         placeholder="Example: Luxury handmade senator outfit crafted with premium fabric for weddings, owambe and special occasions."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="mt-4 min-h-[140px] w-full rounded-[12px] border border-gray-200 p-4 outline-none focus:border-red-500"
+                        className="mt-4 min-h-[140px] w-full rounded-[12px] border border-gray-200 p-4 outline-none focus:border-emerald-500"
                     />
 
                     <select
@@ -382,7 +382,7 @@ export default function AddProductPage() {
                 <button
                     onClick={handleContinue}
                     disabled={isUploading}
-                    className="mt-8 h-14 w-full rounded-[12px] bg-red-600 font-medium text-white disabled:opacity-50"
+                    className="mt-8 h-14 w-full rounded-[12px] bg-emerald-600 font-medium text-white disabled:opacity-50"
                 >
                     {isUploading ? "Uploading media..." : "Continue to Preview"}
                 </button>

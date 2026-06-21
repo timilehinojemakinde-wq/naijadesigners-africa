@@ -85,7 +85,7 @@ export default function PreviewPage() {
                 <div className="mt-4 rounded-[12px] bg-white p-5 shadow-sm">
                     <div className="flex items-start justify-between gap-3">
                         <h2 className="text-xl font-bold">{draft.name}</h2>
-                        <span className="whitespace-nowrap text-xl font-bold text-red-600">
+                        <span className="whitespace-nowrap text-xl font-bold text-emerald-600">
                             {draft.currency} {Number(draft.price).toLocaleString()}
                         </span>
                     </div>
@@ -122,7 +122,7 @@ export default function PreviewPage() {
                 {/* ACTIONS */}
                 <button
                     onClick={handlePublish}
-                    className="mt-6 h-14 w-full rounded-[12px] bg-red-600 font-semibold text-white"
+                    className="mt-6 h-14 w-full rounded-[12px] bg-emerald-600 font-semibold text-white"
                 >
                     Publish to Store
                 </button>

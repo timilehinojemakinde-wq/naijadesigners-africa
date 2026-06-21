@@ -105,7 +105,7 @@ export default function PublishPage() {
                     </>
                 ) : (
                     <>
-                        <h2 className="text-lg font-semibold text-red-600">Something went wrong</h2>
+                        <h2 className="text-lg font-semibold text-emerald-600">Something went wrong</h2>
                         <p className="mt-2 text-sm text-gray-700 break-words">{errorMsg}</p>
                         <button
                             onClick={() => router.push("/designer-dashboard/add-product/preview")}

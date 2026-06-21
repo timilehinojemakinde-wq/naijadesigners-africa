@@ -136,7 +136,7 @@ export default function StoreSetupPage() {
                             )
                         }
                         placeholder="Brand Name"
-                        className="mt-5 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                        className="mt-5 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                     />
 
                     {/* SLUG */}
@@ -146,7 +146,7 @@ export default function StoreSetupPage() {
                             Your Store Website Link
                         </p>
 
-                        <div className="mt-2 rounded-[10px] bg-white p-3 text-sm font-medium text-red-600">
+                        <div className="mt-2 rounded-[10px] bg-white p-3 text-sm font-medium text-emerald-600">
                             {brandName
                                 ? `fithouse.africa/store/${slug}`
                                 : "Enter your brand name"}
@@ -162,7 +162,7 @@ export default function StoreSetupPage() {
                                     ✓ Store URL available
                                 </p>
                             ) : slugAvailable === false ? (
-                                <p className="text-sm text-red-600">
+                                <p className="text-sm text-emerald-600">
                                     ✕ URL already taken
                                 </p>
                             ) : null}
@@ -183,7 +183,7 @@ export default function StoreSetupPage() {
                             )
                         }
                         placeholder="Business Location"
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                     />
 
                     {/* WHATSAPP */}
@@ -196,7 +196,7 @@ export default function StoreSetupPage() {
                             )
                         }
                         placeholder="WhatsApp Number"
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                     />
 
                     {/* INSTAGRAM */}
@@ -209,7 +209,7 @@ export default function StoreSetupPage() {
                             )
                         }
                         placeholder="Instagram Handle"
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                     />
 
                     {/* BIO */}
@@ -222,7 +222,7 @@ export default function StoreSetupPage() {
                             )
                         }
                         placeholder="Tell customers about your fashion brand..."
-                        className="mt-4 min-h-[120px] w-full rounded-[12px] border border-gray-200 p-4 outline-none focus:border-red-500"
+                        className="mt-4 min-h-[120px] w-full rounded-[12px] border border-gray-200 p-4 outline-none focus:border-emerald-500"
                     />
                 </div>
 
@@ -231,7 +231,7 @@ export default function StoreSetupPage() {
                     onClick={handleContinue}
                     disabled={!slugAvailable}
                     className={`mt-8 h-14 w-full rounded-[12px] font-medium text-white ${slugAvailable
-                        ? "bg-red-600"
+                        ? "bg-emerald-600"
                         : "cursor-not-allowed bg-gray-300"
                         }`}
                 >

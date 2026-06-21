@@ -37,13 +37,13 @@ export default function CreateAccountPage() {
             <section className="px-5 py-8">
                 {/* HERO */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         Stay Updated
                     </div>
 
                     <h1 className="mt-6 text-[38px] font-bold leading-[1]">
                         Track Your
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Order
                         </span>
                     </h1>
@@ -96,7 +96,7 @@ export default function CreateAccountPage() {
                 <div className="mt-10 space-y-3">
                     <Link
                         href="/track-order"
-                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-semibold text-white"
+                        className="flex h-14 items-center justify-center rounded-xl bg-emerald-600 text-base font-semibold text-white"
                     >
                         Create Account
                     </Link>
@@ -133,7 +133,7 @@ function InputField({
             <input
                 type="text"
                 placeholder={placeholder}
-                className="h-14 w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 outline-none focus:border-red-500"
+                className="h-14 w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 outline-none focus:border-emerald-500"
             />
         </div>
     );

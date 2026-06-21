@@ -15,13 +15,13 @@ export default function MeasurementInstructionsPage() {
             <section className="px-5 py-8">
                 {/* TOP */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         AI Measurement Guide
                     </div>
 
                     <h1 className="mt-6 text-[42px] font-bold leading-[1]">
                         Before You
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Start
                         </span>
                     </h1>
@@ -42,12 +42,12 @@ export default function MeasurementInstructionsPage() {
 
                     <div className="relative flex h-[380px] items-center justify-center rounded-[28px] border border-gray-700 bg-[#111]">
                         {/* SCAN FRAME */}
-                        <div className="relative h-[300px] w-[180px] rounded-[28px] border-2 border-red-500">
+                        <div className="relative h-[300px] w-[180px] rounded-[28px] border-2 border-emerald-500">
                             {/* Corner markers */}
-                            <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-[20px] border-l-4 border-t-4 border-red-500" />
-                            <div className="absolute right-0 top-0 h-8 w-8 rounded-tr-[20px] border-r-4 border-t-4 border-red-500" />
-                            <div className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-[20px] border-b-4 border-l-4 border-red-500" />
-                            <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-[20px] border-b-4 border-r-4 border-red-500" />
+                            <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-[20px] border-l-4 border-t-4 border-emerald-500" />
+                            <div className="absolute right-0 top-0 h-8 w-8 rounded-tr-[20px] border-r-4 border-t-4 border-emerald-500" />
+                            <div className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-[20px] border-b-4 border-l-4 border-emerald-500" />
+                            <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-[20px] border-b-4 border-r-4 border-emerald-500" />
 
                             {/* BODY SILHOUETTE */}
                             <div className="absolute inset-0 flex items-center justify-center">
@@ -98,8 +98,8 @@ export default function MeasurementInstructionsPage() {
                 </div>
 
                 {/* EXTRA TIPS */}
-                <div className="mt-8 rounded-[28px] bg-red-50 p-5">
-                    <h3 className="font-semibold text-red-700">
+                <div className="mt-8 rounded-[28px] bg-emerald-50 p-5">
+                    <h3 className="font-semibold text-emerald-700">
                         For Best Accuracy
                     </h3>
 
@@ -116,7 +116,7 @@ export default function MeasurementInstructionsPage() {
                 <div className="mt-10">
                     <Link
                         href="/measurement/front-view"
-                        className="flex h-14 items-center justify-center gap-2 rounded-xl bg-red-600 text-base font-medium text-white"
+                        className="flex h-14 items-center justify-center gap-2 rounded-xl bg-emerald-600 text-base font-medium text-white"
                     >
                         Start Front Scan
                         <ArrowRight size={18} />
@@ -138,7 +138,7 @@ function GuideCard({
 }) {
     return (
         <div className="flex items-start gap-4 rounded-[24px] bg-white p-5 shadow-sm">
-            <div className="rounded-xl bg-red-50 p-3 text-red-600">
+            <div className="rounded-xl bg-emerald-50 p-3 text-emerald-600">
                 {icon}
             </div>
 

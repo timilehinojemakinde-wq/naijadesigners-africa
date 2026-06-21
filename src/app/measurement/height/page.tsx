@@ -35,13 +35,13 @@ export default function HeightPage() {
             <section className="flex min-h-[calc(100vh-81px)] flex-col px-5 py-8">
                 {/* TOP */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         Final Step
                     </div>
 
                     <h1 className="mt-6 text-[42px] font-bold leading-[1]">
                         What Is Your
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Height?
                         </span>
                     </h1>
@@ -56,7 +56,7 @@ export default function HeightPage() {
                 {/* HEIGHT CARD */}
                 <div className="mt-8 rounded-[36px] bg-white p-6 shadow-sm">
                     <div className="mb-5 flex items-center gap-3">
-                        <div className="rounded-2xl bg-red-50 p-4 text-red-600">
+                        <div className="rounded-2xl bg-emerald-50 p-4 text-emerald-600">
                             <Ruler size={26} />
                         </div>
 
@@ -73,7 +73,7 @@ export default function HeightPage() {
 
                     {/* UNIT TOGGLE */}
                     <div className="mb-5 grid grid-cols-2 gap-3">
-                        <button className="rounded-2xl bg-red-600 py-4 font-medium text-white">
+                        <button className="rounded-2xl bg-emerald-600 py-4 font-medium text-white">
                             CM
                         </button>
 
@@ -86,7 +86,7 @@ export default function HeightPage() {
                     <input
                         type="number"
                         placeholder="e.g. 170"
-                        className="h-16 w-full rounded-[24px] border border-gray-200 bg-[#fafafa] px-5 text-xl outline-none focus:border-red-500"
+                        className="h-16 w-full rounded-[24px] border border-gray-200 bg-[#fafafa] px-5 text-xl outline-none focus:border-emerald-500"
                     />
 
                     <p className="mt-3 text-sm text-gray-500">
@@ -95,14 +95,14 @@ export default function HeightPage() {
                 </div>
 
                 {/* INFO CARD */}
-                <div className="mt-8 rounded-[30px] bg-red-50 p-5">
+                <div className="mt-8 rounded-[30px] bg-emerald-50 p-5">
                     <div className="flex items-start gap-3">
-                        <div className="mt-1 text-red-600">
+                        <div className="mt-1 text-emerald-600">
                             <Info size={20} />
                         </div>
 
                         <div>
-                            <h3 className="font-semibold text-red-700">
+                            <h3 className="font-semibold text-emerald-700">
                                 Why height matters
                             </h3>
 
@@ -151,7 +151,7 @@ export default function HeightPage() {
                 <div className="mt-auto pt-8">
                     <Link
                         href="/measurement/processing"
-                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white"
+                        className="flex h-14 items-center justify-center rounded-xl bg-emerald-600 text-base font-medium text-white"
                     >
                         Generate Measurements
                     </Link>

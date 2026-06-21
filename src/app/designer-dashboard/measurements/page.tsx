@@ -65,7 +65,7 @@ export default function MeasurementsPage() {
                             Pending
                         </p>
 
-                        <h2 className="mt-2 text-3xl font-bold text-red-600">
+                        <h2 className="mt-2 text-3xl font-bold text-emerald-600">
                             5
                         </h2>
                     </div>
@@ -78,14 +78,14 @@ export default function MeasurementsPage() {
                     </h3>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <button className="rounded-[24px] bg-red-600 p-5 text-left text-white">
+                        <button className="rounded-[24px] bg-emerald-600 p-5 text-left text-white">
                             <Plus size={22} />
 
                             <p className="mt-4 font-medium">
                                 Add Manual
                             </p>
 
-                            <p className="text-sm text-red-100">
+                            <p className="text-sm text-emerald-100">
                                 Enter customer measurement
                             </p>
                         </button>
@@ -125,7 +125,7 @@ export default function MeasurementsPage() {
                             Copy
                         </button>
 
-                        <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 py-3 text-white">
+                        <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-white">
                             <Send size={16} />
                             Share
                         </button>
@@ -139,7 +139,7 @@ export default function MeasurementsPage() {
                             Recent Measurements
                         </h3>
 
-                        <button className="text-sm text-red-600">
+                        <button className="text-sm text-emerald-600">
                             View All
                         </button>
                     </div>
@@ -240,7 +240,7 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                ? "text-red-600"
+                ? "text-emerald-600"
                 : "text-gray-500"
                 }`}
         >

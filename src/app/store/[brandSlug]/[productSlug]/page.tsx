@@ -241,8 +241,8 @@ export default function ProductDetailPage() {
                                 key={i}
                                 onClick={() => setActiveIndex(i)}
                                 className={`h-1.5 rounded-full transition-all ${i === activeIndex
-                                        ? "w-5 bg-white"
-                                        : "w-1.5 bg-white/50"
+                                    ? "w-5 bg-white"
+                                    : "w-1.5 bg-white/50"
                                     }`}
                             />
                         ))}
@@ -265,7 +265,7 @@ export default function ProductDetailPage() {
                         {product.name}
                     </h1>
                     <div className="text-right flex-shrink-0">
-                        <p className="text-2xl font-bold text-red-600">
+                        <p className="text-2xl font-bold text-emerald-600">
                             {product.currency}{" "}
                             {Number(product.price).toLocaleString()}
                         </p>
@@ -278,7 +278,7 @@ export default function ProductDetailPage() {
                         {isCustom ? "Custom Made" : "Ready to Wear"}
                     </span>
                     {product.made_to_measure && (
-                        <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-600">
+                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-600">
                             AI Measurement Available
                         </span>
                     )}
@@ -313,7 +313,7 @@ export default function ProductDetailPage() {
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-red-600 text-lg font-bold text-white">
+                                <div className="flex h-full w-full items-center justify-center bg-emerald-600 text-lg font-bold text-white">
                                     {designer.brand_name?.[0]?.toUpperCase() ?? "?"}
                                 </div>
                             )}
@@ -351,7 +351,7 @@ export default function ProductDetailPage() {
             <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white px-5 py-4">
                 {product.made_to_measure ? (
                     <div className="flex gap-3">
-                        <button className="flex-1 rounded-[12px] bg-red-600 py-4 font-semibold text-white">
+                        <button className="flex-1 rounded-[12px] bg-emerald-600 py-4 font-semibold text-white">
                             Request Custom Order
                         </button>
                         <button className="rounded-[12px] border border-gray-200 px-4 py-4">
@@ -360,7 +360,7 @@ export default function ProductDetailPage() {
                     </div>
                 ) : (
                     <div className="flex gap-3">
-                        <button className="flex-1 rounded-[12px] bg-red-600 py-4 font-semibold text-white">
+                        <button className="flex-1 rounded-[12px] bg-emerald-600 py-4 font-semibold text-white">
                             Buy Now
                         </button>
                         <button

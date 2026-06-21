@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   description: "Africa's Global Fashion Marketplace",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

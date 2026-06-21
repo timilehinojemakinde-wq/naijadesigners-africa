@@ -10,21 +10,41 @@ export default function AuthCallback() {
     useEffect(() => {
         const handleCallback = async () => {
             try {
-                const { data, error } = await supabase.auth.getSession();
+                // Exchange the code in the URL for a session
+                const { error: sessionError } = await supabase.auth.exchangeCodeForSession(
+                    window.location.href
+                );
 
-                if (error) {
-                    console.error(error);
+                if (sessionError) {
+                    console.error("Session exchange error:", sessionError);
                     router.push("/auth");
                     return;
                 }
 
-                if (data.session) {
-                    router.push("/designer-dashboard");
-                } else {
+                // Get the user
+                const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+                if (userError || !user) {
+                    console.error("User error:", userError);
                     router.push("/auth");
+                    return;
                 }
+
+                // Check if onboarding is complete
+                const { data: designer } = await supabase
+                    .from("designers")
+                    .select("onboarding_completed")
+                    .eq("id", user.id)
+                    .single();
+
+                if (!designer?.onboarding_completed) {
+                    router.push("/designer-dashboard/onboarding");
+                } else {
+                    router.push("/designer-dashboard");
+                }
+
             } catch (err) {
-                console.error(err);
+                console.error("Callback error:", err);
                 router.push("/auth");
             }
         };
@@ -33,8 +53,11 @@ export default function AuthCallback() {
     }, [router]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            <p className="text-gray-600">Signing you in...</p>
-        </div>
+        <main className="flex min-h-screen items-center justify-center bg-white">
+            <div className="text-center">
+                <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-emerald-600" />
+                <p className="text-sm text-gray-500">Signing you in...</p>
+            </div>
+        </main>
     );
 }

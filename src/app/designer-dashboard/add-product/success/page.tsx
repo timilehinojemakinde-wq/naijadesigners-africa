@@ -63,7 +63,7 @@ export default function SuccessPage() {
                     <button
                         onClick={handleViewStore}
                         disabled={!storePath}
-                        className="h-12 w-full rounded-[12px] bg-red-600 text-white disabled:opacity-50"
+                        className="h-12 w-full rounded-[12px] bg-emerald-600 text-white disabled:opacity-50"
                     >
                         View Store
                     </button>

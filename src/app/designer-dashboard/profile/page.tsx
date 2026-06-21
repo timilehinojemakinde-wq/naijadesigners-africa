@@ -80,7 +80,7 @@ export default function ProfilePage() {
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-red-600 text-2xl font-bold text-white">
+                                <div className="flex h-full w-full items-center justify-center bg-emerald-600 text-2xl font-bold text-white">
                                     {initial}
                                 </div>
                             )}
@@ -94,7 +94,7 @@ export default function ProfilePage() {
                                 {businessTypeLabel(designer?.business_type ?? null)}{" "}
                                 {designer?.business_location ? `· ${designer.business_location}` : ""}
                             </p>
-                            <p className="mt-1 text-sm text-red-400">
+                            <p className="mt-1 text-sm text-emerald-400">
                                 Verified Designer
                             </p>
                         </div>
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                 <button
                     onClick={handleLogout}
                     disabled={loggingOut}
-                    className="mt-10 flex w-full items-center justify-center gap-2 rounded-[20px] border border-red-200 bg-red-50 py-4 font-medium text-red-600 disabled:opacity-50"
+                    className="mt-10 flex w-full items-center justify-center gap-2 rounded-[20px] border border-emerald-200bg-emerald-50 py-4 font-medium text-emerald-600 disabled:opacity-50"
                 >
                     <LogOut size={18} />
                     {loggingOut ? "Logging out..." : "Logout"}
@@ -201,7 +201,7 @@ function SettingsCard({
             className="flex w-full items-center justify-between rounded-[24px] bg-white p-5 shadow-sm"
         >
             <div className="flex items-center gap-4">
-                <div className="rounded-xl bg-red-50 p-3 text-red-600">
+                <div className="rounded-xl bg-emerald-50 p-3 text-emerald-600">
                     {icon}
                 </div>
                 <div className="text-left">
@@ -225,7 +225,7 @@ function NavItem({
     return (
         <Link
             href={href}
-            className={`flex flex-col items-center gap-1 ${active ? "text-red-600" : "text-gray-500"}`}
+            className={`flex flex-col items-center gap-1 ${active ? "text-emerald-600" : "text-gray-500"}`}
         >
             {icon}
             <span className="text-xs">{label}</span>

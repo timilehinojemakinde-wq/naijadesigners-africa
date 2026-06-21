@@ -82,13 +82,13 @@ export default function OrderTimelinePage() {
             <section className="px-5 py-8">
                 {/* HERO */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         Live Tracking
                     </div>
 
                     <h1 className="mt-6 text-[38px] font-bold leading-[1]">
                         Your Order
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Status
                         </span>
                     </h1>
@@ -159,14 +159,14 @@ export default function OrderTimelinePage() {
                 </div>
 
                 {/* DESIGNER NOTE */}
-                <div className="mt-8 rounded-[30px] bg-red-50 p-5">
+                <div className="mt-8 rounded-[30px] bg-emerald-50 p-5">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-xl bg-red-100 p-3 text-red-600">
+                        <div className="rounded-xl bg-emerald-100 p-3 text-emerald-600">
                             <MessageSquare size={20} />
                         </div>
 
                         <div>
-                            <h3 className="font-semibold text-red-700">
+                            <h3 className="font-semibold text-emerald-700">
                                 Designer Update
                             </h3>
 
@@ -181,7 +181,7 @@ export default function OrderTimelinePage() {
 
                 {/* CTA */}
                 <div className="mt-8">
-                    <button className="flex h-14 w-full items-center justify-center rounded-xl bg-red-600 text-base font-semibold text-white">
+                    <button className="flex h-14 w-full items-center justify-center rounded-xl bg-emerald-600 text-base font-semibold text-white">
                         Contact Designer
                     </button>
 
@@ -240,10 +240,10 @@ function TimelineItem({
             <div className="flex flex-col items-center">
                 <div
                     className={`z-10 flex h-8 w-8 items-center justify-center rounded-full ${status === "done"
-                            ? "bg-green-100 text-green-600"
-                            : status === "active"
-                                ? "bg-red-100 text-red-600"
-                                : "bg-gray-100 text-gray-400"
+                        ? "bg-green-100 text-green-600"
+                        : status === "active"
+                            ? "bg-emerald-100 text-emerald-600"
+                            : "bg-gray-100 text-gray-400"
                         }`}
                 >
                     {status === "done" ? (
@@ -262,8 +262,8 @@ function TimelineItem({
             <div className="pb-4">
                 <h4
                     className={`font-semibold ${status === "active"
-                            ? "text-red-600"
-                            : ""
+                        ? "text-emerald-600"
+                        : ""
                         }`}
                 >
                     {title}
@@ -274,7 +274,7 @@ function TimelineItem({
                 </p>
 
                 {status === "active" && (
-                    <div className="mt-2 inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-600">
+                    <div className="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-600">
                         Current Stage
                     </div>
                 )}

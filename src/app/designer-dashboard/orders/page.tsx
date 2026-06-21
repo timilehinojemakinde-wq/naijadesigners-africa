@@ -59,7 +59,7 @@ export default function OrdersPage() {
                         <input
                             type="text"
                             placeholder="Search order or customer"
-                            className="h-14 w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 outline-none focus:border-red-500"
+                            className="h-14 w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 outline-none focus:border-emerald-500"
                         />
                     </div>
                 </div>
@@ -79,7 +79,7 @@ export default function OrdersPage() {
                         <button
                             key={filter}
                             className={`whitespace-nowrap rounded-xl px-5 py-3 text-sm font-medium ${index === 0
-                                ? "bg-red-600 text-white"
+                                ? "bg-emerald-600 text-white"
                                 : "border border-gray-200 bg-white text-gray-700"
                                 }`}
                         >
@@ -110,7 +110,7 @@ export default function OrdersPage() {
                                     {order.customer}
                                 </p>
 
-                                <p className="mt-2 font-semibold text-red-600">
+                                <p className="mt-2 font-semibold text-emerald-600">
                                     {order.amount}
                                 </p>
                             </div>
@@ -128,12 +128,13 @@ export default function OrdersPage() {
                         </div>
 
                         {/* ACTION BUTTONS */}
+
                         <div className="mt-5 flex gap-3">
-                            <button className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-medium text-white">
+                            <button className="flex-1 rounded-xl border border-emerald-600 py-3 text-sm font-medium text-emerald-600 hover:bg-emerald-50">
                                 View Details
                             </button>
 
-                            <button className="rounded-xl border border-gray-200 px-5 py-3 text-sm">
+                            <button className="flex-1 rounded-xl bg-emerald-600 py-3 text-sm font-medium text-white hover:bg-emerald-700">
                                 Update
                             </button>
                         </div>
@@ -201,7 +202,7 @@ function NavItem({
         <Link
             href={href}
             className={`flex flex-col items-center gap-1 ${active
-                ? "text-red-600"
+                ? "text-emerald-600"
                 : "text-gray-500"
                 }`}
         >

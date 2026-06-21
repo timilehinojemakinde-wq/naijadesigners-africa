@@ -145,7 +145,7 @@ export default function EditStorePage() {
         return (
             <main className="flex min-h-screen items-center justify-center bg-[#fafafa] px-5">
                 <div className="w-full max-w-md rounded-[16px] bg-white p-6 text-center shadow-sm">
-                    <h2 className="text-lg font-semibold text-red-600">Failed to load</h2>
+                    <h2 className="text-lg font-semibold text-emerald-600">Failed to load</h2>
                     <p className="mt-2 break-words text-sm text-gray-600">{loadError}</p>
                     <button
                         onClick={() => window.location.reload()}
@@ -195,7 +195,7 @@ export default function EditStorePage() {
                                 value={brandName}
                                 onChange={(e) => setBrandName(e.target.value)}
                                 placeholder="e.g. House of Tife"
-                                className="mt-1 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                                className="mt-1 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                             />
                         </div>
 
@@ -203,7 +203,7 @@ export default function EditStorePage() {
                             <label className="text-sm font-medium text-gray-700">
                                 Store URL
                             </label>
-                            <div className="mt-1 flex items-center overflow-hidden rounded-[12px] border border-gray-200 focus-within:border-red-500">
+                            <div className="mt-1 flex items-center overflow-hidden rounded-[12px] border border-gray-200 focus-within:border-emerald-500">
                                 <span className="flex-shrink-0 bg-gray-50 px-3 py-4 text-sm text-gray-400">
                                     fithouse.africa/store/
                                 </span>
@@ -215,7 +215,7 @@ export default function EditStorePage() {
                                 />
                             </div>
                             {slugError && (
-                                <p className="mt-1 text-xs text-red-600">{slugError}</p>
+                                <p className="mt-1 text-xs text-emerald-600">{slugError}</p>
                             )}
                             {slug && !slugError && (
                                 <p className="mt-1 text-xs text-green-600">
@@ -230,7 +230,7 @@ export default function EditStorePage() {
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                                 placeholder="Tell customers about your brand..."
-                                className="mt-1 min-h-[120px] w-full rounded-[12px] border border-gray-200 p-4 text-sm outline-none focus:border-red-500"
+                                className="mt-1 min-h-[120px] w-full rounded-[12px] border border-gray-200 p-4 text-sm outline-none focus:border-emerald-500"
                             />
                         </div>
                     </div>
@@ -249,7 +249,7 @@ export default function EditStorePage() {
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                                 placeholder="e.g. Lagos, Nigeria"
-                                className="mt-1 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-red-500"
+                                className="mt-1 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
                             />
                         </div>
 
@@ -257,7 +257,7 @@ export default function EditStorePage() {
                             <label className="text-sm font-medium text-gray-700">
                                 Instagram Handle
                             </label>
-                            <div className="mt-1 flex items-center overflow-hidden rounded-[12px] border border-gray-200 focus-within:border-red-500">
+                            <div className="mt-1 flex items-center overflow-hidden rounded-[12px] border border-gray-200 focus-within:border-emerald-500">
                                 <span className="flex-shrink-0 bg-gray-50 px-3 py-4 text-sm text-gray-400">
                                     @
                                 </span>
@@ -276,7 +276,7 @@ export default function EditStorePage() {
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex h-14 w-full items-center justify-center gap-2 rounded-[12px] bg-red-600 font-medium text-white disabled:opacity-60"
+                    className="flex h-14 w-full items-center justify-center gap-2 rounded-[12px] bg-emerald-600 font-medium text-white disabled:opacity-60"
                 >
                     {saving ? (
                         <><Loader2 size={18} className="animate-spin" /> Saving...</>

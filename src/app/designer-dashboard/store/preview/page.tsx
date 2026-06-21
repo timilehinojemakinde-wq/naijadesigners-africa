@@ -146,7 +146,7 @@ export default function PreviewStorePage() {
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-red-100 text-2xl font-bold text-red-600">
+                                <div className="flex h-full w-full items-center justify-center bg-emerald-100 text-2xl font-bold text-emerald-600">
                                     {designer?.brand_name?.[0]?.toUpperCase() ?? "?"}
                                 </div>
                             )}
@@ -177,7 +177,7 @@ export default function PreviewStorePage() {
                     )}
 
                     <div className="mt-5 flex gap-3">
-                        <button className="flex-1 rounded-[12px] bg-red-600 py-3 text-sm font-medium text-white">
+                        <button className="flex-1 rounded-[12px] bg-emerald-600 py-3 text-sm font-medium text-white">
                             Contact Designer
                         </button>
                         <button
@@ -221,7 +221,7 @@ export default function PreviewStorePage() {
                                 </div>
                                 <div className="p-3">
                                     <h4 className="truncate text-sm font-semibold">{product.name}</h4>
-                                    <p className="mt-1 text-sm font-bold text-red-600">
+                                    <p className="mt-1 text-sm font-bold text-emerald-600">
                                         {product.currency} {Number(product.price).toLocaleString()}
                                     </p>
                                 </div>

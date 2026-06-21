@@ -35,34 +35,54 @@ export default function DesignerDashboard() {
 
 
     return (
-        <main className="min-h-screen bg-[#fafafa] pb-24">
+        <main className="min-h-screen bg-[#F6F7F9] pb-24">
             {/* TOP NAVBAR */}
-            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-md">
-                <div className="flex items-center justify-between px-5 py-4">
+            <header className="sticky top-0 z-50 bg-white">
+                <div className="flex items-center justify-between px-5 py-5">
                     <div>
-                        <h1 className="text-xl font-bold">
-                            FitHouse
-                            <span className="text-red-600">Africa</span>
-                        </h1>
                         <p className="text-sm text-gray-500">
-                            Welcome back 👋
+                            Good morning 👋
                         </p>
+
+                        <h1 className="mt-1 text-xl font-bold text-gray-900">
+                            Veekee Atelier
+                        </h1>
                     </div>
 
-                    <button className="relative rounded-xl border border-gray-200 bg-white p-3">
-                        <Bell size={20} />
-                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-600" />
+                    <button className="relative">
+                        <Bell size={22} />
+
+                        <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500" />
                     </button>
                 </div>
             </header>
 
             {/* DASHBOARD CONTENT */}
             <section className="px-5 py-6">
+                <div className="rounded-xl bg-[#14532D] p-6 text-white shadow-lg">
+                    <p className="text-sm text-white/70">
+                        Total Revenue
+                    </p>
+
+                    <h2 className="mt-2 text-4xl font-bold">
+                        ₦820,000
+                    </h2>
+
+                    <div className="mt-5 flex items-center justify-between">
+                        <span className="rounded-full bg-white/20 px-3 py-1 text-xs">
+                            +12.4%
+                        </span>
+
+                        <span className="text-sm">
+                            This Month
+                        </span>
+                    </div>
+                </div>
                 {/* Greeting */}
                 <div>
                     <h2 className="text-2xl font-bold leading-tight">
                         Welcome to your{" "}
-                        <span className="text-red-600">Designer Hub</span>
+                        <span className="text-[#14532D]">Designer Hub</span>
                     </h2>
                     <p className="mt-2 text-gray-600">
                         Manage orders, measurements, products, invoices and customers.
@@ -70,7 +90,7 @@ export default function DesignerDashboard() {
                 </div>
 
                 {/* STATS */}
-                <div className="mt-8 grid grid-cols-2 gap-4">
+                <div className="mt-6 grid grid-cols-2 gap-4">
                     {[
                         { title: "Orders", value: "12" },
                         { title: "Measurements", value: "7" },
@@ -79,12 +99,12 @@ export default function DesignerDashboard() {
                     ].map((item) => (
                         <div
                             key={item.title}
-                            className="rounded-[8px] bg-white p-5 shadow-sm"
+                            className="rounded-xl bg-white p-5 shadow-sm"
                         >
                             <p className="text-sm text-gray-500">
                                 {item.title}
                             </p>
-                            <h3 className="mt-2 text-3xl font-bold">
+                            <h3 className="mt-2 text-2xl font-bold">
                                 {item.value}
                             </h3>
                         </div>
@@ -141,7 +161,7 @@ export default function DesignerDashboard() {
                                         );
                                     }
                                 }}
-                                className="rounded-[8px] border border-gray-200 bg-white p-5 text-left font-medium transition hover:border-red-400"
+                                className="rounded-[8px] border border-gray-200 bg-white p-5 text-left font-medium transition hover:border-[#14532D]"
                             >
                                 {action.label}
                             </button>
@@ -155,7 +175,7 @@ export default function DesignerDashboard() {
                         Orders Pipeline
                     </h3>
 
-                    <div className="overflow-x-auto">
+                    <div className="grid grid-cols-2 gap-4">
                         <div className="flex gap-4">
                             {[
                                 { title: "New", count: 4 },
@@ -189,7 +209,8 @@ export default function DesignerDashboard() {
                         {[1, 2].map((item) => (
                             <div
                                 key={item}
-                                className="rounded-[8px] bg-white p-5 shadow-sm"
+                                className="rounded-xl bg-white p-5 shadow-sm"
+
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
@@ -264,7 +285,7 @@ function NavItem({
     return (
         <Link
             href={href}
-            className={`flex flex-col items-center gap-1 ${active ? "text-red-600" : "text-gray-500"
+            className={`flex flex-col items-center gap-1 ${active ? "text-[#14532D]" : "text-gray-500"
                 }`}
         >
             {icon}

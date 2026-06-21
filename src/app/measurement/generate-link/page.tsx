@@ -38,7 +38,7 @@ export default function GenerateMeasurementLinkPage() {
                 <div>
                     <h2 className="text-3xl font-bold leading-tight">
                         Generate
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Measurement Link
                         </span>
                     </h2>
@@ -61,7 +61,7 @@ export default function GenerateMeasurementLinkPage() {
                         <input
                             type="text"
                             placeholder="Enter customer name"
-                            className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-red-500"
+                            className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-emerald-500"
                         />
                     </div>
 
@@ -77,7 +77,7 @@ export default function GenerateMeasurementLinkPage() {
                         <input
                             type="text"
                             placeholder="Wedding Dress"
-                            className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-red-500"
+                            className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-emerald-500"
                         />
                     </div>
 
@@ -96,7 +96,7 @@ export default function GenerateMeasurementLinkPage() {
                             ].map((item) => (
                                 <button
                                     key={item}
-                                    className="rounded-2xl border border-gray-200 bg-white py-4 font-medium transition hover:border-red-400"
+                                    className="rounded-2xl border border-gray-200 bg-white py-4 font-medium transition hover:border-emerald-400"
                                 >
                                     {item}
                                 </button>
@@ -110,7 +110,7 @@ export default function GenerateMeasurementLinkPage() {
                             Link Expiry
                         </label>
 
-                        <select className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-red-500">
+                        <select className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-emerald-500">
                             <option>7 Days</option>
                             <option>14 Days</option>
                             <option>30 Days</option>
@@ -122,7 +122,7 @@ export default function GenerateMeasurementLinkPage() {
                 {/* GENERATED LINK */}
                 <div className="mt-8 rounded-[30px] bg-white p-5 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <div className="rounded-xl bg-red-50 p-3 text-red-600">
+                        <div className="rounded-xl bg-emerald-50 p-3 text-emerald-600">
                             <Sparkles size={22} />
                         </div>
 
@@ -155,8 +155,8 @@ export default function GenerateMeasurementLinkPage() {
                 </div>
 
                 {/* INFO */}
-                <div className="mt-8 rounded-[28px] bg-red-50 p-5">
-                    <h3 className="font-semibold text-red-700">
+                <div className="mt-8 rounded-[28px] bg-emerald-50 p-5">
+                    <h3 className="font-semibold text-emerald-700">
                         How it works
                     </h3>
 
@@ -173,7 +173,7 @@ export default function GenerateMeasurementLinkPage() {
                 <div className="mt-10">
                     <Link
                         href="/measurement/welcome"
-                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-medium text-white"
+                        className="flex h-14 items-center justify-center rounded-xl bg-emerald-600 text-base font-medium text-white"
                     >
                         Preview Customer Flow
                     </Link>

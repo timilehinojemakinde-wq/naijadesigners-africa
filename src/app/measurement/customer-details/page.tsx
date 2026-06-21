@@ -38,13 +38,13 @@ export default function CustomerDetailsPage() {
             <section className="px-5 py-8">
                 {/* TITLE */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         Measurements Ready
                     </div>
 
                     <h1 className="mt-6 text-[40px] font-bold leading-[1]">
                         Almost
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Done
                         </span>
                     </h1>
@@ -57,8 +57,8 @@ export default function CustomerDetailsPage() {
                 </div>
 
                 {/* SUCCESS CARD */}
-                <div className="mt-8 rounded-[30px] bg-red-50 p-5">
-                    <h3 className="font-semibold text-red-700">
+                <div className="mt-8 rounded-[30px] bg-emerald-50 p-5">
+                    <h3 className="font-semibold text-emerald-700">
                         ✓ Measurements Generated
                     </h3>
 
@@ -99,7 +99,7 @@ export default function CustomerDetailsPage() {
                             Country
                         </label>
 
-                        <select className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-red-500">
+                        <select className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-emerald-500">
                             <option>Select country</option>
                             <option>Nigeria</option>
                             <option>Ghana</option>
@@ -119,7 +119,7 @@ export default function CustomerDetailsPage() {
                             <input
                                 type="text"
                                 placeholder="Lagos"
-                                className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-red-500"
+                                className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-emerald-500"
                             />
                         </div>
 
@@ -131,7 +131,7 @@ export default function CustomerDetailsPage() {
                             <input
                                 type="text"
                                 placeholder="Lekki"
-                                className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-red-500"
+                                className="h-14 w-full rounded-2xl border border-gray-200 bg-white px-4 outline-none focus:border-emerald-500"
                             />
                         </div>
                     </div>
@@ -151,7 +151,7 @@ export default function CustomerDetailsPage() {
                             <textarea
                                 rows={4}
                                 placeholder="Enter delivery address"
-                                className="w-full rounded-2xl border border-gray-200 bg-white p-4 pl-12 outline-none focus:border-red-500"
+                                className="w-full rounded-2xl border border-gray-200 bg-white p-4 pl-12 outline-none focus:border-emerald-500"
                             />
                         </div>
                     </div>
@@ -174,7 +174,7 @@ export default function CustomerDetailsPage() {
                             <textarea
                                 rows={4}
                                 placeholder="Any special fitting request?"
-                                className="w-full rounded-2xl border border-gray-200 bg-white p-4 pl-12 outline-none focus:border-red-500"
+                                className="w-full rounded-2xl border border-gray-200 bg-white p-4 pl-12 outline-none focus:border-emerald-500"
                             />
                         </div>
                     </div>
@@ -198,7 +198,7 @@ export default function CustomerDetailsPage() {
                 <div className="mt-10">
                     <Link
                         href="/measurement/success"
-                        className="flex h-14 items-center justify-center rounded-xl bg-red-600 text-base font-semibold text-white transition hover:bg-red-700"
+                        className="flex h-14 items-center justify-center rounded-xl bg-emerald-600 text-base font-semibold text-white transition hover:bg-emerald-700"
                     >
                         Submit Measurements
                     </Link>
@@ -235,7 +235,7 @@ function InputField({
                 <input
                     type="text"
                     placeholder={placeholder}
-                    className="h-14 w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 outline-none focus:border-red-500"
+                    className="h-14 w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 outline-none focus:border-emerald-500"
                 />
             </div>
         </div>

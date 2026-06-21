@@ -85,7 +85,7 @@ export default function MeasurementSuccessPage() {
                     <div className="mt-auto pt-8 space-y-3">
                         <Link
                             href="/track-order/create-account"
-                            className="flex h-14 items-center justify-center gap-2 rounded-xl bg-red-600 text-base font-semibold text-white transition hover:bg-red-700"
+                            className="flex h-14 items-center justify-center gap-2 rounded-xl bg-emerald-600 text-base font-semibold text-white transition hover:bg-emerald-700"
                         >
                             Create Account & Track Order
                             <ArrowRight size={18} />

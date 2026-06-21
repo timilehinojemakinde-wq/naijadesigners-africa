@@ -125,13 +125,13 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href="/auth"
+              href="/auth?plan=growth"
               className="hidden text-sm font-medium text-gray-600 hover:text-gray-900 md:block"
             >
               Log in
             </Link>
             <Link
-              href="/auth"
+              href="/auth?plan=growth"
               className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
             >
               Start Free Trial
@@ -143,7 +143,7 @@ export default function LandingPage() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-b from-gray-50 to-white px-6 py-20 text-center md:py-28">
         <div className="mx-auto max-w-4xl">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-100 bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-600">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-100bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-600">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-black" />
             Now in Early Access · Nigeria & Pan-Africa
           </div>
@@ -162,7 +162,7 @@ export default function LandingPage() {
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
-              href="/auth"
+              href="/auth?plan=starter"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-black px-8 py-4 text-base font-semibold text-white hover:bg-gray-800 sm:w-auto"
             >
               Start 14-Day Free Trial
@@ -526,13 +526,22 @@ export default function LandingPage() {
                 </ul>
 
                 <Link
-                  href="/auth"
+
+                  href={
+                    plan.name === "Starter"
+                      ? "/auth?plan=starter"
+                      : plan.name === "Growth"
+                        ? "/auth?plan=growth"
+
+                        : "mailto:timilehinojemakinde@gmail.com?subject=FitHouseAfrica%20Enterprise%20Plan%20Enquiry&body=Hi%2C%20I%20am%20interested%20in%20the%20FitHouseAfrica%20Enterprise%20plan.%20Here%20are%20my%20details%3A%0A%0ABrand%20Name%3A%20%0ANumber%20of%20designers%3A%20%0AMonthly%20order%20volume%3A%20%0A%0ALooking%20forward%20to%20hearing%20from%20you."
+                  }
                   className={`flex items-center justify-center rounded-xl py-3.5 text-sm font-bold transition ${plan.featured
-                    ? "bg-black text-white hover:bg-gray-800"
+                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
                     : "border border-gray-200 text-gray-900 hover:border-gray-300 hover:bg-gray-50"
                     }`}
                 >
                   {plan.cta}
+
                 </Link>
               </div>
             ))}
@@ -578,7 +587,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
-              href="/auth"
+              href="/auth?plan=growth"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-black px-8 py-4 text-base font-semibold text-white hover:bg-gray-800 sm:w-auto"
             >
               Launch Your Store Now

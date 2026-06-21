@@ -37,7 +37,7 @@ export default function SideViewPage() {
                 {/* INSTRUCTION */}
                 <div className="rounded-[28px] bg-white/10 p-4 backdrop-blur-md">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-xl bg-red-600/20 p-3 text-red-500">
+                        <div className="rounded-xl bg-emerald-600/20 p-3 text-emerald-500">
                             <RotateCcw size={22} />
                         </div>
 
@@ -61,12 +61,12 @@ export default function SideViewPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a1a] to-black" />
 
                     {/* BODY FRAME */}
-                    <div className="relative z-10 h-[430px] w-[220px] rounded-[36px] border-2 border-red-500">
+                    <div className="relative z-10 h-[430px] w-[220px] rounded-[36px] border-2 border-emerald-500">
                         {/* CORNERS */}
-                        <div className="absolute left-0 top-0 h-10 w-10 rounded-tl-[28px] border-l-4 border-t-4 border-red-500" />
-                        <div className="absolute right-0 top-0 h-10 w-10 rounded-tr-[28px] border-r-4 border-t-4 border-red-500" />
-                        <div className="absolute bottom-0 left-0 h-10 w-10 rounded-bl-[28px] border-b-4 border-l-4 border-red-500" />
-                        <div className="absolute bottom-0 right-0 h-10 w-10 rounded-br-[28px] border-b-4 border-r-4 border-red-500" />
+                        <div className="absolute left-0 top-0 h-10 w-10 rounded-tl-[28px] border-l-4 border-t-4 border-emerald-500" />
+                        <div className="absolute right-0 top-0 h-10 w-10 rounded-tr-[28px] border-r-4 border-t-4 border-emerald-500" />
+                        <div className="absolute bottom-0 left-0 h-10 w-10 rounded-bl-[28px] border-b-4 border-l-4 border-emerald-500" />
+                        <div className="absolute bottom-0 right-0 h-10 w-10 rounded-br-[28px] border-b-4 border-r-4 border-emerald-500" />
 
                         {/* SIDE BODY PLACEHOLDER */}
                         <div className="absolute inset-0 flex items-center justify-center opacity-40">
@@ -93,7 +93,7 @@ export default function SideViewPage() {
 
                 {/* TIPS */}
                 <div className="mt-5 rounded-[28px] bg-white/10 p-5">
-                    <div className="mb-3 flex items-center gap-2 text-red-400">
+                    <div className="mb-3 flex items-center gap-2 text-emerald-400">
                         <ScanLine size={18} />
                         <p className="text-sm font-medium">
                             Position Guide
@@ -111,7 +111,7 @@ export default function SideViewPage() {
 
                 {/* CAMERA BUTTON */}
                 <div className="mt-6">
-                    <button className="flex h-16 w-full items-center justify-center gap-3 rounded-2xl bg-red-600 text-lg font-semibold transition hover:bg-red-700">
+                    <button className="flex h-16 w-full items-center justify-center gap-3 rounded-2xl bg-emerald-600 text-lg font-semibold transition hover:bg-emerald-700">
                         <Camera size={22} />
                         Capture Side View
                     </button>

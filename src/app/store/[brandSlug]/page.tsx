@@ -56,7 +56,7 @@ export default async function PublicStorePage({ params }: Props) {
                             {designer.profile_image ? (
                                 <img src={designer.profile_image} alt={designer.brand_name} className="h-full w-full object-cover" />
                             ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-red-100 text-xl font-bold text-red-600">
+                                <div className="flex h-full w-full items-center justify-center bg-emerald-100 text-xl font-bold text-emerald-600">
                                     {designer.brand_name?.[0]?.toUpperCase() ?? "?"}
                                 </div>
                             )}
@@ -76,7 +76,7 @@ export default async function PublicStorePage({ params }: Props) {
                         <p className="mt-4 text-sm leading-relaxed text-gray-600">{designer.bio}</p>
                     )}
 
-                    <button className="mt-5 w-full rounded-[12px] bg-red-600 py-3 text-sm font-medium text-white">
+                    <button className="mt-5 w-full rounded-[12px] bg-emerald-600 py-3 text-sm font-medium text-white">
                         Contact Designer
                     </button>
                 </div>
@@ -121,7 +121,7 @@ export default async function PublicStorePage({ params }: Props) {
                                 </div>
                                 <div className="p-3">
                                     <h3 className="truncate text-sm font-semibold">{product.name}</h3>
-                                    <p className="mt-1 text-sm font-bold text-red-600">
+                                    <p className="mt-1 text-sm font-bold text-emerald-600">
                                         {product.currency} {Number(product.price).toLocaleString()}
                                     </p>
                                 </div>

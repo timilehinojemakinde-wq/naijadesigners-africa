@@ -127,11 +127,11 @@ export default function StorePage() {
                     <div className="grid grid-cols-2 gap-4">
                         <Link
                             href="/designer-dashboard/add-product"
-                            className="rounded-[8px] bg-red-600 p-5 text-left text-white"
+                            className="rounded-[8px] bg-emerald-600 p-5 text-left text-white"
                         >
                             <Plus size={22} />
                             <p className="mt-4 font-medium">Add Product</p>
-                            <p className="text-sm text-red-100">Upload to storefront</p>
+                            <p className="text-sm text-emerald-100">Upload to storefront</p>
                         </Link>
 
                         <Link
@@ -146,8 +146,8 @@ export default function StorePage() {
                 </div>
 
                 {/* MARKETPLACE INFO */}
-                <div className="mt-8 rounded-[8px] bg-red-50 p-5">
-                    <h3 className="font-semibold text-red-700">Marketplace Sync</h3>
+                <div className="mt-8 rounded-[8px] bg-emerald-50 p-5">
+                    <h3 className="font-semibold text-emerald-700">Marketplace Sync</h3>
                     <p className="mt-2 text-sm leading-relaxed text-gray-700">
                         Products uploaded to your storefront automatically appear on
                         FitHouse marketplace based on selected category, price, location
@@ -161,7 +161,7 @@ export default function StorePage() {
                         <h3 className="text-lg font-semibold">Your Products</h3>
                         <Link
                             href="/designer-dashboard/store/products"
-                            className="text-sm text-red-600"
+                            className="text-sm text-emerald-600"
                         >
                             View All
                         </Link>
@@ -175,7 +175,7 @@ export default function StorePage() {
                             </p>
                             <Link
                                 href="/designer-dashboard/add-product"
-                                className="mt-4 inline-block rounded-xl bg-red-600 px-5 py-2 text-sm font-medium text-white"
+                                className="mt-4 inline-block rounded-xl bg-emerald-600 px-5 py-2 text-sm font-medium text-white"
                             >
                                 Add Product
                             </Link>
@@ -215,7 +215,7 @@ export default function StorePage() {
                                             <h4 className="truncate font-semibold">
                                                 {product.name}
                                             </h4>
-                                            <p className="mt-1 text-sm font-semibold text-red-600">
+                                            <p className="mt-1 text-sm font-semibold text-emerald-600">
                                                 {product.currency}{" "}
                                                 {Number(product.price).toLocaleString()}
                                             </p>
@@ -268,7 +268,7 @@ function NavItem({
     return (
         <Link
             href={href}
-            className={`flex flex-col items-center gap-1 ${active ? "text-red-600" : "text-gray-500"}`}
+            className={`flex flex-col items-center gap-1 ${active ? "text-emerald-600" : "text-gray-500"}`}
         >
             {icon}
             <span className="text-xs">{label}</span>

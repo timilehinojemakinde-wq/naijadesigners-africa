@@ -15,13 +15,13 @@ export default function TrackOrderPage() {
             <section className="px-5 py-8">
                 {/* HERO */}
                 <div>
-                    <div className="inline-flex rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-600">
+                    <div className="inline-flex rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600">
                         Order Tracking
                     </div>
 
                     <h1 className="mt-6 text-[40px] font-bold leading-[1]">
                         Track Your
-                        <span className="text-red-600">
+                        <span className="text-emerald-600">
                             {" "}Order
                         </span>
                     </h1>
@@ -45,7 +45,7 @@ export default function TrackOrderPage() {
                                 Real-Time Tracking
                             </h3>
 
-                            <p className="text-sm text-red-100">
+                            <p className="text-sm text-emerald-100">
                                 Follow updates from
                                 measurement to delivery.
                             </p>
@@ -74,7 +74,7 @@ export default function TrackOrderPage() {
                     </div>
 
                     {/* SEARCH BUTTON */}
-                    <button className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-red-600 text-base font-semibold text-white transition hover:bg-red-700">
+                    <button className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 text-base font-semibold text-white transition hover:bg-emerald-700">
                         <Search size={18} />
                         Track Order
                     </button>
@@ -97,8 +97,8 @@ export default function TrackOrderPage() {
                 </div>
 
                 {/* ACCOUNT CTA */}
-                <div className="mt-8 rounded-[30px] bg-red-50 p-5">
-                    <h3 className="font-semibold text-red-700">
+                <div className="mt-8 rounded-[30px] bg-emerald-50 p-5">
+                    <h3 className="font-semibold text-emerald-700">
                         Want Faster Updates?
                     </h3>
 
@@ -110,7 +110,7 @@ export default function TrackOrderPage() {
 
                     <Link
                         href="/track-order/create-account"
-                        className="mt-4 flex h-12 items-center justify-center gap-2 rounded-xl bg-red-600 text-sm font-medium text-white"
+                        className="mt-4 flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 text-sm font-medium text-white"
                     >
                         Create Account
                         <ArrowRight size={16} />
@@ -137,7 +137,7 @@ function InputField({
             <input
                 type="text"
                 placeholder={placeholder}
-                className="h-14 w-full rounded-2xl border border-gray-200 bg-[#fafafa] pl-12 pr-4 outline-none focus:border-red-500"
+                className="h-14 w-full rounded-2xl border border-gray-200 bg-[#fafafa] pl-12 pr-4 outline-none focus:border-emerald-500"
             />
         </div>
     );
