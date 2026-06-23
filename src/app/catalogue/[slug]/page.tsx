@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
@@ -8,6 +8,7 @@ type Props = {
 };
 
 export default async function PublicCataloguePage({ params }: Props) {
+    const supabase = await createSupabaseServerClient();
     const { slug } = await params;
 
     const { data: designer, error: designerError } = await supabase
