@@ -18,7 +18,7 @@ type JobSummary = {
     id: string;
     title: string | null;
     status: string;
-    client_name: string | null;
+    client_name?: string | null;
     expected_delivery: string | null;
 };
 
