@@ -10,27 +10,34 @@ export default function AuthCallback() {
     useEffect(() => {
         const handleCallback = async () => {
             try {
-                // Exchange the code in the URL for a session
-                const { error: sessionError } = await supabase.auth.exchangeCodeForSession(
-                    window.location.href
-                );
+                // Let Supabase auto-detect and handle the OAuth callback
+                const { data: { session }, error } = await supabase.auth.getSession();
 
-                if (sessionError) {
-                    console.error("Session exchange error:", sessionError);
+                if (error) {
+                    console.error("Session error:", error);
                     router.push("/auth");
                     return;
                 }
 
-                // Get the user
-                const { data: { user }, error: userError } = await supabase.auth.getUser();
+                if (!session) {
+                    // Wait briefly for session to establish then retry
+                    await new Promise((r) => setTimeout(r, 1000));
+                    const { data: { session: retrySession } } = await supabase.auth.getSession();
 
-                if (userError || !user) {
-                    console.error("User error:", userError);
+                    if (!retrySession) {
+                        router.push("/auth");
+                        return;
+                    }
+                }
+
+                // Get user and check onboarding
+                const { data: { user } } = await supabase.auth.getUser();
+
+                if (!user) {
                     router.push("/auth");
                     return;
                 }
 
-                // Check if onboarding is complete
                 const { data: designer } = await supabase
                     .from("designers")
                     .select("onboarding_completed")
