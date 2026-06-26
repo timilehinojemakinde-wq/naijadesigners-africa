@@ -89,7 +89,7 @@ function MeasureContent() {
             const { data: jobData } = await supabase
                 .from("jobs")
                 .select("id, title, designer_id, client_id")
-                .eq("measurement_token", token)
+                .eq("tracking_token", token)
                 .single();
 
             if (!jobData) {

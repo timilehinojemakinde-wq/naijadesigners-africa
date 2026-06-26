@@ -159,7 +159,7 @@ export default function JobDetailPage() {
 
     const copyTrackingLink = async () => {
         if (!job?.tracking_token) return;
-        const url = `${window.location.origin}/track/${job.tracking_token}`;
+        const url = `${window.location.origin}/measure/${job.tracking_token}`;
         await navigator.clipboard.writeText(url);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
@@ -167,7 +167,7 @@ export default function JobDetailPage() {
 
     const shareWhatsApp = () => {
         if (!client?.phone || !job?.tracking_token) return;
-        const url = `${window.location.origin}/track/${job.tracking_token}`;
+        const url = `${window.location.origin}/measure/${job.tracking_token}`;
         const message = `Hi ${client.full_name}, here's your order tracking link for ${job.title}: ${url}`;
         const phone = client.phone.replace(/\D/g, "");
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
