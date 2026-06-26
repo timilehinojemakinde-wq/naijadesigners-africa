@@ -63,9 +63,18 @@ export default function StorePage() {
 
     const storeSlug = designer?.slug ?? "";
     const storeUrl = `fithouse.africa/store/${storeSlug}`;
-    const storeFullUrl = `${window?.location?.origin}/store/${storeSlug}`;
+
+    const [storeFullUrl, setStoreFullUrl] = useState("");
+
+    useEffect(() => {
+        if (storeSlug) {
+            setStoreFullUrl(`${window.location.origin}/store/${storeSlug}`);
+        }
+    }, [storeSlug]);
 
     const handleShare = async () => {
+        if (!storeFullUrl) return;
+
         if (navigator.share) {
             await navigator.share({
                 title: designer?.brand_name ?? "My FitHouse Store",

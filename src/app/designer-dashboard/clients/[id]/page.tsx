@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -63,6 +64,7 @@ export default function ClientDetailPage() {
     const [client, setClient] = useState<Client | null>(null);
     const [jobs, setJobs] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true);
+    const [measurement, setMeasurement] = useState<any>(null);
 
     useEffect(() => {
         const load = async () => {
@@ -87,6 +89,14 @@ export default function ClientDetailPage() {
                 router.push("/designer-dashboard/clients");
                 return;
             }
+
+            const { data: measurementData } = await supabase
+                .from("measurements")
+                .select("*")
+                .eq("client_id", clientId)
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .maybeSingle();
 
             setClient(clientData);
             setJobs(jobsData ?? []);
@@ -223,22 +233,59 @@ export default function ClientDetailPage() {
                 </section>
 
                 {/* MEASUREMENTS */}
+                {/* MEASUREMENTS */}
                 <section className="rounded-2xl bg-white p-5 shadow-sm">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="mb-3 flex items-center justify-between">
                         <h3 className="text-sm font-bold text-gray-900">
                             Measurements
                         </h3>
-                        <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-500">
-                            Not recorded
+
+                        <span
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${measurement
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : "bg-gray-100 text-gray-500"
+                                }`}
+                        >
+                            {measurement ? "On File" : "Not recorded"}
                         </span>
                     </div>
-                    <p className="text-xs text-gray-400 mb-3">
-                        No measurements on file for this client yet.
-                    </p>
-                    <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 py-2.5 text-xs font-semibold text-white">
-                        <Ruler size={14} />
-                        Send AI Measurement Link
-                    </button>
+
+                    {measurement ? (
+                        <div className="grid grid-cols-2 gap-2">
+                            {[
+                                { key: "height", label: "Height" },
+                                { key: "bust", label: "Bust" },
+                                { key: "waist", label: "Waist" },
+                                { key: "hips", label: "Hips" },
+                                { key: "shoulder_width", label: "Shoulder" },
+                                { key: "sleeve_length", label: "Sleeve" },
+                                { key: "chest", label: "Chest" },
+                                { key: "neck", label: "Neck" },
+                                { key: "inseam", label: "Inseam" },
+                                { key: "thigh", label: "Thigh" },
+                            ].map(({ key, label }) => {
+                                const value = measurement[key];
+
+                                if (value === null || value === undefined || value === "") {
+                                    return null;
+                                }
+
+                                return (
+                                    <div key={key} className="rounded-xl bg-gray-50 px-3 py-2">
+                                        <p className="text-[10px] text-gray-400">{label}</p>
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            {Number(value).toFixed(1)} cm
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-xs text-gray-400">
+                            No measurements on file for this client yet. Measurements are
+                            collected automatically when you send a link from a job.
+                        </p>
+                    )}
                 </section>
 
                 {/* JOBS */}

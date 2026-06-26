@@ -60,10 +60,17 @@ export default function PreviewStorePage() {
     }, [router]);
 
     const storeSlug = designer?.slug ?? "";
-    const storeFullUrl = `${window?.location?.origin}/store/${storeSlug}`;
+    const [storeFullUrl, setStoreFullUrl] = useState("");
+
+    useEffect(() => {
+        if (storeSlug) {
+            setStoreFullUrl(`${window.location.origin}/store/${storeSlug}`);
+        }
+    }, [storeSlug]);
     const displayLocation = designer?.business_location ?? designer?.location ?? "Nigeria";
 
     const handleShare = async () => {
+        if (!storeFullUrl) return;
         if (navigator.share) {
             await navigator.share({
                 title: designer?.brand_name ?? "My FitHouse Store",
