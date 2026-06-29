@@ -138,8 +138,8 @@ function JobsContent() {
                         key={filter.value}
                         onClick={() => setActiveFilter(filter.value)}
                         className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition ${activeFilter === filter.value
-                                ? "bg-gray-900 text-white"
-                                : "border border-gray-200 bg-white text-gray-600"
+                            ? "bg-gray-900 text-white"
+                            : "border border-gray-200 bg-white text-gray-600"
                             }`}
                     >
                         {filter.label}

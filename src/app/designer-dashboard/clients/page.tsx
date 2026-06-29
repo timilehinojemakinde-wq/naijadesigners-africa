@@ -9,6 +9,7 @@ import BottomNav from "@/components/dashboard/BottomNav";
 
 type Client = {
     id: string;
+    title: string | null;
     full_name: string;
     phone: string | null;
     email: string | null;
@@ -30,7 +31,7 @@ export default function ClientsPage() {
 
             const { data: clientsData } = await supabase
                 .from("clients")
-                .select("id, full_name, phone, email, created_at")
+                .select("id, title, full_name, phone, email, created_at")
                 .eq("designer_id", user.id)
                 .order("full_name", { ascending: true });
 
@@ -156,7 +157,7 @@ export default function ClientsPage() {
                                 {/* INFO */}
                                 <div className="flex-1 min-w-0">
                                     <p className="truncate text-sm font-semibold text-gray-900">
-                                        {client.full_name}
+                                        {`${client.title ? client.title + " " : ""}${client.full_name}`}
                                     </p>
                                     <div className="mt-0.5 flex items-center gap-2">
                                         {client.phone && (

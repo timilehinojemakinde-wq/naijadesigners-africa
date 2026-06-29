@@ -1,12 +1,20 @@
 "use client";
 
+import { generateInvoice } from "@/lib/generateInvoice";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import {
-    ArrowLeft, Plus, Trash2,
-    Loader2, Check, Share2, Copy
+    ArrowLeft,
+    Plus,
+    Trash2,
+    Loader2,
+    Check,
+    Share2,
+    Copy,
+    Download
 } from "lucide-react";
+
 import { supabase } from "@/lib/supabaseClient";
 
 type LineItem = {
@@ -75,8 +83,19 @@ export default function InvoicePage() {
     ]);
     const [depositRequired, setDepositRequired] = useState(0);
     const [depositPaid, setDepositPaid] = useState(0);
+    const [balance, setBalance] = useState(0);
     const [currency, setCurrency] = useState("NGN");
     const [notes, setNotes] = useState("");
+
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+    const [paymentAmount, setPaymentAmount] = useState("");
+
+    const [paymentMethod, setPaymentMethod] = useState("Bank Transfer");
+
+    const [paymentNote, setPaymentNote] = useState("");
+
+    const [savingPayment, setSavingPayment] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -120,6 +139,7 @@ export default function InvoicePage() {
                 setItems(inv.items ?? []);
                 setDepositRequired(inv.deposit_required ?? 0);
                 setDepositPaid(inv.deposit_paid ?? 0);
+                setBalance(inv.balance ?? 0);
                 setCurrency(inv.currency ?? "NGN");
                 setNotes(inv.notes ?? "");
             }
@@ -131,7 +151,6 @@ export default function InvoicePage() {
     }, [jobId, router]);
 
     const subtotal = items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-    const balance = subtotal - (Number(depositPaid) || 0);
 
     const addItem = () => {
         setItems((prev) => [
@@ -209,6 +228,7 @@ export default function InvoicePage() {
         setSaving(false);
     };
 
+
     const markDepositPaid = async () => {
         setDepositPaid(depositRequired);
         await handleSave("deposit_paid");
@@ -218,7 +238,107 @@ export default function InvoicePage() {
         setDepositPaid(subtotal);
         await handleSave("fully_paid");
     };
+    const handleDownloadPdf = async () => {
+        if (!job || !client) return;
 
+        // Save latest changes first
+        if (!invoice) {
+            await handleSave();
+        }
+
+        const { data: designer } = await supabase
+            .from("designers")
+            .select("brand_name")
+            .single();
+
+        const pdf = generateInvoice({
+            invoiceNumber: invoice?.id ?? job.job_number ?? "INV",
+            brandName: designer?.brand_name ?? "FitHouseAfrica",
+            customerName: client.full_name,
+            jobTitle: job.title ?? "Tailoring Job",
+            items,
+            subtotal,
+            depositRequired,
+            depositPaid,
+            balance,
+            currency,
+            notes,
+        });
+
+        pdf.save(
+            `${client.full_name.replace(/\s+/g, "-")}-Invoice.pdf`
+        );
+    };
+
+    const handleRecordPayment = async () => {
+        if (!invoice) return;
+
+        const amount = Number(paymentAmount);
+
+        if (!amount || amount <= 0) {
+            alert("Enter a valid payment amount.");
+            return;
+        }
+
+        // Save payment
+        setSavingPayment(true);
+        const { error: paymentError } = await supabase
+            .from("payments")
+            .insert({
+                invoice_id: invoice.id,
+                amount,
+                payment_method: paymentMethod,
+                note: paymentNote || null,
+            });
+
+        if (paymentError) {
+            alert(paymentError.message);
+            return;
+        }
+
+        const newDepositPaid = depositPaid + amount;
+        const newBalance = Math.max(
+            0,
+            subtotal - (newDepositPaid)
+        );
+
+        let newStatus = invoice.status;
+
+        if (newBalance <= 0) {
+            newStatus = "fully_paid";
+        } else if (newDepositPaid >= depositRequired) {
+            newStatus = "deposit_paid";
+        }
+
+        const { error: invoiceError } = await supabase
+            .from("invoices")
+            .update({
+                deposit_paid: newDepositPaid,
+                balance: newBalance,
+                status: newStatus,
+            })
+            .eq("id", invoice.id);
+
+        if (invoiceError) {
+            alert(invoiceError.message);
+            return;
+        }
+
+        setDepositPaid(newDepositPaid);
+        setBalance(newBalance);
+
+        setInvoice({
+            ...invoice,
+            status: newStatus,
+        });
+
+        setPaymentAmount("");
+        setPaymentNote("");
+        setPaymentMethod("Bank Transfer");
+
+        setShowPaymentModal(false);
+        setSavingPayment(false);
+    };
     const handleShare = async () => {
         const url = `${window.location.origin}/invoice/${invoice?.id}`;
         if (navigator.share) {
@@ -311,8 +431,8 @@ export default function InvoicePage() {
                                     key={c}
                                     onClick={() => setCurrency(c)}
                                     className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${currency === c
-                                            ? "border-gray-900 bg-gray-900 text-white"
-                                            : "border-gray-200 text-gray-600"
+                                        ? "border-gray-900 bg-gray-900 text-white"
+                                        : "border-gray-200 text-gray-600"
                                         }`}
                                 >
                                     {c}
@@ -483,27 +603,128 @@ export default function InvoicePage() {
                         className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gray-900 py-3 text-sm font-semibold text-white disabled:opacity-60"
                     >
                         {saving ? (
-                            <><Loader2 size={15} className="animate-spin" /> Saving...</>
+                            <>
+                                <Loader2 size={15} className="animate-spin" />
+                                Saving...
+                            </>
                         ) : saved ? (
-                            <><Check size={15} /> Saved</>
+                            <>
+                                <Check size={15} />
+                                Saved
+                            </>
                         ) : (
                             invoice ? "Save Changes" : "Create Invoice"
                         )}
                     </button>
 
                     {invoice && (
-                        <button
-                            onClick={handleShare}
-                            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700"
-                        >
-                            {copied
-                                ? <Check size={16} className="text-emerald-600" />
-                                : <Share2 size={16} />
-                            }
-                        </button>
+                        <>
+                            <button
+                                onClick={() => setShowPaymentModal(true)}
+                                className="flex items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700"
+                            >
+                                Pay
+                            </button>
+
+                            <button
+                                onClick={handleDownloadPdf}
+                                className="flex items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700"
+                            >
+                                PDF
+                            </button>
+
+                            <button
+                                onClick={handleShare}
+                                className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700"
+                            >
+                                {copied ? (
+                                    <Check size={16} className="text-emerald-600" />
+                                ) : (
+                                    <Share2 size={16} />
+                                )}
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
+
+            {showPaymentModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5">
+                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                        <h2 className="text-lg font-bold text-gray-900">
+                            Record Payment
+                        </h2>
+
+                        <p className="mt-1 text-sm text-gray-500">
+                            Record a payment received from the client.
+                        </p>
+
+                        <div className="mt-5 space-y-4">
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-gray-500">
+                                    Amount
+                                </label>
+
+                                <input
+                                    type="number"
+                                    value={paymentAmount}
+                                    onChange={(e) => setPaymentAmount(e.target.value)}
+                                    placeholder="0.00"
+                                    className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-gray-900"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-gray-500">
+                                    Payment Method
+                                </label>
+
+                                <select
+                                    value={paymentMethod}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-gray-900"
+                                >
+                                    <option>Bank Transfer</option>
+                                    <option>Cash</option>
+                                    <option>POS</option>
+                                    <option>Card</option>
+                                    <option>Mobile Money</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-gray-500">
+                                    Note (Optional)
+                                </label>
+
+                                <textarea
+                                    rows={3}
+                                    value={paymentNote}
+                                    onChange={(e) => setPaymentNote(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-gray-900"
+                                />
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowPaymentModal(false)}
+                                    className="flex-1 rounded-xl border border-gray-200 py-3 font-semibold"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={handleRecordPayment}
+                                    disabled={savingPayment}
+                                    className="flex-1 rounded-xl bg-gray-900 py-3 font-semibold text-white disabled:opacity-60"
+                                >
+                                    {savingPayment ? "Saving..." : "Save Payment"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }

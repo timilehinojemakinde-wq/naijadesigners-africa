@@ -81,70 +81,26 @@ function RequestForm() {
         setSubmitting(true);
 
         try {
-            // Find or create client
-            const { data: existingClient } = await supabase
-                .from("clients")
-                .select("id")
-                .eq("designer_id", designer.id)
-                .eq("phone", phone.trim())
-                .maybeSingle();
-
-            let clientId = existingClient?.id;
-
-            if (!clientId) {
-                const { data: newClient, error: clientError } = await supabase
-                    .from("clients")
-                    .insert({
-                        designer_id: designer.id,
-                        full_name: fullName.trim(),
-                        phone: phone.trim(),
-                        email: email.trim() || null,
-                    })
-                    .select("id")
-                    .single();
-
-                if (clientError) throw clientError;
-                clientId = newClient.id;
-            }
-
-            // Generate job number
-            const jobNumber = `FH-${Date.now().toString().slice(-6)}`;
-
-            // Build title
-            const jobTitle = style?.title
-                ? `${style.title} — ${fullName.trim()}`
-                : `Style Request — ${fullName.trim()}`;
-
-            // Build notes combining style info and customer notes
-            const fullNotes = [
-                style ? `Style: ${style.title ?? "Selected from catalogue"}` : null,
-                notes.trim() ? `Customer notes: ${notes.trim()}` : null,
-            ].filter(Boolean).join("\n\n");
-
-            // Create job
-            const { data: job, error: jobError } = await supabase
-                .from("jobs")
-                .insert({
-                    designer_id: designer.id,
-                    client_id: clientId,
-                    job_number: jobNumber,
-                    title: jobTitle,
-                    style_images: style?.images ?? [],
-                    style_notes: fullNotes || null,
-                    status: "inquiry",
-                })
-                .select("id")
-                .single();
-
-            if (jobError) throw jobError;
-
-            // Create initial timeline entry
-            await supabase.from("job_updates").insert({
-                job_id: job.id,
-                status: "inquiry",
-                note: `Request received from catalogue — ${fullName.trim()}`,
-                notify_client: false,
+            const response = await fetch("/api/request-style", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    designerId: designer.id,
+                    styleId: style?.id ?? null,
+                    styleTitle: style?.title ?? null,
+                    styleImages: style?.images ?? [],
+                    fullName,
+                    phone,
+                    email,
+                    notes,
+                }),
             });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error ?? "Failed to send request");
+            }
 
             setSubmitted(true);
         } catch (err: any) {
@@ -283,7 +239,7 @@ function RequestForm() {
                                 value={fullName}
                                 onChange={(e) => setFullName(e.target.value)}
                                 placeholder="e.g. Sarah Johnson"
-                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
+                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
                             />
                         </div>
                         <div>
@@ -295,7 +251,7 @@ function RequestForm() {
                                 onChange={(e) => setPhone(e.target.value)}
                                 placeholder="e.g. 08012345678"
                                 type="tel"
-                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
+                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
                             />
                             <p className="mt-1 text-xs text-gray-400">
                                 The designer will contact you on this number
@@ -311,7 +267,7 @@ function RequestForm() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="e.g. sarah@email.com"
                                 type="email"
-                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
+                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
                             />
                         </div>
                     </div>
@@ -333,7 +289,7 @@ function RequestForm() {
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="e.g. Make the sleeve longer, change fabric to lace, delivery needed before July 1..."
                         rows={4}
-                        className="w-full resize-none rounded-xl border border-gray-200 px-3.5 py-3 text-sm outline-none focus:border-gray-900"
+                        className="w-full resize-none rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
                     />
                 </section>
 

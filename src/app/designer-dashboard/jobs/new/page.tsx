@@ -11,9 +11,12 @@ export default function CreateJobPage() {
     const router = useRouter();
 
     // Client fields
+    const [clientTitle, setClientTitle] = useState("");
     const [clientName, setClientName] = useState("");
     const [clientPhone, setClientPhone] = useState("");
     const [clientEmail, setClientEmail] = useState("");
+    const [clientAddress, setClientAddress] = useState("");
+    const [clientNotes, setClientNotes] = useState("");
 
     // Job fields
     const [title, setTitle] = useState("");
@@ -95,9 +98,12 @@ export default function CreateJobPage() {
                     .from("clients")
                     .insert({
                         designer_id: user.id,
+                        title: clientTitle || null,
                         full_name: clientName.trim(),
                         phone: clientPhone.trim(),
                         email: clientEmail.trim() || null,
+                        address: clientAddress.trim() || null,
+                        notes: clientNotes.trim() || null,
                     })
                     .select("id")
                     .single();
@@ -167,6 +173,32 @@ export default function CreateJobPage() {
                         Customer
                     </h2>
                     <div className="space-y-3">
+                        <div>
+                            <label className="mb-1 block text-xs font-medium text-gray-600">
+                                Title
+                            </label>
+
+                            <select
+                                value={clientTitle}
+                                onChange={(e) => setClientTitle(e.target.value)}
+                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm outline-none focus:border-gray-900"
+                            >
+                                <option value="">Select title</option>
+                                <option>Mr.</option>
+                                <option>Mrs.</option>
+                                <option>Miss</option>
+                                <option>Ms.</option>
+                                <option>Dr.</option>
+                                <option>Prof.</option>
+                                <option>Chief</option>
+                                <option>Pastor</option>
+                                <option>Rev.</option>
+                                <option>Alhaji</option>
+                                <option>Alhaja</option>
+                                <option>Prince</option>
+                                <option>Princess</option>
+                            </select>
+                        </div>
                         <div>
                             <label className="mb-1 block text-xs font-medium text-gray-600">
                                 Full Name <span className="text-red-500">*</span>

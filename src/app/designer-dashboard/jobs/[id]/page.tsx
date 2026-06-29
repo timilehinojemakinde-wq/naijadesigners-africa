@@ -19,6 +19,7 @@ type Job = {
     style_notes: string | null;
     expected_delivery: string | null;
     tracking_token: string | null;
+    measurement_token: string | null;
     created_at: string;
     client_id: string | null;
 };
@@ -66,6 +67,13 @@ const STATUS_COLORS: Record<string, string> = {
     delivered: "bg-gray-100 text-gray-500",
 };
 
+
+const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+    draft: { label: "Draft", color: "bg-gray-100 text-gray-600" },
+    sent: { label: "Sent", color: "bg-blue-100 text-blue-700" },
+    deposit_paid: { label: "Deposit Paid", color: "bg-amber-100 text-amber-700" },
+    fully_paid: { label: "Fully Paid", color: "bg-emerald-100 text-emerald-700" },
+};
 export default function JobDetailPage() {
     const router = useRouter();
     const params = useParams();
@@ -74,6 +82,16 @@ export default function JobDetailPage() {
     const [measurement, setMeasurement] = useState<any>(null);
     const [job, setJob] = useState<Job | null>(null);
     const [client, setClient] = useState<Client | null>(null);
+    const [invoice, setInvoice] = useState<{
+        id: string;
+        status: string;
+        subtotal: number;
+        deposit_required: number;
+        deposit_paid: number;
+        balance: number;
+        currency: string;
+    } | null>(null);
+
     const [updates, setUpdates] = useState<JobUpdate[]>([]);
     const [activeImage, setActiveImage] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -108,19 +126,40 @@ export default function JobDetailPage() {
             setMeasurement(measurementData);
 
 
-            const [{ data: clientData }, { data: updatesData }] = await Promise.all([
-                jobData.client_id
-                    ? supabase.from("clients").select("*").eq("id", jobData.client_id).single()
-                    : { data: null },
-                supabase
-                    .from("job_updates")
-                    .select("*")
-                    .eq("job_id", jobId)
-                    .order("created_at", { ascending: false }),
-            ]);
+            const [{ data: clientData }, { data: updatesData }, { data: invoiceData }] =
+                await Promise.all([
+                    jobData.client_id
+                        ? supabase
+                            .from("clients")
+                            .select("*")
+                            .eq("id", jobData.client_id)
+                            .single()
+                        : { data: null },
+
+                    supabase
+                        .from("job_updates")
+                        .select("*")
+                        .eq("job_id", jobId)
+                        .order("created_at", { ascending: false }),
+
+                    supabase
+                        .from("invoices")
+                        .select(`
+    id,
+    status,
+    subtotal,
+    deposit_required,
+    deposit_paid,
+    balance,
+    currency
+`)
+                        .eq("job_id", jobId)
+                        .maybeSingle(),
+                ]);
 
             setClient(clientData);
             setUpdates(updatesData ?? []);
+            setInvoice(invoiceData);
             setLoading(false);
         };
 
@@ -159,20 +198,27 @@ export default function JobDetailPage() {
 
     const copyTrackingLink = async () => {
         if (!job?.tracking_token) return;
-        const url = `${window.location.origin}/measure/${job.tracking_token}`;
+        const url = `${window.location.origin}/track/${job.tracking_token}`;  // ← /track/ not /measure/
         await navigator.clipboard.writeText(url);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const shareWhatsApp = () => {
+    const shareTrackingLink = () => {
         if (!client?.phone || !job?.tracking_token) return;
-        const url = `${window.location.origin}/measure/${job.tracking_token}`;
+        const url = `${window.location.origin}/track/${job.tracking_token}`;
         const message = `Hi ${client.full_name}, here's your order tracking link for ${job.title}: ${url}`;
         const phone = client.phone.replace(/\D/g, "");
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
     };
 
+    const shareMeasurementLink = () => {
+        if (!client?.phone || !job?.measurement_token) return;
+        const url = `${window.location.origin}/measure/${job.measurement_token}`;
+        const message = `Hi ${client.full_name}, please click this link to take your measurements for your ${job.title} order. It only takes 60 seconds: ${url}`;
+        const phone = client.phone.replace(/\D/g, "");
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+    };
     if (loading) {
         return (
             <main className="flex min-h-screen items-center justify-center bg-white">
@@ -414,7 +460,7 @@ export default function JobDetailPage() {
                             </p>
 
                             <button
-                                onClick={shareWhatsApp}
+                                onClick={shareMeasurementLink}
                                 disabled={!client?.phone}
                                 className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 py-2.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
                             >
@@ -429,19 +475,53 @@ export default function JobDetailPage() {
                 <section className="rounded-2xl bg-white p-5 shadow-sm">
                     <div className="flex items-center justify-between">
                         <h2 className="text-sm font-bold text-gray-900">Invoice</h2>
-                        <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-500">
-                            Not created
+                        <span
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${invoice
+                                ? STATUS_COLORS[invoice.status] ?? "bg-gray-100 text-gray-600"
+                                : "bg-gray-100 text-gray-500"
+                                }`}
+                        >
+                            {invoice
+                                ? STATUS_CONFIG[invoice.status]?.label ?? invoice.status
+                                : "Not created"}
                         </span>
                     </div>
-                    <p className="mt-2 text-xs text-gray-400">
-                        No invoice yet. Generate one when price is agreed.
-                    </p>
+                    <div className="mt-3">
+                        {invoice ? (
+                            <div className="space-y-2 rounded-xl bg-gray-50 p-3">
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-500">Subtotal</span>
+                                    <span className="font-semibold">
+                                        {invoice.currency} {invoice.subtotal.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-500">Deposit Paid</span>
+                                    <span className="font-semibold text-emerald-600">
+                                        {invoice.currency} {invoice.deposit_paid.toLocaleString()}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between border-t border-gray-200 pt-2 text-sm">
+                                    <span className="font-medium text-gray-700">Balance</span>
+                                    <span className="font-bold text-red-600">
+                                        {invoice.currency} {invoice.balance.toLocaleString()}
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-xs text-gray-400">
+                                No invoice yet. Generate one when price is agreed.
+                            </p>
+                        )}
+                    </div>
                     <Link
                         href={`/designer-dashboard/jobs/${job.id}/invoice`}
                         className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-2.5 text-xs font-semibold text-gray-700"
                     >
                         <FileText size={14} />
-                        Generate Invoice
+                        {invoice ? "View / Edit Invoice" : "Generate Invoice"}
                     </Link>
                 </section>
 
@@ -498,7 +578,7 @@ export default function JobDetailPage() {
             <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-100 bg-white px-5 py-3">
                 <div className="mx-auto flex max-w-md gap-2">
                     <button
-                        onClick={shareWhatsApp}
+                        onClick={shareTrackingLink}
                         className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gray-900 py-3 text-xs font-semibold text-white"
                     >
                         <Send size={14} />

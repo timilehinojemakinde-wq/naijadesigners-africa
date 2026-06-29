@@ -25,7 +25,13 @@ type Job = {
     client_id: string | null;
 };
 
-type ClientMap = Record<string, string>;
+type ClientMap = Record<
+    string,
+    {
+        title: string | null;
+        full_name: string;
+    }
+>;
 
 const STATUS_LABELS: Record<string, string> = {
     inquiry: "Inquiry",
@@ -118,11 +124,17 @@ export default function DashboardHome() {
             if (clientIds.length > 0) {
                 const { data: clientsData } = await supabase
                     .from("clients")
-                    .select("id, full_name")
+                    .select("id, title, full_name")
                     .in("id", clientIds);
 
                 const map: ClientMap = {};
-                (clientsData ?? []).forEach(c => { map[c.id] = c.full_name; });
+
+                (clientsData ?? []).forEach((c) => {
+                    map[c.id] = {
+                        title: c.title,
+                        full_name: c.full_name,
+                    };
+                });
                 setClientMap(map);
             }
 
@@ -472,7 +484,7 @@ export default function DashboardHome() {
                     ) : (
                         <div className="space-y-2">
                             {recentJobs.map((job) => {
-                                const clientName = job.client_id
+                                const client = job.client_id
                                     ? clientMap[job.client_id]
                                     : null;
 
@@ -484,12 +496,12 @@ export default function DashboardHome() {
                                     >
                                         {/* STATUS DOT */}
                                         <div className={`h-2 w-2 flex-shrink-0 rounded-full ${job.status === "ready"
-                                                ? "bg-emerald-500"
-                                                : job.status === "awaiting_deposit"
-                                                    ? "bg-amber-400"
-                                                    : job.status === "measurement_pending"
-                                                        ? "bg-blue-400"
-                                                        : "bg-gray-300"
+                                            ? "bg-emerald-500"
+                                            : job.status === "awaiting_deposit"
+                                                ? "bg-amber-400"
+                                                : job.status === "measurement_pending"
+                                                    ? "bg-blue-400"
+                                                    : "bg-gray-300"
                                             }`} />
 
                                         <div className="flex-1 min-w-0">
@@ -497,12 +509,13 @@ export default function DashboardHome() {
                                                 {job.title ?? "Untitled Job"}
                                             </p>
                                             <div className="mt-1 flex items-center gap-2">
-                                                {clientName && (
+                                                {client && (
                                                     <span className="truncate text-xs text-gray-400">
-                                                        {clientName}
+                                                        {client.title ? `${client.title} ` : ""}
+                                                        {client.full_name}
                                                     </span>
                                                 )}
-                                                {clientName && job.expected_delivery && (
+                                                {client && job.expected_delivery && (
                                                     <span className="text-xs text-gray-300">·</span>
                                                 )}
                                                 {job.expected_delivery && (
