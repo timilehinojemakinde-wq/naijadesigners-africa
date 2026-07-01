@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Check } from "lucide-react";
+import {
+    ArrowLeft,
+    Loader2,
+    Check,
+    Mic,
+    Square,
+    Play,
+    Pause
+} from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Style = {
@@ -37,6 +45,13 @@ function RequestForm() {
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [notes, setNotes] = useState("");
+    const [isRecording, setIsRecording] = useState(false);
+    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+    const [audioUrl, setAudioUrl] = useState("");
+    const [audioPlaying, setAudioPlaying] = useState(false);
+
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         const load = async () => {
@@ -71,6 +86,54 @@ function RequestForm() {
         load();
     }, [slug, styleId, router]);
 
+    const startRecording = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+        });
+
+        const recorder = new MediaRecorder(stream);
+
+        const chunks: BlobPart[] = [];
+
+        recorder.ondataavailable = (e) => {
+            chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+            const blob = new Blob(chunks, {
+                type: "audio/webm",
+            });
+
+            setAudioBlob(blob);
+            setAudioUrl(URL.createObjectURL(blob));
+        };
+
+        recorder.start();
+
+        mediaRecorderRef.current = recorder;
+
+        setIsRecording(true);
+    };
+
+    const stopRecording = () => {
+        mediaRecorderRef.current?.stop();
+        setIsRecording(false);
+    };
+
+    const playRecording = () => {
+        if (!audioUrl) return;
+
+        const audio = new Audio(audioUrl);
+
+        audioRef.current = audio;
+
+        audio.onended = () => setAudioPlaying(false);
+
+        audio.play();
+
+        setAudioPlaying(true);
+    };
+
     const handleSubmit = async () => {
         setError("");
 
@@ -81,6 +144,27 @@ function RequestForm() {
         setSubmitting(true);
 
         try {
+
+            let voiceNoteUrl: string | null = null;
+
+            if (audioBlob) {
+
+                const fileName = `${crypto.randomUUID()}.webm`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from("job-voice-notes")
+                    .upload(fileName, audioBlob, {
+                        contentType: "audio/webm",
+                    });
+
+                if (uploadError) throw uploadError;
+
+                const { data } = supabase.storage
+                    .from("job-voice-notes")
+                    .getPublicUrl(fileName);
+
+                voiceNoteUrl = data.publicUrl;
+            }
             const response = await fetch("/api/request-style", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -93,6 +177,7 @@ function RequestForm() {
                     phone,
                     email,
                     notes,
+                    voiceNoteUrl,
                 }),
             });
 
@@ -276,21 +361,103 @@ function RequestForm() {
                 {/* CUSTOMISATION NOTES */}
                 <section className="rounded-2xl bg-white p-5 shadow-sm">
                     <h2 className="mb-1 text-sm font-bold text-gray-900">
-                        Customisation Notes
-                        <span className="ml-1 font-normal text-gray-400 text-xs">
-                            — optional
-                        </span>
+                        Customisation Instructions
                     </h2>
-                    <p className="mb-3 text-xs text-gray-400">
-                        Any specific changes or instructions for this style?
+
+                    <p className="mb-4 text-xs text-gray-400">
+                        Record a voice note or type additional instructions.
                     </p>
-                    <textarea
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="e.g. Make the sleeve longer, change fabric to lace, delivery needed before July 1..."
-                        rows={4}
-                        className="w-full resize-none rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
-                    />
+
+                    {/* Voice Recorder */}
+
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+
+                        {!audioBlob ? (
+
+                            <button
+                                onClick={isRecording ? stopRecording : startRecording}
+                                className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition
+                    ${isRecording
+                                        ? "bg-red-600 text-white"
+                                        : "bg-gray-900 text-white"
+                                    }`}
+                            >
+                                {isRecording ? (
+                                    <>
+                                        <Square size={16} />
+                                        Stop Recording
+                                    </>
+                                ) : (
+                                    <>
+                                        <Mic size={16} />
+                                        Record Voice Note
+                                    </>
+                                )}
+                            </button>
+
+                        ) : (
+
+                            <div className="space-y-3">
+
+                                <div className="flex items-center justify-between rounded-xl bg-white p-3">
+
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            Voice note recorded
+                                        </p>
+
+                                        <p className="text-xs text-gray-400">
+                                            Tap play to review
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        onClick={playRecording}
+                                        className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white"
+                                    >
+                                        {audioPlaying ? (
+                                            <Pause size={16} />
+                                        ) : (
+                                            <Play size={16} />
+                                        )}
+                                    </button>
+
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setAudioBlob(null);
+                                        setAudioUrl("");
+                                    }}
+                                    className="w-full rounded-xl border border-gray-200 py-2 text-xs font-semibold text-gray-600"
+                                >
+                                    Record Again
+                                </button>
+
+                            </div>
+
+                        )}
+
+                    </div>
+
+                    {/* Text Notes */}
+
+                    <div className="mt-5">
+
+                        <label className="mb-2 block text-xs font-medium text-gray-600">
+                            Text Notes (optional)
+                        </label>
+
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Additional instructions..."
+                            rows={4}
+                            className="w-full resize-none rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-sm outline-none focus:border-gray-900"
+                        />
+
+                    </div>
+
                 </section>
 
                 {error && (

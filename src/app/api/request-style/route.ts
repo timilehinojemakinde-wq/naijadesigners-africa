@@ -26,6 +26,7 @@ export async function POST(request: Request) {
             phone,
             email,
             notes,
+            voiceNoteUrl,
         } = body;
 
         // Validate required fields
@@ -85,6 +86,7 @@ export async function POST(request: Request) {
                 title: jobTitle,
                 style_images: styleImages ?? [],
                 style_notes: fullNotes || null,
+                voice_note_url: voiceNoteUrl ?? null,
                 status: "inquiry",
             })
             .select("id")

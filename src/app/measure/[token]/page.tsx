@@ -183,7 +183,11 @@ function MeasureContent() {
     };
 
     const runProcessing = async () => {
-        if (!frontImage || !sideImage || !height) return;
+        console.log("runProcessing started", { frontImage: !!frontImage, sideImage: !!sideImage, height });
+        if (!frontImage || !sideImage || !height) {
+            console.log("Missing required data, aborting");
+            return;
+        }
 
         setStep("processing");
         setProcessing(true);
@@ -206,7 +210,7 @@ function MeasureContent() {
                 frontImage.width,
                 frontImage.height
             );
-
+            console.log("Measurements extracted:", measurements);
             setResult(measurements);
 
             // Pre-fill editable fields

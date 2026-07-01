@@ -69,7 +69,26 @@ const PIPELINE_STAGES = [
     { value: "finishing", label: "Finishing" },
     { value: "ready", label: "Ready" },
 ];
+function getDueText(date: string | null) {
+    if (!date) return null;
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const due = new Date(date);
+    due.setHours(0, 0, 0, 0);
+
+    const diff = Math.round(
+        (due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (diff === 0) return "Due today";
+    if (diff === 1) return "Tomorrow";
+    if (diff > 1) return `${diff} days left`;
+    if (diff === -1) return "1 day overdue";
+
+    return `${Math.abs(diff)} days overdue`;
+}
 export default function DashboardHome() {
     const router = useRouter();
     const [designer, setDesigner] = useState<Designer | null>(null);
@@ -506,37 +525,61 @@ export default function DashboardHome() {
 
                                         <div className="flex-1 min-w-0">
                                             <p className="truncate text-sm font-semibold text-gray-900">
+                                                {client
+                                                    ? `${client.title ? client.title + " " : ""}${client.full_name}`
+                                                    : "Unknown Client"}
+                                            </p>
+
+                                            <p className="mt-0.5 truncate text-xs text-gray-500">
                                                 {job.title ?? "Untitled Job"}
                                             </p>
-                                            <div className="mt-1 flex items-center gap-2">
-                                                {client && (
-                                                    <span className="truncate text-xs text-gray-400">
-                                                        {client.title ? `${client.title} ` : ""}
-                                                        {client.full_name}
+                                            <div className="mt-1 flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <div
+                                                        className={`h-2 w-2 rounded-full ${job.status === "ready"
+                                                            ? "bg-emerald-500"
+                                                            : job.status === "awaiting_deposit"
+                                                                ? "bg-amber-400"
+                                                                : job.status === "measurement_pending"
+                                                                    ? "bg-blue-500"
+                                                                    : "bg-gray-400"
+                                                            }`}
+                                                    />
+
+                                                    <span
+                                                        className={`text-xs font-semibold ${STATUS_COLORS[job.status]?.includes("text-")
+                                                            ? STATUS_COLORS[job.status].split(" ").find(c => c.startsWith("text-"))
+                                                            : "text-gray-500"
+                                                            }`}
+                                                    >
+                                                        {STATUS_LABELS[job.status] ?? job.status}
                                                     </span>
-                                                )}
-                                                {client && job.expected_delivery && (
-                                                    <span className="text-xs text-gray-300">·</span>
-                                                )}
+                                                </div>
+
                                                 {job.expected_delivery && (
-                                                    <span className="text-xs text-gray-400">
-                                                        Due{" "}
-                                                        {new Date(job.expected_delivery).toLocaleDateString("en-NG", {
-                                                            day: "numeric",
-                                                            month: "short",
-                                                        })}
+                                                    <span className="text-xs font-medium text-gray-500">
+                                                        {(() => {
+                                                            const today = new Date();
+                                                            const due = new Date(job.expected_delivery);
+
+                                                            today.setHours(0, 0, 0, 0);
+                                                            due.setHours(0, 0, 0, 0);
+
+                                                            const days = Math.ceil(
+                                                                (due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+                                                            );
+
+                                                            if (days < 0) return `⚠ ${Math.abs(days)} days overdue`;
+                                                            if (days === 0) return "Due today";
+                                                            if (days === 1) return "Tomorrow";
+                                                            return `${days} days left`;
+                                                        })()}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-shrink-0 items-center gap-2">
-                                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[job.status] ?? "bg-gray-100 text-gray-600"
-                                                }`}>
-                                                {STATUS_LABELS[job.status] ?? job.status}
-                                            </span>
-                                            <ChevronRight size={14} className="text-gray-300" />
-                                        </div>
+
                                     </Link>
                                 );
                             })}

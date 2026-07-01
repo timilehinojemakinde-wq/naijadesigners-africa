@@ -1,12 +1,22 @@
 "use client";
 
+import PremiumVoicePlayer from "@/components/audio/PremiumVoicePlayer";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import {
-    ArrowLeft, Phone, MessageCircle,
-    ChevronRight, Send, Copy, Check,
-    Ruler, FileText, ChevronDown
+    ArrowLeft,
+    Phone,
+    MessageCircle,
+    ChevronRight,
+    Send,
+    Copy,
+    Check,
+    Ruler,
+    FileText,
+    ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -17,6 +27,7 @@ type Job = {
     status: string;
     style_images: string[] | null;
     style_notes: string | null;
+    voice_note_url: string | null;
     expected_delivery: string | null;
     tracking_token: string | null;
     measurement_token: string | null;
@@ -101,8 +112,14 @@ export default function JobDetailPage() {
 
     useEffect(() => {
         const load = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) { router.push("/auth"); return; }
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+
+            if (!user) {
+                router.push("/auth");
+                return;
+            }
 
             const { data: jobData } = await supabase
                 .from("jobs")
@@ -111,7 +128,10 @@ export default function JobDetailPage() {
                 .eq("designer_id", user.id)
                 .single();
 
-            if (!jobData) { router.push("/designer-dashboard/jobs"); return; }
+            if (!jobData) {
+                router.push("/designer-dashboard/jobs");
+                return;
+            }
 
             setJob(jobData);
 
@@ -125,37 +145,39 @@ export default function JobDetailPage() {
 
             setMeasurement(measurementData);
 
-
-            const [{ data: clientData }, { data: updatesData }, { data: invoiceData }] =
-                await Promise.all([
-                    jobData.client_id
-                        ? supabase
-                            .from("clients")
-                            .select("*")
-                            .eq("id", jobData.client_id)
-                            .single()
-                        : { data: null },
-
-                    supabase
-                        .from("job_updates")
+            const [
+                { data: clientData },
+                { data: updatesData },
+                { data: invoiceData },
+            ] = await Promise.all([
+                jobData.client_id
+                    ? supabase
+                        .from("clients")
                         .select("*")
-                        .eq("job_id", jobId)
-                        .order("created_at", { ascending: false }),
+                        .eq("id", jobData.client_id)
+                        .single()
+                    : Promise.resolve({ data: null }),
 
-                    supabase
-                        .from("invoices")
-                        .select(`
-    id,
-    status,
-    subtotal,
-    deposit_required,
-    deposit_paid,
-    balance,
-    currency
-`)
-                        .eq("job_id", jobId)
-                        .maybeSingle(),
-                ]);
+                supabase
+                    .from("job_updates")
+                    .select("*")
+                    .eq("job_id", jobId)
+                    .order("created_at", { ascending: false }),
+
+                supabase
+                    .from("invoices")
+                    .select(`
+                    id,
+                    status,
+                    subtotal,
+                    deposit_required,
+                    deposit_paid,
+                    balance,
+                    currency
+                `)
+                    .eq("job_id", jobId)
+                    .maybeSingle(),
+            ]);
 
             setClient(clientData);
             setUpdates(updatesData ?? []);
@@ -165,6 +187,11 @@ export default function JobDetailPage() {
 
         load();
     }, [jobId, router]);
+
+
+
+
+
 
     const updateStatus = async (newStatus: string) => {
         if (!job) return;
@@ -230,75 +257,174 @@ export default function JobDetailPage() {
     if (!job) return null;
 
     const currentPipelineIndex = PIPELINE.findIndex(p => p.value === job.status);
+    const progress =
+        ((currentPipelineIndex + 1) / PIPELINE.length) * 100;
     const images = job.style_images ?? [];
 
     return (
         <main className="min-h-screen bg-gray-50 pb-32">
+
             {/* HEADER */}
-            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white px-5 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href="/designer-dashboard/jobs"
-                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200"
-                        >
-                            <ArrowLeft size={16} />
-                        </Link>
-                        <div>
-                            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                                {job.job_number ?? "JOB"}
-                            </p>
-                            <h1 className="text-base font-bold text-gray-900">
-                                {job.title ?? "Untitled Job"}
-                            </h1>
-                        </div>
+            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
+
+                <div className="flex items-center gap-3 px-5 pt-4">
+                    <Link
+                        href="/designer-dashboard/jobs"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200"
+                    >
+                        <ArrowLeft size={18} />
+                    </Link>
+
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-lg font-bold text-gray-900">
+                            {client?.full_name ?? "Customer"}
+                        </p>
+
+                        <p className="truncate text-sm text-gray-500">
+                            {job.title}
+                        </p>
                     </div>
-                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${STATUS_COLORS[job.status] ?? "bg-gray-100 text-gray-600"}`}>
-                        {PIPELINE.find(p => p.value === job.status)?.label ?? job.status}
-                    </span>
                 </div>
+
+                <div className="mt-4 flex items-center justify-between border-t border-gray-100 px-5 py-3">
+
+                    <span
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold ${STATUS_COLORS[job.status] ??
+                            "bg-gray-100 text-gray-600"
+                            }`}
+                    >
+                        {PIPELINE.find(p => p.value === job.status)?.label}
+                    </span>
+
+                    {job.expected_delivery && (
+                        <span
+                            className={`text-sm font-semibold ${(() => {
+                                const today = new Date();
+                                const due = new Date(job.expected_delivery);
+
+                                today.setHours(0, 0, 0, 0);
+                                due.setHours(0, 0, 0, 0);
+
+                                const days = Math.ceil(
+                                    (due.getTime() - today.getTime()) /
+                                    (1000 * 60 * 60 * 24)
+                                );
+
+                                if (days < 0) return "text-red-600";
+                                if (days <= 2) return "text-orange-600";
+                                return "text-gray-700";
+                            })()
+                                }`}
+                        >
+                            {(() => {
+                                const today = new Date();
+                                const due = new Date(job.expected_delivery);
+
+                                today.setHours(0, 0, 0, 0);
+                                due.setHours(0, 0, 0, 0);
+
+                                const days = Math.ceil(
+                                    (due.getTime() - today.getTime()) /
+                                    (1000 * 60 * 60 * 24)
+                                );
+
+                                if (days < 0) return `${Math.abs(days)} days overdue`;
+                                if (days === 0) return "Due today";
+                                if (days === 1) return "Tomorrow";
+                                return `${days} days left`;
+                            })()}
+                        </span>
+                    )}
+
+                </div>
+
             </header>
 
             <div className="mx-auto max-w-md space-y-4 px-5 py-4">
 
-                {/* STYLE IMAGES */}
-                {images.length > 0 && (
-                    <section className="overflow-hidden rounded-2xl bg-white shadow-sm">
-                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
-                            <img
-                                src={images[activeImage]}
-                                alt="Style reference"
-                                className="h-full w-full object-cover"
-                            />
-                            {images.length > 1 && (
-                                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-                                    {images.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => setActiveImage(i)}
-                                            className={`h-1.5 rounded-full transition-all ${i === activeImage ? "w-4 bg-white" : "w-1.5 bg-white/50"}`}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        {images.length > 1 && (
-                            <div className="flex gap-2 overflow-x-auto p-3">
-                                {images.map((img, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setActiveImage(i)}
-                                        className={`h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${i === activeImage ? "border-gray-900" : "border-transparent"}`}
-                                    >
-                                        <img src={img} alt="" className="h-full w-full object-cover" />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                {/* DELIVERY */}
+                {job.expected_delivery && (
+                    <section className="rounded-2xl bg-white p-5 shadow-sm">
+                        <h2 className="mb-1 text-sm font-bold text-gray-900">Delivery Date</h2>
+                        <p className="text-sm text-gray-600">
+                            {new Date(job.expected_delivery).toLocaleDateString("en-NG", {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                            })}
+                        </p>
                     </section>
                 )}
 
-                {/* CUSTOMER NOTES */}
+                {/* STYLE IMAGES */}
+                {images.length > 0 && (
+                    <PhotoProvider
+                        maskOpacity={0.95}
+                        speed={() => 300}
+                    >
+                        <section className="overflow-hidden rounded-2xl bg-white shadow-sm">
+
+                            <PhotoView src={images[activeImage]}>
+                                <div className="relative h-[500px] w-full cursor-zoom-in bg-gray-50">
+                                    <img
+                                        src={images[activeImage]}
+                                        alt="Style reference"
+                                        className="h-full w-full object-contain bg-white transition duration-300 hover:scale-[1.01]"
+                                    />
+
+                                    <div className="absolute bottom-4 right-4 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white">
+                                        Tap to zoom
+                                    </div>
+
+                                    {images.length > 1 && (
+                                        <div className="absolute bottom-4 left-4 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white">
+                                            {activeImage + 1} / {images.length}
+                                        </div>
+                                    )}
+                                </div>
+                            </PhotoView>
+
+                            {images.length > 1 && (
+                                <div className="flex gap-2 overflow-x-auto p-3">
+                                    {images.map((img, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setActiveImage(i)}
+                                            className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border-2 transition ${i === activeImage
+                                                ? "border-emerald-600"
+                                                : "border-transparent"
+                                                }`}
+                                        >
+                                            <img
+                                                src={img}
+                                                alt=""
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                        </section>
+                    </PhotoProvider>
+                )}
+
+                {job.voice_note_url && (
+                    <section className="rounded-2xl bg-white p-5 shadow-sm">
+
+                        <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
+                            Customer Voice Note
+                        </p>
+
+                        <PremiumVoicePlayer
+                            src={job.voice_note_url}
+                        />
+
+                    </section>
+                )}
+
+
                 {job.style_notes && (
                     <section className="rounded-2xl bg-amber-50 border border-amber-100 p-4">
                         <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-amber-600">
@@ -310,109 +436,6 @@ export default function JobDetailPage() {
                     </section>
                 )}
 
-                {/* PRODUCTION PIPELINE */}
-                <section className="rounded-2xl bg-white p-5 shadow-sm">
-                    <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-bold text-gray-900">Production Status</h2>
-                        <button
-                            onClick={() => setShowPipeline(!showPipeline)}
-                            className="flex items-center gap-1 text-xs font-medium text-emerald-600"
-                        >
-                            Update <ChevronDown size={14} className={`transition ${showPipeline ? "rotate-180" : ""}`} />
-                        </button>
-                    </div>
-
-                    {/* Pipeline visual */}
-                    <div className="space-y-2">
-                        {PIPELINE.map((stage, i) => {
-                            const isDone = i < currentPipelineIndex;
-                            const isCurrent = i === currentPipelineIndex;
-
-                            return (
-                                <div key={stage.value} className="flex items-center gap-3">
-                                    <div className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${isDone
-                                        ? "bg-emerald-600 text-white"
-                                        : isCurrent
-                                            ? "border-2 border-gray-900 bg-white"
-                                            : "border border-gray-200 bg-gray-50"
-                                        }`}>
-                                        {isDone ? <Check size={10} strokeWidth={3} /> : null}
-                                        {isCurrent ? <div className="h-2 w-2 rounded-full bg-gray-900" /> : null}
-                                    </div>
-                                    <span className={`text-xs ${isCurrent ? "font-semibold text-gray-900" :
-                                        isDone ? "text-gray-400 line-through" :
-                                            "text-gray-400"
-                                        }`}>
-                                        {stage.label}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Status picker */}
-                    {showPipeline && (
-                        <div className="mt-4 space-y-1.5 border-t border-gray-100 pt-4">
-                            <p className="mb-2 text-xs font-semibold text-gray-500">
-                                Move to:
-                            </p>
-                            {PIPELINE.filter(p => p.value !== job.status).map((stage) => (
-                                <button
-                                    key={stage.value}
-                                    onClick={() => updateStatus(stage.value)}
-                                    disabled={statusUpdating}
-                                    className="flex w-full items-center justify-between rounded-xl border border-gray-100 px-3.5 py-2.5 text-sm hover:border-gray-900 hover:bg-gray-50 disabled:opacity-50"
-                                >
-                                    {stage.label}
-                                    <ChevronRight size={14} className="text-gray-400" />
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* CLIENT */}
-                {client && (
-                    <section className="rounded-2xl bg-white p-5 shadow-sm">
-                        <h2 className="mb-3 text-sm font-bold text-gray-900">Customer</h2>
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
-                                {client.full_name[0]?.toUpperCase()}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-gray-900">{client.full_name}</p>
-                                {client.phone && (
-                                    <p className="text-xs text-gray-400">{client.phone}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {client.phone && (
-
-                            <div className="mt-3 flex gap-2">
-                                <a
-                                    href={`https://wa.me/${client.phone.replace(/\D/g, "")}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-semibold text-white"
-                                >
-                                    <MessageCircle size={14} />
-                                    WhatsApp
-                                </a>
-
-                                <a
-                                    href={`tel:${client.phone}`}
-                                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 py-2.5 text-xs font-semibold text-gray-700"
-                                >
-                                    <Phone size={14} />
-                                    Call
-                                </a>
-                            </div>
-                        )}
-                    </section>
-                )}
-
-                {/* MEASUREMENTS */}
                 {/* MEASUREMENTS */}
                 <section className="rounded-2xl bg-white p-5 shadow-sm">
                     <div className="flex items-center justify-between mb-3">
@@ -525,18 +548,194 @@ export default function JobDetailPage() {
                     </Link>
                 </section>
 
-                {/* DELIVERY */}
-                {job.expected_delivery && (
+                {/* PRODUCTION PIPELINE */}
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <div className="mb-6">
+
+                        <div className="flex items-center justify-between">
+
+                            <div>
+
+                                <h2 className="text-lg font-bold text-gray-900">
+                                    Production Progress
+                                </h2>
+
+                                <p className="mt-1 text-sm text-gray-500">
+                                    {Math.round(progress)}% Complete
+                                </p>
+
+                            </div>
+
+                            <button
+                                onClick={() => setShowPipeline(!showPipeline)}
+                                className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-semibold hover:bg-gray-50 transition"
+                            >
+                                Update
+                            </button>
+
+                        </div>
+
+                        <div className="mt-5">
+
+                            <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+
+                                <div
+                                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-emerald-500 to-emerald-600 transition-all duration-700"
+                                    style={{
+                                        width: `${progress}%`,
+                                    }}
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    {/* Pipeline visual */}
+                    <div className="space-y-5">
+
+                        {PIPELINE.map((stage, i) => {
+
+                            const isDone = i < currentPipelineIndex;
+                            const isCurrent = i === currentPipelineIndex;
+
+                            return (
+
+                                <div
+                                    key={stage.value}
+                                    className="relative flex items-start gap-4"
+                                >
+
+                                    {/* Vertical line */}
+
+                                    {i !== PIPELINE.length - 1 && (
+                                        <div
+                                            className={`absolute left-[18px] top-10 h-full w-[2px] ${isDone
+                                                ? "bg-emerald-500"
+                                                : "bg-gray-200"
+                                                }`}
+                                        />
+                                    )}
+
+                                    {/* Circle */}
+
+                                    <div
+                                        className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-full transition-all duration-500
+
+                    ${isDone
+                                                ? "bg-emerald-600 text-white"
+                                                : isCurrent
+                                                    ? "border-4 border-emerald-500 bg-white shadow-lg shadow-emerald-200"
+                                                    : "border-2 border-gray-300 bg-white"
+                                            }`}
+                                    >
+
+                                        {isDone ? (
+                                            <Check size={18} strokeWidth={3} />
+                                        ) : isCurrent ? (
+                                            <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
+                                        ) : null}
+
+                                    </div>
+
+                                    {/* Text */}
+
+                                    <div className="pb-4">
+
+                                        <p
+                                            className={`font-semibold
+
+                        ${isCurrent
+                                                    ? "text-emerald-600"
+                                                    : isDone
+                                                        ? "text-gray-500"
+                                                        : "text-gray-400"
+                                                }`}
+                                        >
+                                            {stage.label}
+                                        </p>
+
+                                        {isCurrent && (
+                                            <p className="mt-1 text-sm text-gray-500">
+                                                Current stage
+                                            </p>
+                                        )}
+
+                                        {isDone && (
+                                            <p className="mt-1 text-xs text-emerald-600">
+                                                Completed
+                                            </p>
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            );
+
+                        })}
+
+                    </div>
+
+                    {/* Status picker */}
+                    {showPipeline && (
+                        <div className="mt-4 space-y-1.5 border-t border-gray-100 pt-4">
+                            <p className="mb-2 text-xs font-semibold text-gray-500">
+                                Move to:
+                            </p>
+                            {PIPELINE.filter(p => p.value !== job.status).map((stage) => (
+                                <button
+                                    key={stage.value}
+                                    onClick={() => updateStatus(stage.value)}
+                                    disabled={statusUpdating}
+                                    className="flex w-full items-center justify-between rounded-xl border border-gray-100 px-3.5 py-2.5 text-sm hover:border-gray-900 hover:bg-gray-50 disabled:opacity-50"
+                                >
+                                    {stage.label}
+                                    <ChevronRight size={14} className="text-gray-400" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* CLIENT */}
+                {client && (
                     <section className="rounded-2xl bg-white p-5 shadow-sm">
-                        <h2 className="mb-1 text-sm font-bold text-gray-900">Delivery Date</h2>
-                        <p className="text-sm text-gray-600">
-                            {new Date(job.expected_delivery).toLocaleDateString("en-NG", {
-                                weekday: "long",
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                            })}
-                        </p>
+                        <h2 className="mb-3 text-sm font-bold text-gray-900">Customer</h2>
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+                                {client.full_name[0]?.toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-gray-900">{client.full_name}</p>
+                                {client.phone && (
+                                    <p className="text-xs text-gray-400">{client.phone}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {client.phone && (
+
+                            <div className="mt-3 flex gap-2">
+                                <a
+                                    href={`https://wa.me/${client.phone.replace(/\D/g, "")}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-semibold text-white"
+                                >
+                                    <MessageCircle size={14} />
+                                    WhatsApp
+                                </a>
+
+                                <a
+                                    href={`tel:${client.phone}`}
+                                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 py-2.5 text-xs font-semibold text-gray-700"
+                                >
+                                    <Phone size={14} />
+                                    Call
+                                </a>
+                            </div>
+                        )}
                     </section>
                 )}
 
@@ -571,6 +770,11 @@ export default function JobDetailPage() {
                         </div>
                     </section>
                 )}
+
+
+
+
+
 
             </div>
 
