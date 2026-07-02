@@ -10,9 +10,7 @@ import {
 import { supabase } from "@/lib/supabaseClient";
 import CameraCapture from "@/components/measurement/CameraCapture";
 import { extractMeasurements, type MeasurementResult } from "@/lib/measurementEngine";
-import * as poseDetection from "@tensorflow-models/pose-detection";
-import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-backend-webgl";
+
 
 type Job = {
     id: string;
@@ -28,11 +26,13 @@ type Designer = {
 // Steps
 const STEPS = [
     "intro",
+    "method_choice",
     "height",
     "front_photo",
     "side_photo",
     "processing",
     "review",
+    "manual_entry",
     "success",
 ] as const;
 
@@ -69,6 +69,7 @@ function MeasureContent() {
     const params = useParams();
     const token = params.token as string;
 
+    const [method, setMethod] = useState<"ai" | "manual" | null>(null);
     const [job, setJob] = useState<Job | null>(null);
     const [designer, setDesigner] = useState<Designer | null>(null);
     const [loading, setLoading] = useState(true);
@@ -234,6 +235,54 @@ function MeasureContent() {
         setProcessing(false);
     };
 
+    const handleManualSubmit = async () => {
+        if (!job) return;
+        setSubmitting(true);
+
+        try {
+            const payload = {
+                designer_id: job.designer_id,
+                client_id: job.client_id,
+                job_id: job.id,
+                scan_method: "manual",
+                confidence_score: 1.0,
+                requires_review: false,
+                height: parseFloat(editableResult.height) || null,
+                bust: parseFloat(editableResult.bust) || null,
+                waist: parseFloat(editableResult.waist) || null,
+                hips: parseFloat(editableResult.hips) || null,
+                shoulder_width: parseFloat(editableResult.shoulder_width) || null,
+                sleeve_length: parseFloat(editableResult.sleeve_length) || null,
+                inseam: parseFloat(editableResult.inseam) || null,
+                neck: parseFloat(editableResult.neck) || null,
+                chest: parseFloat(editableResult.chest) || null,
+                thigh: parseFloat(editableResult.thigh) || null,
+            };
+
+            const { error: insertError } = await supabase
+                .from("measurements")
+                .insert(payload);
+
+            if (insertError) throw insertError;
+
+            await supabase
+                .from("jobs")
+                .update({ status: "measurement_done" })
+                .eq("id", job.id);
+
+            await supabase.from("job_updates").insert({
+                job_id: job.id,
+                status: "measurement_done",
+                note: "Measurements submitted manually by customer",
+                notify_client: false,
+            });
+
+            setStep("success");
+        } catch (err: any) {
+            setError("Failed to submit: " + err.message);
+            setSubmitting(false);
+        }
+    };
     const handleSubmit = async () => {
         if (!job || !result) return;
         setSubmitting(true);
@@ -258,6 +307,7 @@ function MeasureContent() {
                 chest: parseFloat(editableResult.chest) || result.chest,
                 thigh: parseFloat(editableResult.thigh) || result.thigh,
             };
+
 
             const { error: insertError } = await supabase
                 .from("measurements")
@@ -419,10 +469,106 @@ function MeasureContent() {
                         </div>
 
                         <button
-                            onClick={() => setStep("height")}
+                            onClick={() => setStep("method_choice")}
                             className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gray-900 text-sm font-semibold text-white"
                         >
                             Get Started <ArrowRight size={16} />
+                        </button>
+                    </>
+                )}
+
+                {/* ── METHOD CHOICE SCREEN ─────────────────────────────── */}
+                {step === "method_choice" && (
+                    <>
+                        <div className="flex gap-1.5">
+                            <div className="h-1 flex-1 rounded-full bg-emerald-600" />
+                            <div className="h-1 flex-1 rounded-full bg-gray-200" />
+                            <div className="h-1 flex-1 rounded-full bg-gray-200" />
+                        </div>
+
+                        <div className="rounded-2xl bg-white p-5 shadow-sm">
+                            <h2 className="mb-1 text-lg font-bold text-gray-900">
+                                How would you like to submit measurements?
+                            </h2>
+                            <p className="mb-5 text-sm text-gray-400">
+                                Choose the option that works best for you.
+                            </p>
+
+                            <button
+                                onClick={() => { setMethod("ai"); setStep("height"); }}
+                                className="mb-3 flex w-full items-center gap-4 rounded-xl border-2 border-gray-200 p-4 text-left hover:border-emerald-500"
+                            >
+                                <span className="text-2xl">📷</span>
+                                <div>
+                                    <p className="text-sm font-bold text-gray-900">AI Body Scan</p>
+                                    <p className="text-xs text-gray-400">Two photos, 60 seconds, automatic</p>
+                                </div>
+                            </button>
+
+                            <button
+                                onClick={() => { setMethod("manual"); setStep("manual_entry"); }}
+                                className="flex w-full items-center gap-4 rounded-xl border-2 border-gray-200 p-4 text-left hover:border-emerald-500"
+                            >
+                                <span className="text-2xl">✏️</span>
+                                <div>
+                                    <p className="text-sm font-bold text-gray-900">Enter Manually</p>
+                                    <p className="text-xs text-gray-400">Use a tape measure, type in your numbers</p>
+                                </div>
+                            </button>
+                        </div>
+                    </>
+                )}
+
+                {/* ── MANUAL ENTRY SCREEN ─────────────────────────────── */}
+                {step === "manual_entry" && (
+                    <>
+                        <div className="flex gap-1.5">
+                            <div className="h-1 flex-1 rounded-full bg-emerald-600" />
+                            <div className="h-1 flex-1 rounded-full bg-emerald-600" />
+                            <div className="h-1 flex-1 rounded-full bg-gray-200" />
+                        </div>
+
+                        <div className="rounded-2xl bg-white p-5 shadow-sm">
+                            <h2 className="mb-1 text-lg font-bold text-gray-900">
+                                Enter Your Measurements
+                            </h2>
+                            <p className="mb-5 text-sm text-gray-400">
+                                Use a tape measure. All values in centimetres (cm).
+                            </p>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                {Object.entries(MEASUREMENT_LABELS).map(([key, label]) => (
+                                    <div key={key}>
+                                        <label className="mb-1 block text-[10px] font-medium text-gray-400">
+                                            {label}
+                                        </label>
+                                        <div className="flex items-center overflow-hidden rounded-xl border border-gray-200 focus-within:border-emerald-500">
+                                            <input
+                                                type="number"
+                                                value={editableResult[key] ?? ""}
+                                                onChange={(e) =>
+                                                    setEditableResult(prev => ({ ...prev, [key]: e.target.value }))
+                                                }
+                                                placeholder="0"
+                                                className="h-10 w-full px-2.5 text-sm font-semibold outline-none"
+                                            />
+                                            <span className="flex-shrink-0 pr-2 text-[10px] text-gray-400">cm</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleManualSubmit}
+                            disabled={submitting}
+                            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 text-sm font-semibold text-white disabled:opacity-60"
+                        >
+                            {submitting ? (
+                                <><Loader2 size={16} className="animate-spin" /> Submitting...</>
+                            ) : (
+                                <><Check size={16} /> Submit Measurements</>
+                            )}
                         </button>
                     </>
                 )}
