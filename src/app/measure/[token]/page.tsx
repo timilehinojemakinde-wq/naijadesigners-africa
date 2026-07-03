@@ -127,6 +127,7 @@ function MeasureContent() {
 
         setProcessingStep("Loading TensorFlow...");
         await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.10.0/dist/tf-core.min.js");
+        await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.10.0/dist/tf-converter.min.js");
         await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.10.0/dist/tf-backend-webgl.min.js");
 
         setProcessingStep("Loading pose detection...");
@@ -139,6 +140,9 @@ function MeasureContent() {
 
         if (!tf) throw new Error("TensorFlow failed to load. Check your internet connection.");
         if (!poseDetection) throw new Error("Pose detection failed to load. Check your internet connection.");
+        if (typeof tf.loadGraphModel !== "function") {
+            throw new Error("TensorFlow converter not loaded properly. Please refresh and try again.");
+        }
 
         await tf.ready();
         await tf.setBackend("webgl");
