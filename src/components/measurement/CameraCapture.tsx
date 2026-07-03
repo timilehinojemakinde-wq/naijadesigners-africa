@@ -26,10 +26,23 @@ export default function CameraCapture({
 
     const startCamera = async () => {
         setError("");
+
+        // Check if mediaDevices API exists at all
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setError("Camera not supported on this browser. Please try Chrome or Safari, or use 'Upload Photo' instead.");
+            return;
+        }
+
+        // Check if we're on HTTPS
+        if (window.location.protocol !== "https:" && window.location.hostname !== "localhost") {
+            setError("Camera requires a secure connection (HTTPS). Please use 'Upload Photo' instead.");
+            return;
+        }
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    facingMode: "environment",
+                    facingMode: { ideal: "environment" },
                     width: { ideal: 1280 },
                     height: { ideal: 720 },
                 },
@@ -44,10 +57,30 @@ export default function CameraCapture({
 
             setMode("camera");
         } catch (err: any) {
-            if (err.name === "NotAllowedError") {
-                setError("Camera access denied. Please allow camera access and try again.");
+            console.error("Camera error:", err.name, err.message);
+
+            if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+                setError("Camera access denied. Please allow camera permission in your browser settings, or use 'Upload Photo' instead.");
+            } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+                setError("No camera found on this device. Please use 'Upload Photo' instead.");
+            } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+                setError("Camera is already in use by another app. Please close other apps and try again, or use 'Upload Photo'.");
+            } else if (err.name === "OverconstrainedError") {
+                // Retry with simpler constraints
+                try {
+                    const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    streamRef.current = fallbackStream;
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = fallbackStream;
+                        await videoRef.current.play();
+                    }
+                    setMode("camera");
+                    return;
+                } catch (fallbackErr) {
+                    setError("Could not access camera. Please use 'Upload Photo' instead.");
+                }
             } else {
-                setError("Could not access camera: " + err.message);
+                setError(`Camera error: ${err.message || "Unknown error"}. Please use 'Upload Photo' instead.`);
             }
         }
     };
