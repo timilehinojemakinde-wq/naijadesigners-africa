@@ -283,6 +283,7 @@ function MeasureContent() {
             setSubmitting(false);
         }
     };
+
     const handleSubmit = async () => {
         if (!job || !result) return;
         setSubmitting(true);

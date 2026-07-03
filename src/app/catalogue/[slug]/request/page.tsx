@@ -144,41 +144,23 @@ function RequestForm() {
         setSubmitting(true);
 
         try {
-
-            let voiceNoteUrl: string | null = null;
+            const formData = new FormData();
+            formData.append("designerId", designer.id);
+            formData.append("styleId", style?.id ?? "");
+            formData.append("styleTitle", style?.title ?? "");
+            formData.append("styleImages", JSON.stringify(style?.images ?? []));
+            formData.append("fullName", fullName);
+            formData.append("phone", phone);
+            formData.append("email", email);
+            formData.append("notes", notes);
 
             if (audioBlob) {
-
-                const fileName = `${crypto.randomUUID()}.webm`;
-
-                const { error: uploadError } = await supabase.storage
-                    .from("job-voice-notes")
-                    .upload(fileName, audioBlob, {
-                        contentType: "audio/webm",
-                    });
-
-                if (uploadError) throw uploadError;
-
-                const { data } = supabase.storage
-                    .from("job-voice-notes")
-                    .getPublicUrl(fileName);
-
-                voiceNoteUrl = data.publicUrl;
+                formData.append("voiceNote", audioBlob, "voice-note.webm");
             }
+
             const response = await fetch("/api/request-style", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    designerId: designer.id,
-                    styleId: style?.id ?? null,
-                    styleTitle: style?.title ?? null,
-                    styleImages: style?.images ?? [],
-                    fullName,
-                    phone,
-                    email,
-                    notes,
-                    voiceNoteUrl,
-                }),
+                body: formData,
             });
 
             const result = await response.json();

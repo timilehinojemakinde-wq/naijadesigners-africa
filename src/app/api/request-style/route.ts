@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Server-side only — service role bypasses RLS safely
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -15,21 +14,18 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
+        const formData = await request.formData();
 
-        const {
-            designerId,
-            styleId,
-            styleTitle,
-            styleImages,
-            fullName,
-            phone,
-            email,
-            notes,
-            voiceNoteUrl,
-        } = body;
+        const designerId = formData.get("designerId") as string;
+        const styleId = formData.get("styleId") as string | null;
+        const styleTitle = formData.get("styleTitle") as string | null;
+        const styleImages = JSON.parse((formData.get("styleImages") as string) ?? "[]");
+        const fullName = formData.get("fullName") as string;
+        const phone = formData.get("phone") as string;
+        const email = formData.get("email") as string | null;
+        const notes = formData.get("notes") as string | null;
+        const audioFile = formData.get("voiceNote") as File | null;
 
-        // Validate required fields
         if (!designerId || !fullName?.trim() || !phone?.trim()) {
             return NextResponse.json(
                 { success: false, error: "Missing required fields" },
@@ -37,7 +33,7 @@ export async function POST(request: Request) {
             );
         }
 
-        // Find or create client by phone number
+        // Find or create client
         const { data: existingClient } = await supabase
             .from("clients")
             .select("id")
@@ -63,7 +59,27 @@ export async function POST(request: Request) {
             clientId = newClient.id;
         }
 
-        // Build job title and notes
+        // Upload voice note server-side (bypasses RLS via service role)
+        let voiceNoteUrl: string | null = null;
+
+        if (audioFile) {
+            const arrayBuffer = await audioFile.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            const fileName = `${crypto.randomUUID()}.webm`;
+
+            const { error: uploadError } = await supabase.storage
+                .from("job-voice-notes")
+                .upload(fileName, buffer, { contentType: "audio/webm" });
+
+            if (uploadError) throw new Error(uploadError.message);
+
+            const { data: urlData } = supabase.storage
+                .from("job-voice-notes")
+                .getPublicUrl(fileName);
+
+            voiceNoteUrl = urlData.publicUrl;
+        }
+
         const jobTitle = styleTitle
             ? `${styleTitle} — ${fullName.trim()}`
             : `Style Request — ${fullName.trim()}`;
@@ -73,10 +89,8 @@ export async function POST(request: Request) {
             notes?.trim() ? `Customer notes: ${notes.trim()}` : null,
         ].filter(Boolean).join("\n\n");
 
-        // Generate job number
         const jobNumber = `FH-${Date.now().toString().slice(-6)}`;
 
-        // Create the job
         const { data: job, error: jobError } = await supabase
             .from("jobs")
             .insert({
@@ -86,7 +100,7 @@ export async function POST(request: Request) {
                 title: jobTitle,
                 style_images: styleImages ?? [],
                 style_notes: fullNotes || null,
-                voice_note_url: voiceNoteUrl ?? null,
+                voice_note_url: voiceNoteUrl,
                 status: "inquiry",
             })
             .select("id")
@@ -94,7 +108,6 @@ export async function POST(request: Request) {
 
         if (jobError) throw new Error(jobError.message);
 
-        // Add timeline entry
         await supabase.from("job_updates").insert({
             job_id: job.id,
             status: "inquiry",
