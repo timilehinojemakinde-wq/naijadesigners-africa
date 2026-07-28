@@ -56,8 +56,8 @@ const FILTERS = [
     { label: "Delivered", value: "delivered" },
 ];
 
-const titleCase = (str: string) =>
-    str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+const titleCase = (str: string | null | undefined) =>
+    (str ?? "").split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 
 function JobsContent() {
     const router = useRouter();
