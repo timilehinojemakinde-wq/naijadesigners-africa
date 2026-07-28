@@ -7,7 +7,7 @@ import {
     Plus, Ruler, Images, Store,
     ChevronRight, Bell, User,
     AlertCircle, Clock, CheckCircle,
-    Briefcase
+    Briefcase, Wallet
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import BottomNav from "@/components/dashboard/BottomNav";
@@ -263,24 +263,40 @@ export default function DashboardHome() {
 
             <div className="px-5 py-4 space-y-6">
                 {/* REVENUE CARD */}
-                <div className="flex gap-3">
-                    <div className="flex-1 rounded-2xl bg-white p-4 shadow-sm">
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                            Total Earned
-                        </p>
-                        <p className="mt-1.5 text-lg font-bold text-emerald-600">
-                            {financials.currency} {financials.earned.toLocaleString()}
-                        </p>
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <div className="flex items-center">
+
+                        {/* Total Earned */}
+                        <div className="flex flex-1 items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-50">
+                                <Wallet size={18} className="text-emerald-600" />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-xs text-gray-400">Total Earned</p>
+                                <p className="truncate text-lg font-bold text-gray-900">
+                                    {financials.currency} {financials.earned.toLocaleString()}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="mx-4 h-12 w-px flex-shrink-0 bg-gray-100" />
+
+                        {/* Outstanding */}
+                        <div className="flex flex-1 items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-50">
+                                <Clock size={18} className="text-orange-500" />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-xs text-gray-400">Outstanding</p>
+                                <p className="truncate text-lg font-bold text-gray-900">
+                                    {financials.currency} {financials.outstanding.toLocaleString()}
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
-                    <div className="flex-1 rounded-2xl bg-white p-4 shadow-sm">
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                            Outstanding
-                        </p>
-                        <p className="mt-1.5 text-lg font-bold text-amber-600">
-                            {financials.currency} {financials.outstanding.toLocaleString()}
-                        </p>
-                    </div>
-                </div>
+                </section>
 
                 {/* NEEDS ATTENTION */}
                 {needsAttention.length > 0 && (
