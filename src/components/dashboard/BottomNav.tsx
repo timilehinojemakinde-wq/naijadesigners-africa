@@ -7,7 +7,7 @@ import { LayoutGrid, Briefcase, Images, Users, Store } from "lucide-react";
 const items = [
     { label: "Home", href: "/designer-dashboard", icon: LayoutGrid },
     { label: "Jobs", href: "/designer-dashboard/jobs", icon: Briefcase },
-    { label: "Library", href: "/designer-dashboard/style-library", icon: Images },
+    { label: "Catalogue", href: "/designer-dashboard/style-library", icon: Images },
     { label: "Clients", href: "/designer-dashboard/clients", icon: Users },
     { label: "Store", href: "/designer-dashboard/store", icon: Store },
 ];

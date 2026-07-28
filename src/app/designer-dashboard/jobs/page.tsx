@@ -15,6 +15,8 @@ type Job = {
     expected_delivery: string | null;
     created_at: string;
     client_id: string | null;
+    client_name: string | null;
+    client_title: string | null;
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -33,16 +35,16 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
     inquiry: "bg-gray-100 text-gray-600",
-    measurement_pending: "bg-blue-100 text-blue-700",
-    measurement_done: "bg-blue-100 text-blue-700",
+    measurement_pending: "bg-sky-100 text-sky-700",
+    measurement_done: "bg-teal-100 text-teal-700",
     awaiting_deposit: "bg-amber-100 text-amber-700",
-    deposit_paid: "bg-emerald-100 text-emerald-700",
-    cutting: "bg-purple-100 text-purple-700",
-    sewing: "bg-purple-100 text-purple-700",
+    deposit_paid: "bg-green-100 text-green-700",
+    cutting: "bg-indigo-100 text-indigo-700",
+    sewing: "bg-violet-100 text-violet-700",
     finishing: "bg-purple-100 text-purple-700",
     quality_check: "bg-orange-100 text-orange-700",
     ready: "bg-emerald-100 text-emerald-700",
-    delivered: "bg-gray-100 text-gray-500",
+    delivered: "bg-slate-100 text-slate-500",
 };
 
 const FILTERS = [
@@ -54,6 +56,9 @@ const FILTERS = [
     { label: "Delivered", value: "delivered" },
 ];
 
+const titleCase = (str: string) =>
+    str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+
 function JobsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -64,7 +69,7 @@ function JobsContent() {
     const [activeFilter, setActiveFilter] = useState(statusParam);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
-
+    const [financials, setFinancials] = useState({ earned: 0, outstanding: 0, currency: "NGN" });
     useEffect(() => {
         const load = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -72,11 +77,28 @@ function JobsContent() {
 
             const { data } = await supabase
                 .from("jobs")
-                .select("id, title, status, expected_delivery, created_at, client_id")
+                .select("id, title, status, expected_delivery, created_at, client_id, clients(full_name, title)")
                 .eq("designer_id", user.id)
                 .order("created_at", { ascending: false });
 
-            setJobs(data ?? []);
+            const mapped = (data ?? []).map((j: any) => ({
+                ...j,
+                client_name: j.clients?.full_name ?? null,
+                client_title: j.clients?.title ?? null,
+            }));
+            setJobs(mapped);
+            const jobIds = mapped.map((j: any) => j.id);
+            if (jobIds.length > 0) {
+                const { data: invData } = await supabase
+                    .from("invoices")
+                    .select("deposit_paid, balance, currency")
+                    .in("job_id", jobIds);
+
+                const earned = invData?.reduce((sum, inv) => sum + (inv.deposit_paid || 0), 0) ?? 0;
+                const outstanding = invData?.reduce((sum, inv) => sum + (inv.balance || 0), 0) ?? 0;
+                const currency = invData?.[0]?.currency ?? "NGN";
+                setFinancials({ earned, outstanding, currency });
+            }
             setLoading(false);
         };
 
@@ -130,7 +152,27 @@ function JobsContent() {
                     />
                 </div>
             </header>
-
+            {/* FINANCIALS */}
+            <div className="px-5 pt-3">
+                <div className="flex gap-3">
+                    <div className="flex-1 rounded-2xl bg-white p-4 shadow-sm">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                            Total Earned
+                        </p>
+                        <p className="mt-1.5 text-lg font-bold text-emerald-600">
+                            {financials.currency} {financials.earned.toLocaleString()}
+                        </p>
+                    </div>
+                    <div className="flex-1 rounded-2xl bg-white p-4 shadow-sm">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                            Outstanding
+                        </p>
+                        <p className="mt-1.5 text-lg font-bold text-amber-600">
+                            {financials.currency} {financials.outstanding.toLocaleString()}
+                        </p>
+                    </div>
+                </div>
+            </div>
             {/* FILTERS */}
             <div className="flex gap-2 overflow-x-auto px-5 py-3 pb-1">
                 {FILTERS.map((filter) => (
@@ -179,7 +221,10 @@ function JobsContent() {
                         >
                             <div className="flex-1 min-w-0">
                                 <p className="truncate text-sm font-semibold text-gray-900">
-                                    {job.title ?? "Untitled Job"}
+                                    {[job.client_title, job.client_name].filter(Boolean).map(titleCase).join(" ") ?? "Unknown Client"}
+                                </p>
+                                <p className="mt-0.5 truncate text-xs text-gray-500">
+                                    {job.title ? titleCase(job.title) : "Untitled Job"}
                                 </p>
                                 <div className="mt-1.5 flex items-center gap-2 flex-wrap">
                                     <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[job.status] ?? "bg-gray-100 text-gray-600"
@@ -187,11 +232,19 @@ function JobsContent() {
                                         {STATUS_LABELS[job.status] ?? job.status}
                                     </span>
                                     {job.expected_delivery && (
-                                        <span className="text-[10px] text-gray-400">
-                                            Due {new Date(job.expected_delivery).toLocaleDateString("en-NG", {
-                                                day: "numeric",
-                                                month: "short",
-                                            })}
+                                        <span className={`text-[10px] font-semibold ${(() => {
+                                            const days = Math.ceil((new Date(job.expected_delivery).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 86400000);
+                                            if (days < 0) return "text-red-500";
+                                            if (days <= 2) return "text-orange-500";
+                                            return "text-gray-400";
+                                        })()}`}>
+                                            {(() => {
+                                                const days = Math.ceil((new Date(job.expected_delivery).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 86400000);
+                                                if (days < 0) return `${Math.abs(days)}d overdue`;
+                                                if (days === 0) return "Due today";
+                                                if (days === 1) return "Tomorrow";
+                                                return `${days} days left`;
+                                            })()}
                                         </span>
                                     )}
                                 </div>
@@ -199,11 +252,12 @@ function JobsContent() {
                             <ChevronRight size={16} className="flex-shrink-0 text-gray-300" />
                         </Link>
                     ))
-                )}
-            </div>
+                )
+                }
+            </div >
 
             <BottomNav />
-        </main>
+        </main >
     );
 }
 

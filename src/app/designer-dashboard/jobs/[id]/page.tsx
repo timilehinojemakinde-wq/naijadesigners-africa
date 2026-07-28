@@ -37,6 +37,7 @@ type Job = {
 
 type Client = {
     id: string;
+    title: string | null;
     full_name: string;
     phone: string | null;
     email: string | null;
@@ -85,11 +86,14 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
     deposit_paid: { label: "Deposit Paid", color: "bg-amber-100 text-amber-700" },
     fully_paid: { label: "Fully Paid", color: "bg-emerald-100 text-emerald-700" },
 };
+const titleCase = (str: string) =>
+    str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 export default function JobDetailPage() {
     const router = useRouter();
     const params = useParams();
     const jobId = params.id as string;
 
+    const FITSCAN_URL = process.env.NEXT_PUBLIC_FITSCAN_URL ?? 'http://localhost:3000';
     const [measurement, setMeasurement] = useState<any>(null);
     const [job, setJob] = useState<Job | null>(null);
     const [client, setClient] = useState<Client | null>(null);
@@ -241,7 +245,7 @@ export default function JobDetailPage() {
 
     const shareMeasurementLink = () => {
         if (!client?.phone || !job?.measurement_token) return;
-        const url = `${window.location.origin}/measure/${job.measurement_token}`;
+        const url = `${FITSCAN_URL}/${job.measurement_token}`;
         const message = `Hi ${client.full_name}, please click this link to take your measurements for your ${job.title} order. It only takes 60 seconds: ${url}`;
         const phone = client.phone.replace(/\D/g, "");
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
@@ -277,7 +281,7 @@ export default function JobDetailPage() {
 
                     <div className="min-w-0 flex-1">
                         <p className="truncate text-lg font-bold text-gray-900">
-                            {client?.full_name ?? "Customer"}
+                            {[client?.title, client?.full_name].filter(Boolean).map(titleCase).join(" ") ?? "Customer"}
                         </p>
 
                         <p className="truncate text-sm text-gray-500">
@@ -707,7 +711,7 @@ export default function JobDetailPage() {
                                 {client.full_name[0]?.toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-gray-900">{client.full_name}</p>
+                                <p className="font-semibold text-gray-900">{[client.title, client.full_name].filter(Boolean).map(titleCase).join(" ")}</p>
                                 {client.phone && (
                                     <p className="text-xs text-gray-400">{client.phone}</p>
                                 )}

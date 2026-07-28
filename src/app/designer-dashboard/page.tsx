@@ -95,12 +95,18 @@ export default function DashboardHome() {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [clientMap, setClientMap] = useState<ClientMap>({});
     const [loading, setLoading] = useState(true);
+    const [firstName, setFirstName] = useState("Designer");
+    const [financials, setFinancials] = useState({ earned: 0, outstanding: 0, currency: "NGN" });
 
     const greeting = () => {
         const hour = new Date().getHours();
-        if (hour < 12) return "Good morning";
-        if (hour < 17) return "Good afternoon";
-        return "Good evening";
+        if (hour >= 0 && hour < 5) return `Burning the midnight oil, ${firstName} 🕯️`;
+        if (hour >= 5 && hour < 7) return `Rise and shine, ${firstName} 🌅`;
+        if (hour >= 7 && hour < 12) return `Morning, ${firstName} ☀️`;
+        if (hour >= 12 && hour < 14) return `Afternoon, ${firstName} 👋`;
+        if (hour >= 14 && hour < 17) return `Still creating, ${firstName}? ✂️`;
+        if (hour >= 17 && hour < 20) return `Evening, ${firstName} 🌆`;
+        return `Late night work, ${firstName}? 🌙`;
     };
 
     const today = new Date().toLocaleDateString("en-NG", {
@@ -113,6 +119,9 @@ export default function DashboardHome() {
         const load = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) { router.push("/auth"); return; }
+            const googleName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? null;
+            const first = googleName?.split(" ")[0] ?? designerData?.brand_name?.split(" ")[0] ?? "Designer";
+            setFirstName(first);
 
             const [{ data: designerData }, { data: jobsData }] = await Promise.all([
                 supabase
@@ -156,7 +165,17 @@ export default function DashboardHome() {
                 });
                 setClientMap(map);
             }
-
+            const jobIds = (jobsData ?? []).map((j: any) => j.id);
+            if (jobIds.length > 0) {
+                const { data: invData } = await supabase
+                    .from("invoices")
+                    .select("deposit_paid, balance, currency")
+                    .in("job_id", jobIds);
+                const earned = invData?.reduce((s, i) => s + (i.deposit_paid || 0), 0) ?? 0;
+                const outstanding = invData?.reduce((s, i) => s + (i.balance || 0), 0) ?? 0;
+                const currency = invData?.[0]?.currency ?? "NGN";
+                setFinancials({ earned, outstanding, currency });
+            }
             setLoading(false);
         };
 
@@ -214,12 +233,9 @@ export default function DashboardHome() {
                     <div className="flex-1 min-w-0">
                         <p className="text-xs text-gray-400">{today}</p>
                         <h1 className="mt-0.5 text-xl font-bold text-gray-900 truncate">
-                            {greeting()},{" "}
-                            {designer?.brand_name?.split(" ")[0] ?? "Designer"} 👋
+                            {greeting()}
                         </h1>
-                        <p className="mt-0.5 text-xs text-gray-400">
-                            {jobs.length} active job{jobs.length !== 1 ? "s" : ""}
-                        </p>
+
                     </div>
 
                     <div className="flex items-center gap-2 ml-3">
@@ -245,6 +261,25 @@ export default function DashboardHome() {
             </header>
 
             <div className="px-5 py-4 space-y-6">
+                {/* REVENUE CARD */}
+                <div className="flex gap-3">
+                    <div className="flex-1 rounded-2xl bg-white p-4 shadow-sm">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                            Total Earned
+                        </p>
+                        <p className="mt-1.5 text-lg font-bold text-emerald-600">
+                            {financials.currency} {financials.earned.toLocaleString()}
+                        </p>
+                    </div>
+                    <div className="flex-1 rounded-2xl bg-white p-4 shadow-sm">
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                            Outstanding
+                        </p>
+                        <p className="mt-1.5 text-lg font-bold text-amber-600">
+                            {financials.currency} {financials.outstanding.toLocaleString()}
+                        </p>
+                    </div>
+                </div>
 
                 {/* NEEDS ATTENTION */}
                 {needsAttention.length > 0 && (
@@ -370,7 +405,7 @@ export default function DashboardHome() {
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-gray-900">
-                                    Style Library
+                                    e-Catalogue
                                 </p>
                                 <p className="text-xs text-gray-400">
                                     Share catalogue
@@ -414,56 +449,6 @@ export default function DashboardHome() {
                     </div>
                 </section>
 
-                {/* PRODUCTION PIPELINE */}
-                {pipelineCounts.length > 0 && (
-                    <section>
-                        <div className="mb-3 flex items-center justify-between">
-                            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                                Production Pipeline
-                            </p>
-                            <Link
-                                href="/designer-dashboard/jobs"
-                                className="text-xs font-medium text-emerald-600"
-                            >
-                                View all
-                            </Link>
-                        </div>
-
-                        <div className="rounded-2xl bg-white p-4 shadow-sm">
-                            <div className="space-y-3">
-                                {pipelineCounts.map((stage) => (
-                                    <Link
-                                        key={stage.value}
-                                        href={`/designer-dashboard/jobs?status=${stage.value}`}
-                                        className="flex items-center gap-3"
-                                    >
-                                        <div className="w-24 flex-shrink-0">
-                                            <p className="truncate text-xs text-gray-500">
-                                                {stage.label}
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-1 items-center gap-2">
-                                            <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                                                <div
-                                                    className="h-full rounded-full bg-emerald-500 transition-all"
-                                                    style={{
-                                                        width: `${Math.min(
-                                                            100,
-                                                            (stage.count / Math.max(...pipelineCounts.map(s => s.count))) * 100
-                                                        )}%`,
-                                                    }}
-                                                />
-                                            </div>
-                                            <span className="w-4 flex-shrink-0 text-right text-xs font-semibold text-gray-900">
-                                                {stage.count}
-                                            </span>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-                )}
 
                 {/* ACTIVE JOBS */}
                 <section>
