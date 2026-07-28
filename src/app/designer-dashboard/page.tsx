@@ -119,9 +119,6 @@ export default function DashboardHome() {
         const load = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) { router.push("/auth"); return; }
-            const googleName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? null;
-            const first = googleName?.split(" ")[0] ?? designerData?.brand_name?.split(" ")[0] ?? "Designer";
-            setFirstName(first);
 
             const [{ data: designerData }, { data: jobsData }] = await Promise.all([
                 supabase
@@ -136,6 +133,10 @@ export default function DashboardHome() {
                     .not("status", "eq", "delivered")
                     .order("created_at", { ascending: false }),
             ]);
+
+            const googleName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? null;
+            const first = googleName?.split(" ")[0] ?? designerData?.brand_name?.split(" ")[0] ?? "Designer";
+            setFirstName(first);
 
             setDesigner(designerData);
 
