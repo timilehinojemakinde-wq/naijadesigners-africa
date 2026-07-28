@@ -283,17 +283,21 @@ export default function DashboardHome() {
                         <div className="mx-4 h-12 w-px flex-shrink-0 bg-gray-100" />
 
                         {/* Outstanding */}
-                        <div className="flex flex-1 items-center gap-3 min-w-0">
+                        <Link
+                            href="/designer-dashboard/payments"
+                            className="flex flex-1 items-center gap-3 min-w-0"
+                        >
                             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-50">
                                 <Clock size={18} className="text-orange-500" />
                             </div>
-                            <div className="min-w-0">
+                            <div className="min-w-0 flex-1">
                                 <p className="text-xs text-gray-400">Outstanding</p>
                                 <p className="truncate text-lg font-bold text-gray-900">
                                     {financials.currency} {financials.outstanding.toLocaleString()}
                                 </p>
                             </div>
-                        </div>
+                            <ChevronRight size={16} className="flex-shrink-0 text-gray-300" />
+                        </Link>
 
                     </div>
                 </section>
