@@ -86,8 +86,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
     deposit_paid: { label: "Deposit Paid", color: "bg-amber-100 text-amber-700" },
     fully_paid: { label: "Fully Paid", color: "bg-emerald-100 text-emerald-700" },
 };
-const titleCase = (str: string) =>
-    str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+const titleCase = (str: string | null | undefined) =>
+    (str ?? "").split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 export default function JobDetailPage() {
     const router = useRouter();
     const params = useParams();
