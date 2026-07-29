@@ -3,21 +3,28 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Clock, MessageCircle } from "lucide-react";
+import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { formatCurrency } from "@/lib/formatCurrency";
 
-type PendingPayment = {
+type PaymentRow = {
     jobId: string;
     jobTitle: string | null;
     clientName: string;
     clientPhone: string | null;
-    balance: number;
+    amount: number;
     currency: string;
+    createdAt: string;
 };
 
 export default function PaymentsPage() {
     const router = useRouter();
-    const [payments, setPayments] = useState<PendingPayment[]>([]);
+    const [outstanding, setOutstanding] = useState<PaymentRow[]>([]);
+    const [earned, setEarned] = useState<PaymentRow[]>([]);
+    const [totalEarned, setTotalEarned] = useState(0);
+    const [totalOutstanding, setTotalOutstanding] = useState(0);
+    const [currency, setCurrency] = useState("NGN");
+    const [tab, setTab] = useState<"outstanding" | "earned">("outstanding");
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,9 +45,8 @@ export default function PaymentsPage() {
 
             const { data: invoicesData } = await supabase
                 .from("invoices")
-                .select("job_id, balance, currency")
-                .in("job_id", jobIds)
-                .gt("balance", 0);
+                .select("job_id, deposit_paid, balance, currency, created_at")
+                .in("job_id", jobIds);
 
             const clientIds = [...new Set(
                 (jobsData ?? [])
@@ -68,7 +74,10 @@ export default function PaymentsPage() {
                 jobMap[j.id] = { title: j.title, client_id: j.client_id };
             });
 
-            const list: PendingPayment[] = (invoicesData ?? [])
+            const invoices = invoicesData ?? [];
+
+            const outstandingList: PaymentRow[] = invoices
+                .filter(inv => inv.balance > 0)
                 .map(inv => {
                     const job = jobMap[inv.job_id];
                     const client = job?.client_id ? clientMap[job.client_id] : null;
@@ -77,27 +86,54 @@ export default function PaymentsPage() {
                         jobTitle: job?.title ?? "Untitled Job",
                         clientName: client?.name ?? "Unknown Client",
                         clientPhone: client?.phone ?? null,
-                        balance: inv.balance,
+                        amount: inv.balance,
                         currency: inv.currency,
+                        createdAt: inv.created_at,
                     };
                 })
-                .sort((a, b) => b.balance - a.balance);
+                .sort((a, b) => b.amount - a.amount);
 
-            setPayments(list);
+            const earnedList: PaymentRow[] = invoices
+                .filter(inv => inv.deposit_paid > 0)
+                .map(inv => {
+                    const job = jobMap[inv.job_id];
+                    const client = job?.client_id ? clientMap[job.client_id] : null;
+                    return {
+                        jobId: inv.job_id,
+                        jobTitle: job?.title ?? "Untitled Job",
+                        clientName: client?.name ?? "Unknown Client",
+                        clientPhone: client?.phone ?? null,
+                        amount: inv.deposit_paid,
+                        currency: inv.currency,
+                        createdAt: inv.created_at,
+                    };
+                })
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+            setOutstanding(outstandingList);
+            setEarned(earnedList);
+            setTotalOutstanding(invoices.reduce((s, i) => s + (i.balance || 0), 0));
+            setTotalEarned(invoices.reduce((s, i) => s + (i.deposit_paid || 0), 0));
+            setCurrency(invoices[0]?.currency ?? "NGN");
             setLoading(false);
         };
 
         load();
     }, [router]);
 
-    const totalOutstanding = payments.reduce((s, p) => s + p.balance, 0);
-    const currency = payments[0]?.currency ?? "NGN";
-
-    const remindClient = (p: PendingPayment) => {
+    const remindClient = (p: PaymentRow, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!p.clientPhone) return;
-        const message = `Hi ${p.clientName}, this is a friendly reminder that you have an outstanding balance of ${p.currency} ${p.balance.toLocaleString()} for your ${p.jobTitle} order. Kindly complete payment at your convenience. Thank you!`;
+        const message = `Hi ${p.clientName}, this is a friendly reminder that you have an outstanding balance of ${formatCurrency(p.amount, p.currency)} for your ${p.jobTitle} order. Kindly complete payment at your convenience. Thank you!`;
         const phone = p.clientPhone.replace(/\D/g, "");
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+    };
+
+    const formatDate = (iso: string) => {
+        const d = new Date(iso);
+        const date = d.toLocaleDateString("en-NG", { day: "numeric", month: "short" });
+        const time = d.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" });
+        return `${date}, ${time}`;
     };
 
     if (loading) {
@@ -107,6 +143,8 @@ export default function PaymentsPage() {
             </main>
         );
     }
+
+    const activeList = tab === "outstanding" ? outstanding : earned;
 
     return (
         <main className="min-h-screen bg-gray-50 pb-24">
@@ -118,74 +156,115 @@ export default function PaymentsPage() {
                     >
                         <ArrowLeft size={18} />
                     </Link>
-                    <div>
-                        <p className="text-lg font-bold text-gray-900">Outstanding Payments</p>
-                        <p className="text-xs text-gray-400">
-                            {payments.length} payment{payments.length !== 1 ? "s" : ""} pending
-                        </p>
-                    </div>
+                    <p className="text-lg font-bold text-gray-900">Payments</p>
                 </div>
             </header>
 
-            <div className="px-5 py-4 space-y-4">
-                <section className="rounded-2xl bg-white p-5 shadow-sm">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-50">
-                            <Clock size={18} className="text-orange-500" />
+            <div className="px-5 pt-4">
+                {/* HERO BALANCE CARD */}
+                <div className="rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 p-6">
+                    <div className="flex items-center justify-between">
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+                                Total Earned
+                            </p>
+                            <p className="mt-1.5 truncate text-2xl font-bold text-white">
+                                {formatCurrency(totalEarned, currency)}
+                            </p>
                         </div>
-                        <div>
-                            <p className="text-xs text-gray-400">Total Outstanding</p>
-                            <p className="text-lg font-bold text-gray-900">
-                                {currency} {totalOutstanding.toLocaleString()}
+
+                        <div className="mx-4 h-10 w-px flex-shrink-0 bg-white/10" />
+
+                        <div className="min-w-0 text-right">
+                            <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+                                Outstanding
+                            </p>
+                            <p className="mt-1.5 truncate text-2xl font-bold text-amber-400">
+                                {formatCurrency(totalOutstanding, currency)}
                             </p>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                {payments.length === 0 ? (
+                {/* SEGMENTED TOGGLE */}
+                <div className="mt-4 flex gap-1 rounded-full bg-gray-100 p-1">
+                    <button
+                        onClick={() => setTab("outstanding")}
+                        className={`flex-1 rounded-full py-2 text-xs font-semibold transition ${tab === "outstanding"
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-400"
+                            }`}
+                    >
+                        Outstanding ({outstanding.length})
+                    </button>
+                    <button
+                        onClick={() => setTab("earned")}
+                        className={`flex-1 rounded-full py-2 text-xs font-semibold transition ${tab === "earned"
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-400"
+                            }`}
+                    >
+                        Earned ({earned.length})
+                    </button>
+                </div>
+            </div>
+
+            <div className="px-5 py-4">
+                {activeList.length === 0 ? (
                     <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center">
                         <p className="text-sm font-semibold text-gray-700">
-                            No pending payments
+                            {tab === "outstanding" ? "No pending payments" : "No payments received yet"}
                         </p>
                         <p className="mt-1 text-xs text-gray-400">
-                            All invoices are fully paid
+                            {tab === "outstanding"
+                                ? "All invoices are fully paid"
+                                : "Payments will appear here once received"}
                         </p>
                     </div>
                 ) : (
                     <div className="space-y-2">
-                        {payments.map((p) => (
+                        {activeList.map((p) => (
                             <div
                                 key={p.jobId}
-                                className="rounded-2xl bg-white p-4 shadow-sm"
+                                onClick={() => router.push(`/designer-dashboard/jobs/${p.jobId}`)}
+                                className="flex items-center gap-3 rounded-2xl bg-white p-3.5 shadow-sm active:bg-gray-50 cursor-pointer"
                             >
-                                <Link
-                                    href={`/designer-dashboard/jobs/${p.jobId}`}
-                                    className="flex items-center justify-between"
-                                >
-                                    <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm font-semibold text-gray-900">
-                                            {p.clientName}
-                                        </p>
-                                        <p className="mt-0.5 truncate text-xs text-gray-500">
-                                            {p.jobTitle}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-2 flex-shrink-0">
-                                        <span className="text-sm font-bold text-orange-600">
-                                            {p.currency} {p.balance.toLocaleString()}
-                                        </span>
-                                        <ChevronRight size={16} className="text-gray-300" />
-                                    </div>
-                                </Link>
+                                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-500">
+                                    {p.clientName[0]?.toUpperCase()}
+                                </div>
 
-                                <button
-                                    onClick={() => remindClient(p)}
-                                    disabled={!p.clientPhone}
-                                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
-                                >
-                                    <MessageCircle size={14} />
-                                    Remind Client
-                                </button>
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate text-sm font-semibold text-gray-900">
+                                        {p.clientName}
+                                    </p>
+                                    <p className="truncate text-xs text-gray-400">
+                                        {p.jobTitle}
+                                    </p>
+                                </div>
+
+                                <div className="flex-shrink-0 text-right">
+                                    <p className={`text-sm font-bold ${tab === "outstanding" ? "text-amber-600" : "text-emerald-600"
+                                        }`}>
+                                        {formatCurrency(p.amount, p.currency)}
+                                    </p>
+                                    <p className="text-[10px] text-gray-400">
+                                        {tab === "earned" ? formatDate(p.createdAt) : "Pending"}
+                                    </p>
+                                </div>
+
+                                {tab === "outstanding" && (
+                                    <button
+                                        onClick={(e) => remindClient(p, e)}
+                                        disabled={!p.clientPhone}
+                                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white disabled:cursor-not-allowed disabled:opacity-30"
+                                    >
+                                        <MessageCircle size={14} />
+                                    </button>
+                                )}
+
+                                {tab === "earned" && (
+                                    <ChevronRight size={14} className="flex-shrink-0 text-gray-300" />
+                                )}
                             </div>
                         ))}
                     </div>

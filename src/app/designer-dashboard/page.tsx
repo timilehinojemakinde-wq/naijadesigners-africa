@@ -96,7 +96,6 @@ export default function DashboardHome() {
     const [clientMap, setClientMap] = useState<ClientMap>({});
     const [loading, setLoading] = useState(true);
     const [firstName, setFirstName] = useState("Designer");
-    const [financials, setFinancials] = useState({ earned: 0, outstanding: 0, currency: "NGN" });
 
     const greeting = () => {
         const hour = new Date().getHours();
@@ -166,17 +165,7 @@ export default function DashboardHome() {
                 });
                 setClientMap(map);
             }
-            const jobIds = (jobsData ?? []).map((j: any) => j.id);
-            if (jobIds.length > 0) {
-                const { data: invData } = await supabase
-                    .from("invoices")
-                    .select("deposit_paid, balance, currency")
-                    .in("job_id", jobIds);
-                const earned = invData?.reduce((s, i) => s + (i.deposit_paid || 0), 0) ?? 0;
-                const outstanding = invData?.reduce((s, i) => s + (i.balance || 0), 0) ?? 0;
-                const currency = invData?.[0]?.currency ?? "NGN";
-                setFinancials({ earned, outstanding, currency });
-            }
+
             setLoading(false);
         };
 
@@ -262,45 +251,6 @@ export default function DashboardHome() {
             </header>
 
             <div className="px-5 py-4 space-y-6">
-                {/* REVENUE CARD */}
-                <section className="rounded-2xl bg-white p-5 shadow-sm">
-                    <div className="flex items-center">
-
-                        {/* Total Earned */}
-                        <div className="flex flex-1 items-center gap-3 min-w-0">
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-50">
-                                <Wallet size={18} className="text-emerald-600" />
-                            </div>
-                            <div className="min-w-0">
-                                <p className="text-xs text-gray-400">Total Earned</p>
-                                <p className="truncate text-lg font-bold text-gray-900">
-                                    {financials.currency} {financials.earned.toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Divider */}
-                        <div className="mx-4 h-12 w-px flex-shrink-0 bg-gray-100" />
-
-                        {/* Outstanding */}
-                        <Link
-                            href="/designer-dashboard/payments"
-                            className="flex flex-1 items-center gap-3 min-w-0"
-                        >
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-50">
-                                <Clock size={18} className="text-orange-500" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                                <p className="text-xs text-gray-400">Outstanding</p>
-                                <p className="truncate text-lg font-bold text-gray-900">
-                                    {financials.currency} {financials.outstanding.toLocaleString()}
-                                </p>
-                            </div>
-                            <ChevronRight size={16} className="flex-shrink-0 text-gray-300" />
-                        </Link>
-
-                    </div>
-                </section>
 
                 {/* NEEDS ATTENTION */}
                 {needsAttention.length > 0 && (
