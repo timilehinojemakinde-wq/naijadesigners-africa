@@ -376,7 +376,7 @@ export default function DashboardHome() {
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-gray-900">
-                                    e-Catalogue
+                                    Catalogue
                                 </p>
                                 <p className="text-xs text-gray-400">
                                     Share catalogue

@@ -42,6 +42,8 @@ export default function StyleLibraryPage() {
     const [loading, setLoading] = useState(true);
     const [designerSlug, setDesignerSlug] = useState("");
     const [copied, setCopied] = useState(false);
+    const [bannerImage, setBannerImage] = useState<string | null>(null);
+    const [bannerUploading, setBannerUploading] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -56,7 +58,7 @@ export default function StyleLibraryPage() {
                     .order("created_at", { ascending: false }),
                 supabase
                     .from("designers")
-                    .select("slug")
+                    .select("slug, banner_image")
                     .eq("id", user.id)
                     .single(),
             ]);
@@ -64,6 +66,7 @@ export default function StyleLibraryPage() {
             setStyles(stylesData ?? []);
             setFiltered(stylesData ?? []);
             setDesignerSlug(designerData?.slug ?? "");
+            setBannerImage(designerData?.banner_image ?? null);
             setLoading(false);
         };
 
@@ -87,7 +90,37 @@ export default function StyleLibraryPage() {
     }, [styles, activeCategory, search]);
 
     const catalogueUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/catalogue/${designerSlug}`;
+    const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setBannerUploading(true);
 
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const fileExt = file.name.split(".").pop();
+        const fileName = `banners/${user.id}-${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from("style-images")
+            .upload(fileName, file, { cacheControl: "3600", upsert: true });
+
+        if (!uploadError) {
+            const { data: urlData } = supabase.storage
+                .from("style-images")
+                .getPublicUrl(fileName);
+
+            await supabase
+                .from("designers")
+                .update({ banner_image: urlData.publicUrl })
+                .eq("id", user.id);
+
+            setBannerImage(urlData.publicUrl);
+        }
+
+        setBannerUploading(false);
+        e.target.value = "";
+    };
     const handleShareCatalogue = async () => {
         if (navigator.share) {
             await navigator.share({
@@ -106,6 +139,21 @@ export default function StyleLibraryPage() {
         <main className="min-h-screen bg-gray-50 pb-24">
             {/* HEADER */}
             <header className="bg-white px-5 pt-12 pb-4">
+                {/* CATALOGUE BANNER */}
+                <label className="relative mb-4 flex h-28 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-gray-100">
+                    {bannerImage ? (
+                        <img src={bannerImage} alt="Catalogue banner" className="h-full w-full object-cover" />
+                    ) : (
+                        <p className="text-xs text-gray-400">Tap to add a catalogue header image</p>
+                    )}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition hover:bg-black/30">
+                        {bannerUploading && (
+                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        )}
+                    </div>
+                    <input type="file" accept="image/*" hidden onChange={handleBannerUpload} />
+                </label>
+
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl font-bold text-gray-900">Style Library</h1>
@@ -210,47 +258,40 @@ export default function StyleLibraryPage() {
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="columns-2 gap-3 [&>*]:mb-4">
                         {filtered.map((style) => (
                             <Link
                                 key={style.id}
                                 href={`/designer-dashboard/style-library/${style.id}`}
-                                className="overflow-hidden rounded-2xl bg-white shadow-sm"
+                                className="block break-inside-avoid"
                             >
-                                {/* IMAGE */}
-                                <div className="aspect-[3/4] w-full overflow-hidden bg-gray-100">
+                                <div className="relative overflow-hidden rounded-2xl bg-gray-100">
                                     {style.images?.[0] ? (
                                         <img
                                             src={style.images[0]}
                                             alt={style.title ?? "Style"}
-                                            className="h-full w-full object-cover"
+                                            className="w-full h-auto object-cover"
                                         />
                                     ) : (
-                                        <div className="flex h-full w-full items-center justify-center">
+                                        <div className="flex aspect-[3/4] w-full items-center justify-center">
                                             <Images size={24} className="text-gray-300" />
                                         </div>
                                     )}
+                                    {!style.is_published && (
+                                        <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white">
+                                            Private
+                                        </span>
+                                    )}
                                 </div>
 
-                                {/* INFO */}
-                                <div className="p-3">
-                                    <p className="truncate text-sm font-semibold text-gray-900">
-                                        {style.title ?? "Untitled Style"}
+                                <p className="mt-2 truncate text-sm font-semibold text-gray-900">
+                                    {style.title ?? "Untitled Style"}
+                                </p>
+                                {style.category && (
+                                    <p className="text-xs text-gray-400">
+                                        {style.category}
                                     </p>
-                                    <div className="mt-1.5 flex items-center justify-between">
-                                        {style.category && (
-                                            <span className="text-[10px] text-gray-400">
-                                                {style.category}
-                                            </span>
-                                        )}
-                                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${style.is_published
-                                            ? "bg-emerald-100 text-emerald-700"
-                                            : "bg-gray-100 text-gray-500"
-                                            }`}>
-                                            {style.is_published ? "Published" : "Private"}
-                                        </span>
-                                    </div>
-                                </div>
+                                )}
                             </Link>
                         ))}
                     </div>
