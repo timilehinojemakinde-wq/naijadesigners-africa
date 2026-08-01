@@ -25,7 +25,7 @@ const CATEGORY_MAP: Record<string, string> = {
 
 export default function PublishPage() {
     const router = useRouter();
-    const { draft, setDraft } = useProductDraft();
+    const { draft, setDraft, clearDraft } = useProductDraft();
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const hasRun = useRef(false);
 
@@ -84,7 +84,7 @@ export default function PublishPage() {
                     return;
                 }
 
-                setDraft(null);
+                clearDraft();
                 router.push("/designer-dashboard/add-product/success");
             } catch (err: any) {
                 setErrorMsg("Unexpected error: " + (err?.message ?? JSON.stringify(err)));
