@@ -14,6 +14,7 @@ type Style = {
     title: string | null;
     category: string | null;
     images: string[] | null;
+    video_url: string | null;
     notes: string | null;
     is_published: boolean;
     created_at: string;
@@ -146,6 +147,18 @@ export default function StyleDetailPage() {
 
             <div className="mx-auto max-w-md space-y-4 px-5 py-4">
 
+                {/* VIDEO */}
+                {style.video_url && (
+                    <section className="overflow-hidden rounded-2xl bg-black shadow-sm">
+                        <video
+                            src={style.video_url}
+                            className="aspect-[3/4] w-full object-contain"
+                            controls
+                            playsInline
+                        />
+                    </section>
+                )}
+
                 {/* IMAGES */}
                 {images.length > 0 && (
                     <section className="overflow-hidden rounded-2xl bg-white shadow-sm">
@@ -162,8 +175,8 @@ export default function StyleDetailPage() {
                                             key={i}
                                             onClick={() => setActiveImage(i)}
                                             className={`h-1.5 rounded-full transition-all ${i === activeImage
-                                                    ? "w-4 bg-white"
-                                                    : "w-1.5 bg-white/50"
+                                                ? "w-4 bg-white"
+                                                : "w-1.5 bg-white/50"
                                                 }`}
                                         />
                                     ))}
@@ -178,8 +191,8 @@ export default function StyleDetailPage() {
                                         key={i}
                                         onClick={() => setActiveImage(i)}
                                         className={`h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border-2 transition ${i === activeImage
-                                                ? "border-gray-900"
-                                                : "border-transparent"
+                                            ? "border-gray-900"
+                                            : "border-transparent"
                                             }`}
                                     >
                                         <img

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, X, Loader2, Video, Image as ImageIcon, Play } from "lucide-react";
+import { ArrowLeft, Plus, X, Loader2, Video, Image as ImageIcon, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
 const CATEGORIES = [
@@ -56,6 +56,8 @@ export default function NewStylePage() {
 
     const [drafts, setDrafts] = useState<Draft[]>([newDraft()]);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [hasSwiped, setHasSwiped] = useState(false);
+    const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
 
@@ -64,12 +66,35 @@ export default function NewStylePage() {
             prev.map((d, i) => (i === index ? { ...d, ...patch } : d))
         );
     };
+    const getSlideWidth = (el: HTMLDivElement) => el.clientWidth * 0.88 + 12; // 88% width + 12px gap
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
 
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                        const idx = slideRefs.current.findIndex((el) => el === entry.target);
+                        if (idx !== -1) {
+                            setActiveIndex(idx);
+                            setHasSwiped(true);
+                        }
+                    }
+                });
+            },
+            { root: container, threshold: [0.6] }
+        );
+
+        slideRefs.current.forEach((el) => el && observer.observe(el));
+        return () => observer.disconnect();
+    }, [drafts.length]);
     const scrollToIndex = (index: number) => {
         const el = containerRef.current;
         if (!el) return;
-        el.scrollTo({ left: index * el.clientWidth, behavior: "smooth" });
+        el.scrollTo({ left: index * getSlideWidth(el), behavior: "smooth" });
         setActiveIndex(index);
+        setHasSwiped(true);
     };
 
     const addDraft = () => {
@@ -95,20 +120,35 @@ export default function NewStylePage() {
 
     const handleImageSelect = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files ?? []);
+        if (files.length === 0) return;
         const draft = drafts[index];
-        const remaining = 8 - draft.images.length;
-        const selected = files.slice(0, remaining);
 
-        const newImages = selected.map((file) => ({
-            file,
-            preview: URL.createObjectURL(file),
-        }));
-
-        updateDraft(index, {
-            mediaType: "image",
-            images: [...draft.images, ...newImages],
-            error: "",
-        });
+        if (draft.mediaType === null) {
+            // Fresh pick on an empty slot: each image becomes its own style
+            const newDrafts = files.map((file) => ({
+                ...newDraft(),
+                mediaType: "image" as const,
+                images: [{ file, preview: URL.createObjectURL(file) }],
+            }));
+            setDrafts((prev) => {
+                const next = [...prev];
+                next.splice(index, 1, ...newDrafts);
+                return next;
+            });
+            setTimeout(() => scrollToIndex(index), 50);
+        } else {
+            // Adding more angles to a style already in progress
+            const remaining = 8 - draft.images.length;
+            const selected = files.slice(0, remaining);
+            const newImages = selected.map((file) => ({
+                file,
+                preview: URL.createObjectURL(file),
+            }));
+            updateDraft(index, {
+                images: [...draft.images, ...newImages],
+                error: "",
+            });
+        }
         e.target.value = "";
     };
 
@@ -246,6 +286,16 @@ export default function NewStylePage() {
                 </div>
             </header>
 
+            {/* SWIPE HINT */}
+            {drafts.length > 1 && !hasSwiped && (
+                <div className="flex justify-center pt-3">
+                    <div className="flex items-center gap-1.5 rounded-full bg-gray-900 px-3.5 py-1.5 text-[11px] font-medium text-white animate-pulse">
+                        <span>Swipe to add details for each photo</span>
+                        <ChevronRight size={12} />
+                    </div>
+                </div>
+            )}
+
             {/* DOT INDICATORS */}
             {drafts.length > 1 && (
                 <div className="flex justify-center gap-1.5 pt-3">
@@ -263,17 +313,16 @@ export default function NewStylePage() {
             {/* SWIPEABLE CAROUSEL */}
             <div
                 ref={containerRef}
-                onScroll={(e) => {
-                    const el = e.currentTarget;
-                    const idx = Math.round(el.scrollLeft / el.clientWidth);
-                    if (idx !== activeIndex) setActiveIndex(idx);
-                }}
-                className="mt-3 flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
+                className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-[6%]"
                 style={{ scrollbarWidth: "none" }}
             >
                 {drafts.map((draft, index) => (
-                    <div key={draft.key} className="w-full flex-shrink-0 snap-center px-5">
-                        <div className="mx-auto max-w-md space-y-4 pb-4">
+                    <div
+                        key={draft.key}
+                        ref={(el) => { slideRefs.current[index] = el; }}
+                        className="w-[88%] flex-shrink-0 snap-center"
+                    >
+                        <div className="mx-auto max-w-md space-y-4 px-1 pb-4">
 
                             {drafts.length > 1 && (
                                 <div className="flex items-center justify-between">
@@ -461,7 +510,10 @@ export default function NewStylePage() {
                 ))}
 
                 {/* ADD ANOTHER SLIDE */}
-                <div className="w-full flex-shrink-0 snap-center px-5">
+                <div
+                    ref={(el) => { slideRefs.current[drafts.length] = el; }}
+                    className="w-[88%] flex-shrink-0 snap-center"
+                >
                     <div className="mx-auto flex max-w-md items-center justify-center pb-4" style={{ minHeight: "60vh" }}>
                         <button
                             onClick={addDraft}
@@ -473,6 +525,28 @@ export default function NewStylePage() {
                     </div>
                 </div>
             </div>
+
+            {/* ARROW NAV */}
+            {drafts.length > 1 && (
+                <>
+                    {activeIndex > 0 && (
+                        <button
+                            onClick={() => scrollToIndex(activeIndex - 1)}
+                            className="fixed left-3 top-1/2 z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 shadow-md border border-gray-100"
+                        >
+                            <ChevronLeft size={18} className="text-gray-700" />
+                        </button>
+                    )}
+                    {activeIndex < drafts.length && (
+                        <button
+                            onClick={() => scrollToIndex(activeIndex + 1)}
+                            className="fixed right-3 top-1/2 z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 shadow-md border border-gray-100"
+                        >
+                            <ChevronRight size={18} className="text-gray-700" />
+                        </button>
+                    )}
+                </>
+            )}
 
             {/* SAVE BAR */}
             <div className="fixed bottom-0 left-0 right-0 border-t border-gray-100 bg-white px-5 py-4">

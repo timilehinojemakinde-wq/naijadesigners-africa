@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, X, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -10,18 +10,23 @@ import { uploadMediaFile } from "@/lib/uploadMedia";
 import { useProductDraft } from "./layout";
 import type { MediaItem } from "./layout";
 
+const CATEGORIES = [
+    "Agbada", "Senator", "Aso Ebi", "Native Wear", "Bridal", "Wedding",
+    "Luxury", "Corporate", "Casual", "Streetwear", "Ready to Wear",
+    "Kids Wear", "Women's Wear", "Men's Wear", "Unisex",
+];
+
 export default function AddProductPage() {
     const router = useRouter();
-    const { setDraft } = useProductDraft();
+    const { draft, setDraft } = useProductDraft();
 
-    const [media, setMedia] = useState<MediaItem[]>([]);
-
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [category, setCategory] = useState("");
-    const [productType, setProductType] = useState("both");
-    const [currency, setCurrency] = useState("NGN");
-    const [price, setPrice] = useState("");
+    const [media, setMedia] = useState<MediaItem[]>(draft?.media ?? []);
+    const [name, setName] = useState(draft?.name ?? "");
+    const [description, setDescription] = useState(draft?.description ?? "");
+    const [category, setCategory] = useState(draft?.category ?? "");
+    const [productType, setProductType] = useState(draft?.productType ?? "both");
+    const [currency, setCurrency] = useState(draft?.currency ?? "NGN");
+    const [price, setPrice] = useState(draft?.price ?? "");
 
     // Process (compress/validate) then upload one file in the background
     const processAndUpload = async (id: string, file: File, type: "image" | "video") => {
@@ -70,7 +75,6 @@ export default function AddProductPage() {
         processAndUpload(item.id, item.file, item.type);
     };
 
-    // UPLOAD MEDIA — kicks off background upload immediately on selection
     const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
         if (!files.length) return;
@@ -102,7 +106,6 @@ export default function AddProductPage() {
         e.target.value = "";
     };
 
-    // REMOVE MEDIA
     const removeMedia = (id: string) => {
         setMedia((prev) => {
             const item = prev.find((m) => m.id === id);
@@ -112,7 +115,6 @@ export default function AddProductPage() {
     };
 
     const heroMedia = media[0];
-
     const isUploading = media.some((m) => m.status === "uploading");
     const hasError = media.some((m) => m.status === "error");
 
@@ -121,94 +123,75 @@ export default function AddProductPage() {
             alert("Please upload at least one product image or video.");
             return;
         }
-
         if (!name.trim()) {
             alert("Please enter product name.");
             return;
         }
-
         if (isUploading) {
             alert("Please wait for all media to finish uploading.");
             return;
         }
-
         if (hasError) {
             alert("One or more media files failed to upload. Please retry or remove them.");
             return;
         }
+        if (!price || Number(price) <= 0) {
+            alert("Please enter a valid price.");
+            return;
+        }
 
-        setDraft({
-            media,
-            name,
-            description,
-            category,
-            productType,
-            currency,
-            price,
-        });
-
+        setDraft({ media, name, description, category, productType, currency, price });
         router.push("/designer-dashboard/add-product/preview");
     };
 
     return (
-        <main className="min-h-screen bg-[#fafafa] pb-24">
+        <main className="min-h-screen bg-gray-50 pb-28">
             {/* HEADER */}
-            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
-                <div className="flex items-center gap-4 px-5 py-4">
+            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white px-5 py-4">
+                <div className="flex items-center gap-3">
                     <button
-                        onClick={() => router.push("/designer-dashboard")}
-                        className="rounded-[12px] border border-gray-200 p-2"
+                        onClick={() => router.push("/designer-dashboard/store")}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200"
                     >
-                        <ArrowLeft size={18} />
+                        <ArrowLeft size={16} />
                     </button>
-
                     <div>
-                        <h1 className="text-xl font-bold">Add Product</h1>
-                        <p className="text-sm text-gray-500">Upload media and product details</p>
+                        <h1 className="text-base font-bold text-gray-900">Add Product</h1>
+                        <p className="text-xs text-gray-400">Upload media and product details</p>
                     </div>
                 </div>
             </header>
 
-            <section className="mx-auto max-w-md px-5 py-6">
-                {/* MEDIA */}
-                <div className="rounded-[12px] bg-white p-5 shadow-sm">
-                    <h2 className="text-lg font-semibold">Product Media</h2>
+            <div className="mx-auto max-w-md space-y-4 px-5 py-5">
 
-                    <p className="mt-1 text-sm text-gray-500">
-                        Upload up to 4 photos or videos (max 30s, 25MB).
-                        First upload becomes your main display media.
+                {/* MEDIA */}
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <h2 className="text-sm font-bold text-gray-900">Product Media</h2>
+                    <p className="mt-1 mb-4 text-xs text-gray-400">
+                        Up to 4 photos or videos (max 30s, 25MB). First upload is your main display media.
                     </p>
 
-                    {/* HERO PREVIEW */}
                     {heroMedia ? (
-                        <div className="relative mt-5 overflow-hidden rounded-[12px] border border-gray-200 bg-gray-50">
+                        <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
                             {heroMedia.type === "video" ? (
-                                <video
-                                    src={heroMedia.preview}
-                                    controls
-                                    className="h-[320px] w-full object-contain"
-                                />
+                                <video src={heroMedia.preview} controls className="h-72 w-full object-contain" />
                             ) : (
-                                <img
-                                    src={heroMedia.preview}
-                                    alt="Hero"
-                                    className="h-[320px] w-full object-contain"
-                                />
+                                <img src={heroMedia.preview} alt="Hero" className="h-72 w-full object-contain" />
                             )}
 
                             {heroMedia.status === "uploading" && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                                    <Loader2 className="animate-spin text-white" size={32} />
+                                    <Loader2 className="animate-spin text-white" size={28} />
                                 </div>
                             )}
 
                             {heroMedia.status === "error" && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/60 px-4 text-center">
-                                    <AlertCircle className="text-emerald-400" size={28} />
+                                    <AlertCircle className="text-red-400" size={26} />
                                     <p className="text-xs text-white">{heroMedia.error}</p>
                                     <button
                                         onClick={() => retryUpload(heroMedia)}
-                                        className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-medium text-black"
+                                        className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-900"
                                     >
                                         <RotateCcw size={12} /> Retry
                                     </button>
@@ -216,63 +199,56 @@ export default function AddProductPage() {
                             )}
                         </div>
                     ) : (
-                        <label className="mt-5 flex h-[260px] cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-emerald-400">
-                            <Plus size={32} />
-                            <p className="mt-3 text-sm text-gray-600">Tap to upload product media</p>
-                            <input
-                                hidden
-                                multiple
-                                type="file"
-                                accept="image/*,video/*"
-                                onChange={handleMediaUpload}
-                            />
+                        <label className="flex h-64 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition hover:border-gray-400">
+                            <Plus size={28} className="text-gray-400" />
+                            <p className="mt-3 text-sm text-gray-500">Tap to upload product media</p>
+                            <input hidden multiple type="file" accept="image/*,video/*" onChange={handleMediaUpload} />
                         </label>
                     )}
 
-                    {/* SUPPORTING MEDIA */}
                     {media.length > 0 && (
-                        <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+                        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                             {media.map((item, index) => (
                                 <div key={item.id} className="relative flex-shrink-0">
                                     {item.type === "video" ? (
                                         <video
                                             src={item.preview}
-                                            className={`h-[90px] w-[90px] rounded-[12px] border object-cover ${index === 0 ? "border-emerald-600" : "border-gray-200"
+                                            className={`h-20 w-20 rounded-xl border object-cover ${index === 0 ? "border-gray-900" : "border-gray-200"
                                                 }`}
                                         />
                                     ) : (
                                         <img
                                             src={item.preview}
                                             alt=""
-                                            className={`h-[90px] w-[90px] rounded-[12px] border object-cover ${index === 0 ? "border-emerald-600" : "border-gray-200"
+                                            className={`h-20 w-20 rounded-xl border object-cover ${index === 0 ? "border-gray-900" : "border-gray-200"
                                                 }`}
                                         />
                                     )}
 
                                     {item.status === "uploading" && (
-                                        <div className="absolute inset-0 flex items-center justify-center rounded-[12px] bg-black/40">
-                                            <Loader2 className="animate-spin text-white" size={18} />
+                                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40">
+                                            <Loader2 className="animate-spin text-white" size={16} />
                                         </div>
                                     )}
 
                                     {item.status === "error" && (
                                         <button
                                             onClick={() => retryUpload(item)}
-                                            className="absolute inset-0 flex items-center justify-center rounded-[12px] bg-black/60"
+                                            className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/60"
                                         >
-                                            <RotateCcw className="text-white" size={18} />
+                                            <RotateCcw className="text-white" size={16} />
                                         </button>
                                     )}
 
                                     <button
                                         onClick={() => removeMedia(item.id)}
-                                        className="absolute right-1 top-1 rounded-full bg-black/70 p-1 text-white"
+                                        className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-white"
                                     >
-                                        <X size={14} />
+                                        <X size={10} />
                                     </button>
 
                                     {index === 0 && (
-                                        <span className="absolute bottom-1 left-1 rounded bg-emerald-600 px-2 py-1 text-[10px] text-white">
+                                        <span className="absolute bottom-1 left-1 rounded-full bg-gray-900 px-1.5 py-0.5 text-[9px] font-semibold text-white">
                                             Hero
                                         </span>
                                     )}
@@ -280,113 +256,120 @@ export default function AddProductPage() {
                             ))}
 
                             {media.length < 4 && (
-                                <label className="flex h-[90px] w-[90px] cursor-pointer items-center justify-center rounded-[12px] border-2 border-dashed border-gray-300 bg-gray-50">
-                                    <Plus size={22} />
-                                    <input
-                                        hidden
-                                        multiple
-                                        type="file"
-                                        accept="image/*,video/*"
-                                        onChange={handleMediaUpload}
-                                    />
+                                <label className="flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
+                                    <Plus size={18} className="text-gray-400" />
+                                    <input hidden multiple type="file" accept="image/*,video/*" onChange={handleMediaUpload} />
                                 </label>
                             )}
                         </div>
                     )}
 
                     {isUploading && (
-                        <p className="mt-3 text-xs text-gray-500">
-                            ⏳ Uploading media in the background — you can keep filling the form.
+                        <p className="mt-3 text-xs text-gray-400">
+                            Uploading media in the background — you can keep filling the form.
                         </p>
                     )}
-                </div>
+                </section>
 
-                {/* PRODUCT DETAILS */}
-                <div className="mt-6 rounded-[12px] bg-white p-5 shadow-sm">
-                    <h2 className="text-lg font-semibold">Product Details</h2>
+                {/* DETAILS */}
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <h2 className="mb-4 text-sm font-bold text-gray-900">Product Details</h2>
 
-                    <input
-                        placeholder="Product Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
-                    />
+                    <div className="space-y-4">
+                        <div>
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
+                                Product Name <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="e.g. Royal Green Agbada"
+                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
+                            />
+                        </div>
 
-                    <textarea
-                        placeholder="Example: Luxury handmade senator outfit crafted with premium fabric for weddings, owambe and special occasions."
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="mt-4 min-h-[140px] w-full rounded-[12px] border border-gray-200 p-4 outline-none focus:border-emerald-500"
-                    />
+                        <div>
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
+                                Description <span className="font-normal text-gray-400">— optional</span>
+                            </label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Luxury handmade senator outfit crafted with premium fabric for weddings, owambe and special occasions."
+                                rows={4}
+                                className="w-full resize-none rounded-xl border border-gray-200 px-3.5 py-3 text-sm outline-none focus:border-gray-900"
+                            />
+                        </div>
 
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4"
-                    >
-                        <option value="">Select Category</option>
-                        <option value="Agbada">Agbada</option>
-                        <option value="Senator">Senator</option>
-                        <option value="Aso Ebi">Aso Ebi</option>
-                        <option value="Native Wear">Native Wear</option>
-                        <option value="Bridal">Bridal</option>
-                        <option value="Wedding">Wedding</option>
-                        <option value="Luxury">Luxury</option>
-                        <option value="Corporate">Corporate</option>
-                        <option value="Casual">Casual</option>
-                        <option value="Streetwear">Streetwear</option>
-                        <option value="Ready to Wear">Ready to Wear</option>
-                        <option value="Kids Wear">Kids Wear</option>
-                        <option value="Women's Wear">Women's Wear</option>
-                        <option value="Men's Wear">Men's Wear</option>
-                        <option value="Unisex">Unisex</option>
-                    </select>
+                        <div>
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">Category</label>
+                            <div className="flex flex-wrap gap-2">
+                                {CATEGORIES.map((cat) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setCategory(cat === category ? "" : cat)}
+                                        className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${category === cat
+                                            ? "bg-gray-900 text-white"
+                                            : "border border-gray-200 text-gray-600 hover:border-gray-400"
+                                            }`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                    <select
-                        value={productType}
-                        onChange={(e) => setProductType(e.target.value)}
-                        className="mt-4 h-14 w-full rounded-[12px] border border-gray-200 px-4"
-                    >
-                        <option value="ready-made">Ready Made</option>
-                        <option value="custom">Custom Measurement</option>
-                        <option value="both">Both</option>
-                    </select>
-                </div>
+                        <div>
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">Product Type</label>
+                            <select
+                                value={productType}
+                                onChange={(e) => setProductType(e.target.value)}
+                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
+                            >
+                                <option value="ready-made">Ready Made</option>
+                                <option value="custom">Custom Measurement</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
 
                 {/* PRICING */}
-                <div className="mt-6 rounded-[12px] bg-white p-5 shadow-sm">
-                    <h2 className="text-lg font-semibold">Pricing</h2>
-
-                    <div className="mt-4 flex gap-3">
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <h2 className="mb-4 text-sm font-bold text-gray-900">Pricing</h2>
+                    <div className="flex gap-2">
                         <select
                             value={currency}
                             onChange={(e) => setCurrency(e.target.value)}
-                            className="h-14 rounded-[12px] border border-gray-200 px-4"
+                            className="h-11 rounded-xl border border-gray-200 px-3 text-sm outline-none focus:border-gray-900"
                         >
                             <option>NGN</option>
                             <option>USD</option>
                             <option>GBP</option>
                         </select>
-
                         <input
                             type="number"
                             placeholder="Price"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
-                            className="h-14 flex-1 rounded-[12px] border border-gray-200 px-4"
+                            className="h-11 flex-1 rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
                         />
                     </div>
-                </div>
+                </section>
+            </div>
 
-                {/* CTA */}
-                <button
-                    onClick={handleContinue}
-                    disabled={isUploading}
-                    className="mt-8 h-14 w-full rounded-[12px] bg-emerald-600 font-medium text-white disabled:opacity-50"
-                >
-                    {isUploading ? "Uploading media..." : "Continue to Preview"}
-                </button>
-            </section>
+            {/* SAVE BAR */}
+            <div className="fixed bottom-0 left-0 right-0 border-t border-gray-100 bg-white px-5 py-4">
+                <div className="mx-auto max-w-md">
+                    <button
+                        onClick={handleContinue}
+                        disabled={isUploading}
+                        className="flex h-12 w-full items-center justify-center rounded-xl bg-gray-900 text-sm font-semibold text-white disabled:opacity-60"
+                    >
+                        {isUploading ? "Uploading media..." : "Continue to Preview"}
+                    </button>
+                </div>
+            </div>
         </main>
     );
 }

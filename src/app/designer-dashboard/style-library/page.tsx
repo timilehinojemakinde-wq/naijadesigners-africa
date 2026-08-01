@@ -15,6 +15,7 @@ type Style = {
     title: string | null;
     category: string | null;
     images: string[] | null;
+    video_url: string | null;
     notes: string | null;
     is_published: boolean;
     created_at: string;
@@ -53,7 +54,7 @@ export default function StyleLibraryPage() {
             const [{ data: stylesData }, { data: designerData }] = await Promise.all([
                 supabase
                     .from("styles")
-                    .select("id, title, category, images, notes, is_published, created_at")
+                    .select("id, title, category, images, video_url, notes, is_published, created_at")
                     .eq("designer_id", user.id)
                     .order("created_at", { ascending: false }),
                 supabase
@@ -272,6 +273,20 @@ export default function StyleLibraryPage() {
                                             alt={style.title ?? "Style"}
                                             className="w-full h-auto object-cover"
                                         />
+                                    ) : style.video_url ? (
+                                        <div className="relative aspect-[3/4] w-full">
+                                            <video
+                                                src={style.video_url}
+                                                className="h-full w-full object-cover"
+                                                muted
+                                                playsInline
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90">
+                                                    <div className="ml-0.5 h-0 w-0 border-y-[6px] border-l-[9px] border-y-transparent border-l-gray-900" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     ) : (
                                         <div className="flex aspect-[3/4] w-full items-center justify-center">
                                             <Images size={24} className="text-gray-300" />

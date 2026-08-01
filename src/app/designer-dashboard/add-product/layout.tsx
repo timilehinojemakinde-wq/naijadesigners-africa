@@ -1,14 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 export type MediaItem = {
     id: string;
     file: File;
     preview: string;
+    url?: string;
     type: "image" | "video";
     status: "uploading" | "done" | "error";
-    url?: string;
     error?: string;
 };
 
@@ -22,26 +22,33 @@ export type ProductDraft = {
     price: string;
 };
 
-type ContextType = {
+type ProductDraftContextValue = {
     draft: ProductDraft | null;
-    setDraft: Dispatch<SetStateAction<ProductDraft | null>>;
+    setDraft: (draft: ProductDraft) => void;
+    clearDraft: () => void;
 };
 
-const ProductDraftContext = createContext<ContextType | null>(null);
+const ProductDraftContext = createContext<ProductDraftContextValue | null>(null);
 
 export function useProductDraft() {
     const ctx = useContext(ProductDraftContext);
     if (!ctx) {
-        throw new Error("useProductDraft must be used inside add-product layout");
+        throw new Error("useProductDraft must be used within the add-product section");
     }
     return ctx;
 }
 
 export default function AddProductLayout({ children }: { children: ReactNode }) {
-    const [draft, setDraft] = useState<ProductDraft | null>(null);
+    const [draft, setDraftState] = useState<ProductDraft | null>(null);
 
     return (
-        <ProductDraftContext.Provider value={{ draft, setDraft }}>
+        <ProductDraftContext.Provider
+            value={{
+                draft,
+                setDraft: (d) => setDraftState(d),
+                clearDraft: () => setDraftState(null),
+            }}
+        >
             {children}
         </ProductDraftContext.Provider>
     );
