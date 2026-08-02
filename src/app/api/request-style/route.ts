@@ -20,6 +20,7 @@ export async function POST(request: Request) {
         const styleId = formData.get("styleId") as string | null;
         const styleTitle = formData.get("styleTitle") as string | null;
         const styleImages = JSON.parse((formData.get("styleImages") as string) ?? "[]");
+        const styleVideoUrl = (formData.get("styleVideoUrl") as string) || null;
         const fullName = formData.get("fullName") as string;
         const phone = formData.get("phone") as string;
         const email = formData.get("email") as string | null;
@@ -99,6 +100,7 @@ export async function POST(request: Request) {
                 job_number: jobNumber,
                 title: jobTitle,
                 style_images: styleImages ?? [],
+                style_video_url: styleVideoUrl,
                 style_notes: fullNotes || null,
                 voice_note_url: voiceNoteUrl,
                 status: "inquiry",

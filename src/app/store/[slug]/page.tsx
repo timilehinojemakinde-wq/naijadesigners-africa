@@ -14,7 +14,7 @@ export default async function PublicStorePage({ params }: Props) {
 
     const { data: designer, error: designerError } = await supabase
         .from("designers")
-        .select("id, brand_name, profile_image, banner_image, business_location, bio, slug")
+        .select("id, brand_name, profile_image, banner_image_url, business_location, bio, slug")
         .eq("slug", slug)
         .single();
 
@@ -31,9 +31,9 @@ export default async function PublicStorePage({ params }: Props) {
         <main className="min-h-screen bg-white pb-20">
             {/* BANNER HEADER */}
             <header className="relative h-56 w-full overflow-hidden bg-gray-900">
-                {designer.banner_image ? (
+                {designer.banner_image_url ? (
                     <img
-                        src={designer.banner_image}
+                        src={designer.banner_image_url}
                         alt=""
                         className="absolute inset-0 h-full w-full object-cover"
                     />

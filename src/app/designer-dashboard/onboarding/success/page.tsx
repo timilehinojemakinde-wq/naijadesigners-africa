@@ -114,21 +114,12 @@ export default function OnboardingSuccess() {
                             3 things to do first:
                         </p>
 
-
                         {/* PRIMARY — Add product */}
                         <Link
                             href="/designer-dashboard/add-product"
                             className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 text-sm font-semibold text-white transition hover:bg-emerald-700"
                         >
                             Add Your First Product <ArrowRight size={16} />
-                        </Link>
-
-                        {/* SECONDARY — Dashboard */}
-                        <Link
-                            href="/designer-dashboard"
-                            className="flex h-12 w-full items-center justify-center rounded-xl border border-gray-200 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
-                        >
-                            Go to Dashboard
                         </Link>
 
                         <Link
@@ -153,7 +144,7 @@ export default function OnboardingSuccess() {
                                 <LayoutDashboard size={18} />
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-semibold text-gray-800">Explore your dashboard</p>
+                                <p className="text-sm font-semibold text-gray-800">Go to your dashboard</p>
                                 <p className="text-xs text-gray-500">Orders, invoices, store settings</p>
                             </div>
                             <ArrowRight size={16} className="text-gray-400" />

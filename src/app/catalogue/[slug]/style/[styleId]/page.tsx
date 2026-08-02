@@ -1,6 +1,7 @@
-import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Play } from "lucide-react";
 
 type Props = {
     params: Promise<{ slug: string; styleId: string }>;
@@ -8,6 +9,7 @@ type Props = {
 
 export default async function PublicStylePage({ params }: Props) {
     const { slug, styleId } = await params;
+    const supabase = await createSupabaseServerClient();
 
     const { data: designer } = await supabase
         .from("designers")
@@ -51,6 +53,18 @@ export default async function PublicStylePage({ params }: Props) {
 
             <div className="mx-auto max-w-md space-y-4 px-5 py-4">
 
+                {/* VIDEO */}
+                {style.video_url && (
+                    <div className="overflow-hidden rounded-2xl bg-black shadow-sm">
+                        <video
+                            src={style.video_url}
+                            className="aspect-[3/4] w-full object-contain"
+                            controls
+                            playsInline
+                        />
+                    </div>
+                )}
+
                 {/* IMAGES */}
                 {images.length > 0 && (
                     <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
@@ -77,6 +91,12 @@ export default async function PublicStylePage({ params }: Props) {
                                 ))}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {!style.video_url && images.length === 0 && (
+                    <div className="flex aspect-[3/4] w-full items-center justify-center rounded-2xl bg-gray-100 text-4xl">
+                        👗
                     </div>
                 )}
 

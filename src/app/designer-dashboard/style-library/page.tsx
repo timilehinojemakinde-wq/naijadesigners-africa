@@ -59,15 +59,39 @@ export default function StyleLibraryPage() {
                     .order("created_at", { ascending: false }),
                 supabase
                     .from("designers")
-                    .select("slug, banner_image")
+                    .select("slug, banner_image_url")
                     .eq("id", user.id)
                     .single(),
             ]);
 
             setStyles(stylesData ?? []);
             setFiltered(stylesData ?? []);
-            setDesignerSlug(designerData?.slug ?? "");
-            setBannerImage(designerData?.banner_image ?? null);
+            setBannerImage(designerData?.banner_image_url ?? null);
+
+            let slug = designerData?.slug ?? "";
+
+            if (!slug) {
+                const { data: brandData } = await supabase
+                    .from("designers")
+                    .select("brand_name")
+                    .eq("id", user.id)
+                    .single();
+
+                const base = (brandData?.brand_name ?? "designer")
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/^-|-$/g, "");
+
+                slug = `${base}-${user.id.slice(0, 6)}`;
+
+                await supabase
+                    .from("designers")
+                    .update({ slug })
+                    .eq("id", user.id);
+            }
+
+            setDesignerSlug(slug);
             setLoading(false);
         };
 
@@ -113,7 +137,7 @@ export default function StyleLibraryPage() {
 
             await supabase
                 .from("designers")
-                .update({ banner_image: urlData.publicUrl })
+                .update({ banner_image_url: urlData.publicUrl })
                 .eq("id", user.id);
 
             setBannerImage(urlData.publicUrl);
@@ -173,29 +197,28 @@ export default function StyleLibraryPage() {
                 </div>
 
                 {/* SHARE CATALOGUE LINK */}
-                {designerSlug && (
-                    <button
-                        onClick={handleShareCatalogue}
-                        className="mt-4 flex w-full items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3"
-                    >
-                        <div className="flex items-center gap-2">
-                            <Share2 size={14} className="text-emerald-600" />
-                            <div className="text-left">
-                                <p className="text-xs font-semibold text-emerald-700">
-                                    Share Style Catalogue
-                                </p>
-                                <p className="text-[10px] text-emerald-600 opacity-70">
-                                    Customers browse and select styles
-                                </p>
-                            </div>
+                <button
+                    onClick={designerSlug ? handleShareCatalogue : undefined}
+                    disabled={!designerSlug}
+                    className="mt-4 flex w-full items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <div className="flex items-center gap-2">
+                        <Share2 size={14} className="text-emerald-600" />
+                        <div className="text-left">
+                            <p className="text-xs font-semibold text-emerald-700">
+                                Share Style Catalogue
+                            </p>
+                            <p className="text-[10px] text-emerald-600 opacity-70">
+                                Customers browse and select styles
+                            </p>
                         </div>
-                        {copied ? (
-                            <Check size={14} className="text-emerald-600" />
-                        ) : (
-                            <Copy size={14} className="text-emerald-600" />
-                        )}
-                    </button>
-                )}
+                    </div>
+                    {copied ? (
+                        <Check size={14} className="text-emerald-600" />
+                    ) : (
+                        <Copy size={14} className="text-emerald-600" />
+                    )}
+                </button>
 
                 {/* SEARCH */}
                 <div className="relative mt-3">

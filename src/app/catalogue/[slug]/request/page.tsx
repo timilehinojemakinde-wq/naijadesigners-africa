@@ -18,6 +18,7 @@ type Style = {
     id: string;
     title: string | null;
     images: string[] | null;
+    video_url: string | null;
     category: string | null;
 };
 
@@ -71,7 +72,7 @@ function RequestForm() {
             if (styleId) {
                 const { data: styleData } = await supabase
                     .from("styles")
-                    .select("id, title, images, category")
+                    .select("id, title, images, video_url, category")
                     .eq("id", styleId)
                     .eq("designer_id", designerData.id)
                     .eq("is_published", true)
@@ -149,6 +150,7 @@ function RequestForm() {
             formData.append("styleId", style?.id ?? "");
             formData.append("styleTitle", style?.title ?? "");
             formData.append("styleImages", JSON.stringify(style?.images ?? []));
+            formData.append("styleVideoUrl", style?.video_url ?? "");
             formData.append("fullName", fullName);
             formData.append("phone", phone);
             formData.append("email", email);
@@ -271,6 +273,13 @@ function RequestForm() {
                                     src={style.images[0]}
                                     alt={style.title ?? "Style"}
                                     className="h-full w-full object-cover"
+                                />
+                            ) : style.video_url ? (
+                                <video
+                                    src={style.video_url}
+                                    className="h-full w-full object-cover"
+                                    muted
+                                    playsInline
                                 />
                             ) : (
                                 <div className="flex h-full w-full items-center justify-center text-2xl">

@@ -29,6 +29,7 @@ type Job = {
     title: string | null;
     status: string;
     style_images: string[] | null;
+    style_video_url: string | null;
     style_notes: string | null;
     voice_note_url: string | null;
     expected_delivery: string | null;
@@ -401,6 +402,17 @@ export default function JobDetailPage() {
 
             <div className="mx-auto max-w-md space-y-4 px-5 py-4">
 
+                {/* STYLE VIDEO */}
+                {job.style_video_url && (
+                    <section className="overflow-hidden rounded-2xl bg-black shadow-sm">
+                        <video
+                            src={job.style_video_url}
+                            className="w-full aspect-[3/4] object-contain"
+                            controls
+                            playsInline
+                        />
+                    </section>
+                )}
                 {/* 2. STYLE IMAGE (HERO) */}
                 {images.length > 0 && (
                     <PhotoProvider maskOpacity={0.95} speed={() => 300}>

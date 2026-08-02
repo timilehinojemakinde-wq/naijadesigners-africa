@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-    Home, Package, Ruler, Store, Receipt, User,
-    ChevronRight, LogOut, Shield, CreditCard, Bell, Globe,
+    User,
+    ChevronRight, LogOut, Shield, CreditCard, Bell, Globe, Store,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import BottomNav from "@/components/dashboard/BottomNav";
 
 type Designer = {
     brand_name: string | null;
@@ -162,24 +163,14 @@ export default function ProfilePage() {
                 <button
                     onClick={handleLogout}
                     disabled={loggingOut}
-                    className="mt-10 flex w-full items-center justify-center gap-2 rounded-[20px] border border-emerald-200bg-emerald-50 py-4 font-medium text-emerald-600 disabled:opacity-50"
+                    className="mt-10 flex w-full items-center justify-center gap-2 rounded-[20px] border border-emerald-200 bg-emerald-50 py-4 font-medium text-emerald-600 disabled:opacity-50"
                 >
                     <LogOut size={18} />
                     {loggingOut ? "Logging out..." : "Logout"}
                 </button>
             </section>
 
-            {/* BOTTOM NAV */}
-            <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white">
-                <div className="mx-auto flex max-w-md items-center justify-between px-6 py-4">
-                    <NavItem href="/designer-dashboard" icon={<Home size={20} />} label="Home" />
-                    <NavItem href="/designer-dashboard/orders" icon={<Package size={20} />} label="Orders" />
-                    <NavItem href="/designer-dashboard/measurements" icon={<Ruler size={20} />} label="Measure" />
-                    <NavItem href="/designer-dashboard/store" icon={<Store size={20} />} label="Store" />
-                    <NavItem href="/designer-dashboard/invoice" icon={<Receipt size={20} />} label="Invoice" />
-                    <NavItem href="/designer-dashboard/profile" icon={<User size={20} />} label="Profile" active />
-                </div>
-            </nav>
+            <BottomNav />
         </main>
     );
 }
@@ -210,25 +201,6 @@ function SettingsCard({
                 </div>
             </div>
             <ChevronRight size={18} className="text-gray-400" />
-        </Link>
-    );
-}
-
-function NavItem({
-    href, icon, label, active = false,
-}: {
-    href: string;
-    icon: React.ReactNode;
-    label: string;
-    active?: boolean;
-}) {
-    return (
-        <Link
-            href={href}
-            className={`flex flex-col items-center gap-1 ${active ? "text-emerald-600" : "text-gray-500"}`}
-        >
-            {icon}
-            <span className="text-xs">{label}</span>
         </Link>
     );
 }

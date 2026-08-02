@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { MapPin, Play } from "lucide-react";
 
 type Props = {
     params: Promise<{ slug: string }>;
@@ -13,36 +13,39 @@ export default async function PublicCataloguePage({ params }: Props) {
 
     const { data: designer, error: designerError } = await supabase
         .from("designers")
-        .select("id, brand_name, profile_image, banner_image, business_location, bio, slug")
+        .select("id, brand_name, profile_image, banner_image_url, business_location, bio, slug")
         .eq("slug", slug)
         .single();
 
-    if (designerError || !designer) notFound();
+    if (designerError || !designer) {
+        console.error("Catalogue lookup failed:", designerError);
+        notFound();
+    }
 
     const { data: styles } = await supabase
         .from("styles")
-        .select("id, title, category, images, notes")
+        .select("id, title, category, images, video_url, notes")
         .eq("designer_id", designer.id)
         .eq("is_published", true)
         .order("created_at", { ascending: false });
 
     return (
         <main className="min-h-screen bg-white pb-20">
-            {/* BANNER HEADER */}
-            <header className="relative h-56 w-full overflow-hidden bg-gray-900">
-                {designer.banner_image ? (
+            {/* BRAND HERO — full-bleed, no corner radius */}
+            <header className="relative h-[70vh] min-h-[420px] w-full overflow-hidden bg-gray-900">
+                {designer.banner_image_url ? (
                     <img
-                        src={designer.banner_image}
+                        src={designer.banner_image_url}
                         alt=""
                         className="absolute inset-0 h-full w-full object-cover"
                     />
                 ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-700 via-emerald-800 to-gray-900" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10" />
 
-                <div className="absolute bottom-4 left-5 right-5 flex items-end gap-3">
-                    <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full border-2 border-white bg-emerald-100">
+                <div className="absolute bottom-8 left-6 right-6">
+                    <div className="mb-4 h-16 w-16 overflow-hidden rounded-full border-2 border-white/80 bg-emerald-100">
                         {designer.profile_image ? (
                             <img
                                 src={designer.profile_image}
@@ -55,34 +58,28 @@ export default async function PublicCataloguePage({ params }: Props) {
                             </div>
                         )}
                     </div>
-                    <div className="pb-1">
-                        <h1 className="text-lg font-bold text-white drop-shadow">
-                            {designer.brand_name}
-                        </h1>
-                        {designer.business_location && (
-                            <p className="mt-0.5 flex items-center gap-1 text-xs text-white/80">
-                                <MapPin size={10} />
-                                {designer.business_location}
-                            </p>
-                        )}
-                    </div>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow sm:text-4xl">
+                        {designer.brand_name}
+                    </h1>
+                    {designer.business_location && (
+                        <p className="mt-2 flex items-center gap-1.5 text-sm text-white/80">
+                            <MapPin size={13} />
+                            {designer.business_location}
+                        </p>
+                    )}
+                    {designer.bio && (
+                        <p className="mt-3 max-w-md text-sm leading-relaxed text-white/90">
+                            {designer.bio}
+                        </p>
+                    )}
+                    <p className="mt-4 text-xs font-medium text-emerald-300">
+                        Browse the collection below and tap any style you love — we'll send your pick straight to {designer.brand_name}.
+                    </p>
                 </div>
             </header>
 
-            <div className="px-5 pt-4">
-                {designer.bio && (
-                    <p className="text-sm leading-relaxed text-gray-600">
-                        {designer.bio}
-                    </p>
-                )}
-                <p className="mt-2 text-xs text-gray-400">
-                    Browse the collection below and tap any style you love —
-                    we'll send your pick straight to {designer.brand_name}.
-                </p>
-            </div>
-
             {/* STYLES — MASONRY */}
-            <div className="px-5 pt-5">
+            <div className="px-5 pt-6">
                 {!styles || styles.length === 0 ? (
                     <div className="rounded-2xl bg-gray-50 p-10 text-center">
                         <p className="font-medium text-gray-700">No styles published yet</p>
@@ -110,6 +107,20 @@ export default async function PublicCataloguePage({ params }: Props) {
                                                 alt={style.title ?? "Style"}
                                                 className="w-full h-auto object-cover"
                                             />
+                                        ) : style.video_url ? (
+                                            <div className="relative aspect-[3/4] w-full">
+                                                <video
+                                                    src={style.video_url}
+                                                    className="h-full w-full object-cover"
+                                                    muted
+                                                    playsInline
+                                                />
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90">
+                                                        <Play size={16} className="ml-0.5 text-gray-900" fill="currentColor" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         ) : (
                                             <div className="flex aspect-[3/4] w-full items-center justify-center text-gray-300 text-3xl">
                                                 👗
