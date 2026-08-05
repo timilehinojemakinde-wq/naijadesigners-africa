@@ -10,9 +10,10 @@ import {
     Mic,
     Square,
     Play,
-    Pause
+    Pause,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { capitalizeWords } from "@/lib/textFormat";
 
 type Style = {
     id: string;
@@ -26,6 +27,10 @@ type Designer = {
     id: string;
     brand_name: string | null;
 };
+
+const TITLES = ["Mr", "Mrs", "Miss", "Ms", "Dr", "Chief", "Engr", "Alhaji", "Alhaja"];
+
+const WAVEFORM_BARS = 40;
 
 function RequestForm() {
     const router = useRouter();
@@ -42,17 +47,25 @@ function RequestForm() {
     const [error, setError] = useState("");
 
     // Form fields
-    const [fullName, setFullName] = useState("");
+    const [title, setTitle] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
-    const [notes, setNotes] = useState("");
+
     const [isRecording, setIsRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const [audioUrl, setAudioUrl] = useState("");
     const [audioPlaying, setAudioPlaying] = useState(false);
+    const [waveform, setWaveform] = useState<number[]>(Array(WAVEFORM_BARS).fill(4));
+    const [frozenWaveform, setFrozenWaveform] = useState<number[]>([]);
+    const [recordingSeconds, setRecordingSeconds] = useState(0);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const animationFrameRef = useRef<number | null>(null);
+    const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
         const load = async () => {
@@ -87,74 +100,93 @@ function RequestForm() {
         load();
     }, [slug, styleId, router]);
 
+    const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
     const startRecording = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        streamRef.current = stream;
 
         const recorder = new MediaRecorder(stream);
-
         const chunks: BlobPart[] = [];
 
-        recorder.ondataavailable = (e) => {
-            chunks.push(e.data);
-        };
-
+        recorder.ondataavailable = (e) => chunks.push(e.data);
         recorder.onstop = () => {
-            const blob = new Blob(chunks, {
-                type: "audio/webm",
-            });
-
+            const blob = new Blob(chunks, { type: "audio/webm" });
             setAudioBlob(blob);
             setAudioUrl(URL.createObjectURL(blob));
         };
 
         recorder.start();
-
         mediaRecorderRef.current = recorder;
-
         setIsRecording(true);
+        setRecordingSeconds(0);
+        setWaveform(Array(WAVEFORM_BARS).fill(4));
+
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        const audioContext = new AudioContextClass();
+        const source = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        audioContextRef.current = audioContext;
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const tick = () => {
+            analyser.getByteFrequencyData(dataArray);
+            const avg = dataArray.reduce((s, v) => s + v, 0) / dataArray.length;
+            const barHeight = Math.max(4, Math.min(32, (avg / 255) * 55));
+            setWaveform((prev) => [...prev.slice(1), barHeight]);
+            animationFrameRef.current = requestAnimationFrame(tick);
+        };
+        tick();
+
+        recordingTimerRef.current = setInterval(() => {
+            setRecordingSeconds((s) => s + 1);
+        }, 1000);
     };
 
     const stopRecording = () => {
         mediaRecorderRef.current?.stop();
         setIsRecording(false);
+        setFrozenWaveform(waveform);
+
+        if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+        if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+        audioContextRef.current?.close();
+        streamRef.current?.getTracks().forEach((t) => t.stop());
     };
 
     const playRecording = () => {
         if (!audioUrl) return;
-
         const audio = new Audio(audioUrl);
-
         audioRef.current = audio;
-
         audio.onended = () => setAudioPlaying(false);
-
         audio.play();
-
         setAudioPlaying(true);
     };
 
     const handleSubmit = async () => {
         setError("");
 
-        if (!fullName.trim()) { setError("Please enter your name."); return; }
-        if (!phone.trim()) { setError("Please enter your phone number."); return; }
+        if (!firstName.trim()) { setError("Please enter your first name."); return; }
+        if (!lastName.trim()) { setError("Please enter your last name."); return; }
+        if (!phone.trim()) { setError("Please enter your WhatsApp number."); return; }
         if (!designer) return;
 
         setSubmitting(true);
 
         try {
+            const fullName = `${firstName.trim()} ${lastName.trim()}`;
+
             const formData = new FormData();
             formData.append("designerId", designer.id);
             formData.append("styleId", style?.id ?? "");
             formData.append("styleTitle", style?.title ?? "");
             formData.append("styleImages", JSON.stringify(style?.images ?? []));
             formData.append("styleVideoUrl", style?.video_url ?? "");
+            formData.append("title", title);
             formData.append("fullName", fullName);
             formData.append("phone", phone);
-            formData.append("email", email);
-            formData.append("notes", notes);
 
             if (audioBlob) {
                 formData.append("voiceNote", audioBlob, "voice-note.webm");
@@ -279,7 +311,9 @@ function RequestForm() {
                                     src={style.video_url}
                                     className="h-full w-full object-cover"
                                     muted
+                                    loop
                                     playsInline
+                                    autoPlay
                                 />
                             ) : (
                                 <div className="flex h-full w-full items-center justify-center text-2xl">
@@ -309,18 +343,48 @@ function RequestForm() {
                     <div className="space-y-3">
                         <div>
                             <label className="mb-1 block text-xs font-medium text-gray-600">
-                                Full Name <span className="text-red-500">*</span>
+                                Title <span className="font-normal text-gray-400">— optional</span>
                             </label>
-                            <input
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                placeholder="e.g. Sarah Johnson"
-                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
-                            />
+                            <select
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 outline-none focus:border-gray-900"
+                            >
+                                <option value="">Select title</option>
+                                {TITLES.map((t) => (
+                                    <option key={t} value={t}>{t}</option>
+                                ))}
+                            </select>
                         </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <div>
+                                <label className="mb-1 block text-xs font-medium text-gray-600">
+                                    First Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(capitalizeWords(e.target.value))}
+                                    placeholder="e.g. Sarah"
+                                    className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1 block text-xs font-medium text-gray-600">
+                                    Last Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    value={lastName}
+                                    onChange={(e) => setLastName(capitalizeWords(e.target.value))}
+                                    placeholder="e.g. Johnson"
+                                    className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
+                                />
+                            </div>
+                        </div>
+
                         <div>
                             <label className="mb-1 block text-xs font-medium text-gray-600">
-                                WhatsApp / Phone <span className="text-red-500">*</span>
+                                WhatsApp Number <span className="text-red-500">*</span>
                             </label>
                             <input
                                 value={phone}
@@ -333,122 +397,89 @@ function RequestForm() {
                                 The designer will contact you on this number
                             </p>
                         </div>
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-600">
-                                Email{" "}
-                                <span className="font-normal text-gray-400">— optional</span>
-                            </label>
-                            <input
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="e.g. sarah@email.com"
-                                type="email"
-                                className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-900"
-                            />
-                        </div>
                     </div>
                 </section>
 
-                {/* CUSTOMISATION NOTES */}
+                {/* VOICE NOTE */}
                 <section className="rounded-2xl bg-white p-5 shadow-sm">
                     <h2 className="mb-1 text-sm font-bold text-gray-900">
-                        Customisation Instructions
+                        Voice Note <span className="font-normal text-gray-400">— optional</span>
                     </h2>
-
                     <p className="mb-4 text-xs text-gray-400">
-                        Record a voice note or type additional instructions.
+                        Record any customisation instructions for the designer.
                     </p>
-
-                    {/* Voice Recorder */}
 
                     <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
 
-                        {!audioBlob ? (
-
-                            <button
-                                onClick={isRecording ? stopRecording : startRecording}
-                                className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition
-                    ${isRecording
-                                        ? "bg-red-600 text-white"
-                                        : "bg-gray-900 text-white"
-                                    }`}
-                            >
-                                {isRecording ? (
-                                    <>
-                                        <Square size={16} />
-                                        Stop Recording
-                                    </>
-                                ) : (
-                                    <>
-                                        <Mic size={16} />
-                                        Record Voice Note
-                                    </>
-                                )}
-                            </button>
-
-                        ) : (
-
+                        {isRecording ? (
                             <div className="space-y-3">
-
-                                <div className="flex items-center justify-between rounded-xl bg-white p-3">
-
-                                    <div>
-                                        <p className="text-sm font-semibold text-gray-900">
-                                            Voice note recorded
-                                        </p>
-
-                                        <p className="text-xs text-gray-400">
-                                            Tap play to review
-                                        </p>
-                                    </div>
-
+                                <div className="flex items-center gap-3">
+                                    <span className="flex h-2.5 w-2.5 flex-shrink-0 rounded-full bg-red-500 animate-pulse" />
+                                    <span className="text-xs font-semibold text-red-600">
+                                        Recording • {formatTime(recordingSeconds)}
+                                    </span>
+                                </div>
+                                <div className="flex h-12 items-end justify-center gap-[3px] rounded-xl bg-white px-3 py-2">
+                                    {waveform.map((h, i) => (
+                                        <div
+                                            key={i}
+                                            className="w-1 flex-shrink-0 rounded-full bg-emerald-500 transition-all duration-75"
+                                            style={{ height: `${h}px` }}
+                                        />
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={stopRecording}
+                                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white"
+                                >
+                                    <Square size={16} />
+                                    Stop Recording
+                                </button>
+                            </div>
+                        ) : !audioBlob ? (
+                            <button
+                                onClick={startRecording}
+                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 py-3 text-sm font-semibold text-white"
+                            >
+                                <Mic size={16} />
+                                Record Voice Note
+                            </button>
+                        ) : (
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3 rounded-xl bg-white p-3">
                                     <button
                                         onClick={playRecording}
-                                        className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white"
+                                        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white"
                                     >
-                                        {audioPlaying ? (
-                                            <Pause size={16} />
-                                        ) : (
-                                            <Play size={16} />
-                                        )}
+                                        {audioPlaying ? <Pause size={16} /> : <Play size={16} />}
                                     </button>
-
+                                    <div className="flex h-8 flex-1 items-end gap-[3px] overflow-hidden">
+                                        {frozenWaveform.map((h, i) => (
+                                            <div
+                                                key={i}
+                                                className="w-1 flex-shrink-0 rounded-full bg-emerald-300"
+                                                style={{ height: `${h}px` }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <span className="flex-shrink-0 text-xs text-gray-400">
+                                        {formatTime(recordingSeconds)}
+                                    </span>
                                 </div>
 
                                 <button
                                     onClick={() => {
                                         setAudioBlob(null);
                                         setAudioUrl("");
+                                        setFrozenWaveform([]);
                                     }}
                                     className="w-full rounded-xl border border-gray-200 py-2 text-xs font-semibold text-gray-600"
                                 >
                                     Record Again
                                 </button>
-
                             </div>
-
                         )}
-
                     </div>
-
-                    {/* Text Notes */}
-
-                    <div className="mt-5">
-
-                        <label className="mb-2 block text-xs font-medium text-gray-600">
-                            Text Notes (optional)
-                        </label>
-
-                        <textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Additional instructions..."
-                            rows={4}
-                            className="w-full resize-none rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-sm outline-none focus:border-gray-900"
-                        />
-
-                    </div>
-
                 </section>
 
                 {error && (

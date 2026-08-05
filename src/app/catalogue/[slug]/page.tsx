@@ -97,10 +97,10 @@ export default async function PublicCataloguePage({ params }: Props) {
                             {styles.map((style) => (
                                 <Link
                                     key={style.id}
-                                    href={`/catalogue/${slug}/style/${style.id}`}
+                                    href={`/catalogue/${slug}/request?styleId=${style.id}`}
                                     className="block break-inside-avoid"
                                 >
-                                    <div className="overflow-hidden rounded-2xl bg-gray-100">
+                                    <div className="relative overflow-hidden rounded-2xl bg-gray-100">
                                         {style.images?.[0] ? (
                                             <img
                                                 src={style.images[0]}
@@ -108,19 +108,19 @@ export default async function PublicCataloguePage({ params }: Props) {
                                                 className="w-full h-auto object-cover"
                                             />
                                         ) : style.video_url ? (
-                                            <div className="relative aspect-[3/4] w-full">
+                                            <>
                                                 <video
                                                     src={style.video_url}
-                                                    className="h-full w-full object-cover"
+                                                    className="w-full h-auto object-cover"
                                                     muted
+                                                    loop
                                                     playsInline
+                                                    autoPlay
                                                 />
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90">
-                                                        <Play size={16} className="ml-0.5 text-gray-900" fill="currentColor" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white">
+                                                    <Play size={10} fill="white" />
+                                                </span>
+                                            </>
                                         ) : (
                                             <div className="flex aspect-[3/4] w-full items-center justify-center text-gray-300 text-3xl">
                                                 👗

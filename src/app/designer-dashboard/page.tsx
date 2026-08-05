@@ -6,11 +6,12 @@ import Link from "next/link";
 import {
     Plus, Ruler, Images, Store,
     ChevronRight, Bell, User,
-    AlertCircle, Clock, CheckCircle,
+    AlertCircle, Clock, CheckCircle, MessageSquarePlus,
     Briefcase, Wallet
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import BottomNav from "@/components/dashboard/BottomNav";
+import NotificationPrompt from "@/components/NotificationPrompt";
 
 type Designer = {
     brand_name: string | null;
@@ -122,7 +123,7 @@ export default function DashboardHome() {
             const [{ data: designerData }, { data: jobsData }] = await Promise.all([
                 supabase
                     .from("designers")
-                    .select("brand_name, profile_image")
+                    .select("brand_name, profile_image, approval_status")
                     .eq("id", user.id)
                     .single(),
                 supabase
@@ -138,6 +139,8 @@ export default function DashboardHome() {
             setFirstName(first);
 
             setDesigner(designerData);
+            // Fire-and-forget — don't block the UI on this
+            supabase.from("designers").update({ last_seen_at: new Date().toISOString() }).eq("id", user.id).then();
 
             const allJobs = jobsData ?? [];
             setJobs(allJobs);
@@ -190,7 +193,10 @@ export default function DashboardHome() {
         j.status === "ready"
     );
 
+    const newInquiries = jobs.filter(j => j.status === "inquiry");
+
     const needsAttention = [
+        ...newInquiries,
         ...awaitingMeasurement,
         ...awaitingDeposit,
         ...dueTomorrow,
@@ -229,9 +235,12 @@ export default function DashboardHome() {
                     </div>
 
                     <div className="flex items-center gap-2 ml-3">
-                        <button className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white">
+                        <Link
+                            href="/designer-dashboard/notifications"
+                            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white"
+                        >
                             <Bell size={16} className="text-gray-500" />
-                        </button>
+                        </Link>
                         <Link
                             href="/designer-dashboard/profile"
                             className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-emerald-100"
@@ -263,6 +272,8 @@ export default function DashboardHome() {
                         </div>
 
                         <div className="space-y-2">
+
+
                             {awaitingMeasurement.length > 0 && (
                                 <Link
                                     href="/designer-dashboard/jobs?status=measurement_pending"
@@ -545,6 +556,7 @@ export default function DashboardHome() {
             </div>
 
             <BottomNav />
+            <NotificationPrompt />
         </main>
     );
 }

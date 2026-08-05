@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+import { notifyDesigner } from "@/lib/sendPush";
+
+
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -21,10 +24,9 @@ export async function POST(request: Request) {
         const styleTitle = formData.get("styleTitle") as string | null;
         const styleImages = JSON.parse((formData.get("styleImages") as string) ?? "[]");
         const styleVideoUrl = (formData.get("styleVideoUrl") as string) || null;
+        const clientTitle = (formData.get("title") as string) || null;
         const fullName = formData.get("fullName") as string;
         const phone = formData.get("phone") as string;
-        const email = formData.get("email") as string | null;
-        const notes = formData.get("notes") as string | null;
         const audioFile = formData.get("voiceNote") as File | null;
 
         if (!designerId || !fullName?.trim() || !phone?.trim()) {
@@ -49,9 +51,9 @@ export async function POST(request: Request) {
                 .from("clients")
                 .insert({
                     designer_id: designerId,
+                    title: clientTitle,
                     full_name: fullName.trim(),
                     phone: phone.trim(),
-                    email: email?.trim() || null,
                 })
                 .select("id")
                 .single();
@@ -85,10 +87,7 @@ export async function POST(request: Request) {
             ? `${styleTitle} — ${fullName.trim()}`
             : `Style Request — ${fullName.trim()}`;
 
-        const fullNotes = [
-            styleTitle ? `Style: ${styleTitle}` : null,
-            notes?.trim() ? `Customer notes: ${notes.trim()}` : null,
-        ].filter(Boolean).join("\n\n");
+        const fullNotes = styleTitle ? `Style: ${styleTitle}` : null;
 
         const jobNumber = `FH-${Date.now().toString().slice(-6)}`;
 
@@ -101,7 +100,7 @@ export async function POST(request: Request) {
                 title: jobTitle,
                 style_images: styleImages ?? [],
                 style_video_url: styleVideoUrl,
-                style_notes: fullNotes || null,
+                style_notes: fullNotes,
                 voice_note_url: voiceNoteUrl,
                 status: "inquiry",
             })
@@ -115,6 +114,14 @@ export async function POST(request: Request) {
             status: "inquiry",
             note: `Request received from catalogue — ${fullName.trim()}`,
             notify_client: false,
+        });
+
+        await notifyDesigner({
+            designerId,
+            type: "new_inquiry",
+            title: "New Style Request",
+            body: `${fullName.trim()} wants ${styleTitle ?? "a custom piece"}`,
+            link: `/designer-dashboard/jobs/${job.id}`,
         });
 
         return NextResponse.json({ success: true, jobId: job.id });

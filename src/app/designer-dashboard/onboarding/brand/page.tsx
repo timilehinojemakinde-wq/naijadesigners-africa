@@ -73,7 +73,7 @@ export default function OnboardingStep2() {
                     brand_name: brandName,
                     slug,
                     bio,
-                    intagram_handle: instagram,
+                    instagram_handle: instagram,
                     onboarding_completed: true,
                 })
                 .eq("id", user.id);
@@ -160,10 +160,10 @@ export default function OnboardingStep2() {
                             Store URL <span className="text-red-500">*</span>
                         </label>
                         <div className={`flex overflow-hidden rounded-xl border transition ${slugError
-                                ? "border-red-400"
-                                : slug && !slugError
-                                    ? "border-emerald-500"
-                                    : "border-gray-200 focus-within:border-emerald-500"
+                            ? "border-red-400"
+                            : slug && !slugError
+                                ? "border-emerald-500"
+                                : "border-gray-200 focus-within:border-emerald-500"
                             }`}>
                             <span className="flex items-center bg-gray-50 px-3 text-xs text-gray-400 border-r border-gray-200 whitespace-nowrap">
                                 fithouse.africa/store/
@@ -233,8 +233,8 @@ export default function OnboardingStep2() {
                         onClick={handleContinue}
                         disabled={saving || !canContinue}
                         className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white transition ${canContinue && !saving
-                                ? "bg-emerald-600 hover:bg-emerald-700"
-                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            ? "bg-emerald-600 hover:bg-emerald-700"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
                             }`}
                     >
                         {saving ? (
@@ -268,10 +268,10 @@ export default function OnboardingStep2() {
                             ].map((item) => (
                                 <div key={item.step} className="flex items-start gap-3">
                                     <div className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${item.done
-                                            ? "bg-emerald-600 text-white"
-                                            : item.active
-                                                ? "border-2 border-emerald-500 text-emerald-400"
-                                                : "border border-gray-700 text-gray-600"
+                                        ? "bg-emerald-600 text-white"
+                                        : item.active
+                                            ? "border-2 border-emerald-500 text-emerald-400"
+                                            : "border border-gray-700 text-gray-600"
                                         }`}>
                                         {item.done ? <Check size={10} strokeWidth={3} /> : item.step}
                                     </div>

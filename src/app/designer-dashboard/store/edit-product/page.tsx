@@ -25,7 +25,6 @@ export default function EditStorePage() {
         const load = async () => {
             try {
                 const { data: { user }, error: authError } = await supabase.auth.getUser();
-                console.log("Auth user:", user, "authError:", authError);
 
                 if (authError || !user) {
                     setLoadError("Not logged in. Please log in first.");
@@ -39,15 +38,12 @@ export default function EditStorePage() {
                     .eq("id", user.id)
                     .single();
 
-                console.log("Designer data:", data, "error:", error);
-
                 if (error) {
                     if (error.code === "PGRST116") {
-                        console.log("No designer row found — showing empty form");
                         setLoading(false);
                         return;
                     }
-                    setLoadError(`Failed to load: ${error.message} (code: ${error.code})`);
+                    setLoadError(`Failed to load: ${error.message}`);
                     setLoading(false);
                     return;
                 }
@@ -62,7 +58,6 @@ export default function EditStorePage() {
 
                 setLoading(false);
             } catch (err: any) {
-                console.error("Caught error:", err);
                 setLoadError("Unexpected error: " + err.message);
                 setLoading(false);
             }
@@ -116,10 +111,8 @@ export default function EditStorePage() {
                 })
                 .eq("id", user.id);
 
-            console.log("Save error:", error);
-
             if (error) {
-                alert("Failed to save: " + error.message);
+                setLoadError("Failed to save: " + error.message);
                 setSaving(false);
                 return;
             }
@@ -127,7 +120,7 @@ export default function EditStorePage() {
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
         } catch (err: any) {
-            alert("Unexpected error: " + err.message);
+            setLoadError("Unexpected error: " + err.message);
         }
 
         setSaving(false);
@@ -135,27 +128,27 @@ export default function EditStorePage() {
 
     if (loading) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-[#fafafa]">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-red-600" />
+            <main className="flex min-h-screen items-center justify-center bg-white">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-gray-900" />
             </main>
         );
     }
 
     if (loadError) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-[#fafafa] px-5">
-                <div className="w-full max-w-md rounded-[16px] bg-white p-6 text-center shadow-sm">
-                    <h2 className="text-lg font-semibold text-emerald-600">Failed to load</h2>
-                    <p className="mt-2 break-words text-sm text-gray-600">{loadError}</p>
+            <main className="flex min-h-screen items-center justify-center bg-gray-50 px-5">
+                <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm">
+                    <h2 className="text-lg font-bold text-gray-900">Failed to load</h2>
+                    <p className="mt-2 break-words text-sm text-gray-500">{loadError}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="mt-4 h-12 w-full rounded-[12px] bg-gray-900 text-sm text-white"
+                        className="mt-4 flex h-12 w-full items-center justify-center rounded-xl bg-gray-900 text-sm font-semibold text-white"
                     >
                         Try Again
                     </button>
                     <Link
                         href="/designer-dashboard/store"
-                        className="mt-3 block text-sm text-gray-500 underline"
+                        className="mt-3 block text-sm text-gray-400 underline"
                     >
                         Go back
                     </Link>
@@ -165,137 +158,143 @@ export default function EditStorePage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#fafafa] pb-24">
-            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
-                <div className="flex items-center gap-4 px-5 py-4">
+        <main className="min-h-screen bg-gray-50 pb-24">
+            <header className="sticky top-0 z-50 border-b border-gray-100 bg-white px-5 py-4">
+                <div className="flex items-center gap-3">
                     <Link
                         href="/designer-dashboard/store"
-                        className="rounded-[12px] border border-gray-200 p-2"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200"
                     >
-                        <ArrowLeft size={18} />
+                        <ArrowLeft size={16} />
                     </Link>
                     <div>
-                        <h1 className="text-xl font-bold">Edit Store</h1>
-                        <p className="text-sm text-gray-500">Customize your storefront</p>
+                        <h1 className="text-base font-bold text-gray-900">Edit Store</h1>
+                        <p className="text-xs text-gray-400">Customize your storefront</p>
                     </div>
                 </div>
             </header>
 
-            <section className="mx-auto max-w-md space-y-6 px-5 py-6">
-                {/* BRAND INFO */}
-                <div className="rounded-[16px] bg-white p-5 shadow-sm">
-                    <h2 className="text-base font-semibold">Brand Info</h2>
+            <div className="mx-auto max-w-md space-y-4 px-5 py-5">
 
-                    <div className="mt-4 space-y-4">
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <h2 className="mb-4 text-sm font-bold text-gray-900">Brand Info</h2>
+
+                    <div className="space-y-4">
                         <div>
-                            <label className="text-sm font-medium text-gray-700">
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
                                 Brand Name
                             </label>
                             <input
                                 value={brandName}
                                 onChange={(e) => setBrandName(e.target.value)}
                                 placeholder="e.g. House of Tife"
-                                className="mt-1 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
+                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-gray-700">
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
                                 Store URL
                             </label>
-                            <div className="mt-1 flex items-center overflow-hidden rounded-[12px] border border-gray-200 focus-within:border-emerald-500">
-                                <span className="flex-shrink-0 bg-gray-50 px-3 py-4 text-sm text-gray-400">
+                            <div className="flex items-center overflow-hidden rounded-xl border border-gray-200 focus-within:border-gray-900">
+                                <span className="flex-shrink-0 bg-gray-50 px-3 py-3 text-xs text-gray-400">
                                     fithouse.africa/store/
                                 </span>
                                 <input
                                     value={slug}
                                     onChange={(e) => handleSlugChange(e.target.value)}
                                     placeholder="houseoftife"
-                                    className="h-14 flex-1 px-2 text-sm outline-none"
+                                    className="h-11 flex-1 px-2 text-sm outline-none"
                                 />
                             </div>
                             {slugError && (
-                                <p className="mt-1 text-xs text-emerald-600">{slugError}</p>
+                                <p className="mt-1 text-xs text-red-500">{slugError}</p>
                             )}
                             {slug && !slugError && (
-                                <p className="mt-1 text-xs text-green-600">
+                                <p className="mt-1 text-xs text-emerald-600">
                                     fithouse.africa/store/{slug}
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-gray-700">Bio</label>
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
+                                Bio
+                            </label>
                             <textarea
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                                 placeholder="Tell customers about your brand..."
-                                className="mt-1 min-h-[120px] w-full rounded-[12px] border border-gray-200 p-4 text-sm outline-none focus:border-emerald-500"
+                                rows={4}
+                                className="w-full resize-none rounded-xl border border-gray-200 px-3.5 py-3 text-sm outline-none focus:border-gray-900"
                             />
                         </div>
                     </div>
-                </div>
+                </section>
 
-                {/* CONTACT & LOCATION */}
-                <div className="rounded-[16px] bg-white p-5 shadow-sm">
-                    <h2 className="text-base font-semibold">Contact & Location</h2>
+                <section className="rounded-2xl bg-white p-5 shadow-sm">
+                    <h2 className="mb-4 text-sm font-bold text-gray-900">Contact & Location</h2>
 
-                    <div className="mt-4 space-y-4">
+                    <div className="space-y-4">
                         <div>
-                            <label className="text-sm font-medium text-gray-700">
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
                                 Business Location
                             </label>
                             <input
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                                 placeholder="e.g. Lagos, Nigeria"
-                                className="mt-1 h-14 w-full rounded-[12px] border border-gray-200 px-4 outline-none focus:border-emerald-500"
+                                className="h-11 w-full rounded-xl border border-gray-200 px-3.5 text-sm outline-none focus:border-gray-900"
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium text-gray-700">
+                            <label className="mb-1.5 block text-xs font-medium text-gray-600">
                                 Instagram Handle
                             </label>
-                            <div className="mt-1 flex items-center overflow-hidden rounded-[12px] border border-gray-200 focus-within:border-emerald-500">
-                                <span className="flex-shrink-0 bg-gray-50 px-3 py-4 text-sm text-gray-400">
+                            <div className="flex items-center overflow-hidden rounded-xl border border-gray-200 focus-within:border-gray-900">
+                                <span className="flex-shrink-0 bg-gray-50 px-3 py-3 text-xs text-gray-400">
                                     @
                                 </span>
                                 <input
                                     value={instagram}
                                     onChange={(e) => setInstagram(e.target.value)}
                                     placeholder="houseoftife"
-                                    className="h-14 flex-1 px-2 text-sm outline-none"
+                                    className="h-11 flex-1 px-2 text-sm outline-none"
                                 />
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+            </div>
 
-                {/* SAVE */}
-                <button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="flex h-14 w-full items-center justify-center gap-2 rounded-[12px] bg-emerald-600 font-medium text-white disabled:opacity-60"
-                >
-                    {saving ? (
-                        <><Loader2 size={18} className="animate-spin" /> Saving...</>
-                    ) : saved ? (
-                        <><CheckCircle size={18} /> Saved!</>
-                    ) : (
-                        "Save Changes"
-                    )}
-                </button>
-
-                {saved && (
-                    <Link
-                        href="/designer-dashboard/store/preview"
-                        className="flex h-12 w-full items-center justify-center rounded-[12px] border border-gray-300 text-sm font-medium"
+            <div className="fixed bottom-0 left-0 right-0 border-t border-gray-100 bg-white px-5 py-4">
+                <div className="mx-auto max-w-md space-y-2">
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gray-900 text-sm font-semibold text-white disabled:opacity-60"
                     >
-                        Preview Your Store →
-                    </Link>
-                )}
-            </section>
+                        {saving ? (
+                            <><Loader2 size={16} className="animate-spin" /> Saving...</>
+                        ) : saved ? (
+                            <><CheckCircle size={16} /> Saved!</>
+                        ) : (
+                            "Save Changes"
+                        )}
+                    </button>
+
+                    {saved && (
+                        <Link
+                            href={`/store/${slug}`}
+                            target="_blank"
+                            className="flex h-11 w-full items-center justify-center rounded-xl border border-gray-200 text-sm font-semibold text-gray-700"
+                        >
+                            Preview Your Store →
+                        </Link>
+                    )}
+                </div>
+            </div>
         </main>
     );
 }

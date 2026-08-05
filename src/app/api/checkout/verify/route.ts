@@ -1,3 +1,4 @@
+import { notifyDesigner } from "@/lib/sendPush";
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
@@ -19,10 +20,23 @@ export async function GET(req: NextRequest) {
         const supabase = await createSupabaseServerClient();
 
         if (verifyData.status && verifyData.data.status === "success") {
-            await supabase
+            const { data: order } = await supabase
                 .from("orders")
                 .update({ status: "paid" })
-                .eq("payment_reference", reference);
+                .eq("payment_reference", reference)
+                .select("designer_id, amount, currency, buyer_name")
+                .single();
+
+            if (order) {
+                // After (new object style)
+                await notifyDesigner({
+                    designerId: order.designer_id,
+                    title: "Payment Received 💰",
+                    body: `${order.buyer_name} paid ${order.currency} ${Number(order.amount).toLocaleString()}`,
+                    link: `/designer-dashboard/store/orders`,
+                    type: "payment_received",
+                });
+            }
 
             return NextResponse.redirect(
                 new URL(`/store/${slug}/order/${reference}?status=success`, req.url)
