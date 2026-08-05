@@ -1,17 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import ApprovalPendingModal from "@/components/dashboard/ApprovalPendingModal";
 
 export default function DesignerDashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
+    const pathname = usePathname();
+    const isOnboardingRoute = pathname?.startsWith("/designer-dashboard/onboarding");
+
     const [checked, setChecked] = useState(false);
     const [brandName, setBrandName] = useState("");
     const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
 
     useEffect(() => {
+        if (isOnboardingRoute) {
+            setChecked(true);
+            return;
+        }
+
         const check = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) { router.push("/auth"); return; }
@@ -32,7 +40,7 @@ export default function DesignerDashboardLayout({ children }: { children: React.
             setChecked(true);
         };
         check();
-    }, [router]);
+    }, [router, isOnboardingRoute]);
 
     const refreshStatus = async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -51,6 +59,10 @@ export default function DesignerDashboardLayout({ children }: { children: React.
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-gray-900" />
             </main>
         );
+    }
+
+    if (isOnboardingRoute) {
+        return <>{children}</>;
     }
 
     const blocked = approvalStatus === "pending" || approvalStatus === "rejected";
