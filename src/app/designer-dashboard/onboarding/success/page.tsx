@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, Share2, ArrowRight, Package, Ruler, LayoutDashboard } from "lucide-react";
+import { Check, MessageCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+
+const SUPPORT_PHONE = "+2347066633446";
+const SUPPORT_NAME = "Getrude";
 
 export default function OnboardingSuccess() {
     const router = useRouter();
     const [brandName, setBrandName] = useState("");
-    const [slug, setSlug] = useState("");
     const [loading, setLoading] = useState(true);
-    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -20,38 +21,19 @@ export default function OnboardingSuccess() {
 
             const { data } = await supabase
                 .from("designers")
-                .select("brand_name, slug")
+                .select("brand_name")
                 .eq("id", user.id)
                 .single();
 
-            if (data) {
-                setBrandName(data.brand_name ?? "");
-                setSlug(data.slug ?? "");
-            }
-
+            setBrandName(data?.brand_name ?? "");
             setLoading(false);
         };
-
         load();
     }, [router]);
 
-    const storeUrl = typeof window !== "undefined"
-        ? `${window.location.origin}/store/${slug}`
-        : `/store/${slug}`;
-
-    const handleShare = async () => {
-        if (navigator.share) {
-            await navigator.share({
-                title: brandName,
-                text: "Check out my fashion store on FitHouseAfrica",
-                url: storeUrl,
-            });
-        } else {
-            await navigator.clipboard.writeText(storeUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
+    const whatsappMessage = encodeURIComponent(
+        `Hi Getrude! I just signed up as ${brandName || "a designer"} on FitHouseAfrica and had a question.`
+    );
 
     if (loading) {
         return (
@@ -63,9 +45,8 @@ export default function OnboardingSuccess() {
 
     return (
         <main className="min-h-screen bg-white">
-            {/* NAV */}
             <nav className="border-b border-gray-100 px-6 py-4">
-                <div className="mx-auto flex max-w-6xl items-center justify-between">
+                <div className="mx-auto max-w-6xl">
                     <Link href="/" className="text-lg font-bold tracking-tight">
                         FitHouse<span className="text-emerald-600">Africa</span>
                     </Link>
@@ -73,113 +54,116 @@ export default function OnboardingSuccess() {
             </nav>
 
             <div className="mx-auto grid min-h-[calc(100vh-65px)] max-w-6xl md:grid-cols-2">
-
-                {/* LEFT */}
+                {/* LEFT — the reframe lives here */}
                 <div className="flex flex-col justify-center px-6 py-12 md:px-16">
-
-                    {/* SUCCESS ICON */}
-                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600">
-                        <Check size={32} className="text-white" strokeWidth={3} />
+                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50">
+                        <Check size={30} className="text-emerald-600" strokeWidth={3} />
                     </div>
 
-                    <h1 className="mb-2 text-3xl font-bold tracking-tight text-gray-900">
-                        Your store is live! 🎉
+                    <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
+                        You're in, {brandName || "welcome"}.
                     </h1>
-                    <p className="mb-8 text-gray-500">
-                        Welcome to FitHouseAfrica,{" "}
-                        <span className="font-semibold text-gray-800">{brandName}</span>.
-                        Your designer dashboard is ready — start building your fashion business.
+                    <p className="mt-2 text-base text-gray-500">
+                        One last step before you're fully set up.
                     </p>
 
-                    {/* STORE LINK */}
-                    <div className="mb-8 rounded-xl border border-gray-200 bg-gray-50 p-4">
-                        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                            Your Store Link
-                        </p>
-                        <p className="mb-3 text-sm font-semibold text-gray-800">
-                            fithouse.africa/store/{slug}
-                        </p>
-                        <button
-                            onClick={handleShare}
-                            className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-                        >
-                            <Share2 size={14} />
-                            {copied ? "Link copied!" : "Share Your Store"}
-                        </button>
+                    {/* PROGRESS TRACKER */}
+                    <div className="mt-8 space-y-5">
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+                                <Check size={15} strokeWidth={3} />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-gray-900">Profile Created</p>
+                                <p className="text-xs text-gray-400">Your brand and details are saved</p>
+                            </div>
+                        </div>
+
+                        <div className="ml-4 h-6 w-px bg-gray-200" />
+
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-emerald-500 bg-white">
+                                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-emerald-700">Verifying Your Profile</p>
+                                <p className="text-xs text-gray-400">Usually done within 24 hours</p>
+                            </div>
+                        </div>
+
+                        <div className="ml-4 h-6 w-px bg-gray-200" />
+
+                        <div className="flex items-center gap-4">
+                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-200 bg-white">
+                                <div className="h-2.5 w-2.5 rounded-full bg-gray-300" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-gray-400">Full Access</p>
+                                <p className="text-xs text-gray-400">Your dashboard unlocks completely</p>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* NEXT STEPS */}
-                    <div className="mb-8 space-y-3">
-                        <p className="text-sm font-semibold text-gray-700">
-                            3 things to do first:
+                    {/* WHY WE VERIFY — reframed as protection, not suspicion */}
+                    <div className="mt-8 rounded-2xl bg-gray-50 p-5">
+                        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-gray-500">
+                            <ShieldCheck size={13} className="text-emerald-600" /> Why we check every profile
                         </p>
-
-                        {/* PRIMARY — Add product */}
-                        <Link
-                            href="/designer-dashboard/add-product"
-                            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 text-sm font-semibold text-white transition hover:bg-emerald-700"
-                        >
-                            Add Your First Product <ArrowRight size={16} />
-                        </Link>
-
-                        <Link
-                            href="/designer-dashboard/measurements"
-                            className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 transition hover:border-emerald-200 hover:bg-emerald-50"
-                        >
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
-                                <Ruler size={18} />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-gray-800">Try the AI measurement scan</p>
-                                <p className="text-xs text-gray-500">Experience it before your clients do</p>
-                            </div>
-                            <ArrowRight size={16} className="text-gray-400" />
-                        </Link>
-
-                        <Link
-                            href="/designer-dashboard"
-                            className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 transition hover:border-emerald-200 hover:bg-emerald-50"
-                        >
-                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
-                                <LayoutDashboard size={18} />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-gray-800">Go to your dashboard</p>
-                                <p className="text-xs text-gray-500">Orders, invoices, store settings</p>
-                            </div>
-                            <ArrowRight size={16} className="text-gray-400" />
-                        </Link>
+                        <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                            We personally verify every designer — not to slow you down, but to keep this
+                            platform genuine for the customers who'll be paying you. Your 14-day free trial
+                            starts today either way. We're building a service, not just collecting signups.
+                        </p>
                     </div>
+
+                    <Link
+                        href="/designer-dashboard"
+                        className="mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gray-900 text-sm font-semibold text-white transition hover:bg-gray-800"
+                    >
+                        Go to My Dashboard <ArrowRight size={16} />
+                    </Link>
                 </div>
 
-                {/* RIGHT */}
-                <div className="hidden flex-col justify-center bg-gray-900 px-12 py-12 md:flex">
+                {/* RIGHT — the human touch */}
+                <div className="hidden flex-col justify-between bg-gray-900 px-12 py-12 md:flex">
                     <div className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                        Setup Complete
+                        A real person, not a bot
                     </div>
 
-                    <h2 className="mb-6 text-2xl font-bold text-white">
-                        What happens next.
-                    </h2>
+                    <div className="rounded-2xl border border-gray-700 bg-gray-800 p-6">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-lg font-bold text-white">
+                                {SUPPORT_NAME[0]}
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-white">Hi, I'm {SUPPORT_NAME} 👋</p>
+                                <p className="text-xs text-gray-400">FitHouseAfrica Support</p>
+                            </div>
+                        </div>
+                        <p className="mt-4 text-sm leading-relaxed text-gray-300">
+                            Welcome to FitHouseAfrica! I'll be reviewing your profile personally.
+                            If you have any questions while you wait, or anytime after — message me
+                            directly. I'm here to help you succeed, not just process a signup.
+                        </p>
+                        <a
+                            href={`https://wa.me/${SUPPORT_PHONE.replace(/\D/g, "")}?text=${whatsappMessage}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 text-sm font-semibold text-white transition hover:bg-emerald-500"
+                        >
+                            <MessageCircle size={15} />
+                            Message {SUPPORT_NAME} on WhatsApp
+                        </a>
+                    </div>
 
-                    <div className="space-y-6 mb-10">
+                    <div className="mt-8 space-y-4">
                         {[
-                            {
-                                title: "Your 14-day free trial starts now",
-                                desc: "Full access to all features. No credit card needed until your trial ends.",
-                            },
-                            {
-                                title: "Add products to attract customers",
-                                desc: "Designers with 5+ products get 3× more enquiries from the marketplace.",
-                            },
-                            {
-                                title: "Send your first AI measurement link",
-                                desc: "Share with an existing client today. They scan themselves in 60 seconds.",
-                            },
+                            { title: "Your 14-day free trial starts now", desc: "Full access to every feature once verified — no credit card needed." },
+                            { title: "We check Instagram, TikTok, or Facebook", desc: "Whatever you gave us — just enough to confirm you're a real designer." },
                         ].map((item, i) => (
-                            <div key={i} className="flex gap-4">
-                                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+                            <div key={i} className="flex gap-3">
+                                <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
                                     {i + 1}
                                 </div>
                                 <div>
@@ -188,15 +172,6 @@ export default function OnboardingSuccess() {
                                 </div>
                             </div>
                         ))}
-                    </div>
-
-                    <div className="rounded-xl border border-gray-700 bg-gray-800 p-5">
-                        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-500">
-                            Need help?
-                        </p>
-                        <p className="text-sm text-gray-400">
-                            Reply to your welcome email or contact our support team. We're here to make sure your setup is flawless.
-                        </p>
                     </div>
                 </div>
             </div>

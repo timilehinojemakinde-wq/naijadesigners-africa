@@ -14,9 +14,10 @@ export type OnboardingData = {
     yearsExperience: string;
     location: string;
     brandName: string;
-    slug: string;
     bio: string;
     instagram: string;
+    tiktok: string;
+    facebook: string;
 };
 
 type ContextType = {
@@ -37,9 +38,10 @@ const defaultData: OnboardingData = {
     yearsExperience: "",
     location: "",
     brandName: "",
-    slug: "",
     bio: "",
     instagram: "",
+    tiktok: "",
+    facebook: "",
 };
 
 export default function OnboardingLayout({ children }: { children: ReactNode }) {

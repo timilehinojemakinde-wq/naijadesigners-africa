@@ -8,42 +8,12 @@ import { useOnboarding } from "./layout";
 import { supabase } from "@/lib/supabaseClient";
 
 const BUSINESS_TYPES = [
-    {
-        value: "fashion_designer",
-        label: "Fashion Designer",
-        desc: "I create original designs and custom pieces",
-        emoji: "✂️",
-    },
-    {
-        value: "tailor",
-        label: "Tailor",
-        desc: "I sew and alter garments for clients",
-        emoji: "🧵",
-    },
-    {
-        value: "bridal_specialist",
-        label: "Bridal Specialist",
-        desc: "I focus on wedding and bridal wear",
-        emoji: "👰",
-    },
-    {
-        value: "fashion_house",
-        label: "Fashion House",
-        desc: "I run a team or studio with multiple designers",
-        emoji: "🏛️",
-    },
-    {
-        value: "ready_to_wear",
-        label: "Ready to Wear",
-        desc: "I sell finished pieces in standard sizes",
-        emoji: "👗",
-    },
-    {
-        value: "luxury_couture",
-        label: "Luxury Couture",
-        desc: "I create high-end, premium fashion pieces",
-        emoji: "💎",
-    },
+    { value: "fashion_designer", label: "Fashion Designer", desc: "Original designs & custom pieces", emoji: "✂️" },
+    { value: "tailor", label: "Tailor", desc: "Sewing & alterations for clients", emoji: "🧵" },
+    { value: "bridal_specialist", label: "Bridal Specialist", desc: "Wedding & bridal wear", emoji: "👰" },
+    { value: "fashion_house", label: "Fashion House", desc: "Team or studio, multiple designers", emoji: "🏛️" },
+    { value: "ready_to_wear", label: "Ready to Wear", desc: "Finished pieces, standard sizes", emoji: "👗" },
+    { value: "luxury_couture", label: "Luxury Couture", desc: "High-end, premium fashion", emoji: "💎" },
 ];
 
 const EXPERIENCE_OPTIONS = [
@@ -52,6 +22,32 @@ const EXPERIENCE_OPTIONS = [
     { value: "4", label: "3–5 yrs" },
     { value: "6", label: "5+ yrs" },
 ];
+
+function StepTracker({ current }: { current: number }) {
+    const steps = ["About You", "Your Brand", "Go Live"];
+    return (
+        <div className="mb-10 flex items-center gap-2">
+            {steps.map((label, i) => {
+                const n = i + 1;
+                const done = n < current;
+                const active = n === current;
+                return (
+                    <div key={label} className="flex flex-1 items-center gap-2">
+                        <div className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition ${done ? "bg-emerald-600 text-white" :
+                                active ? "border-2 border-emerald-500 bg-emerald-50 text-emerald-600" :
+                                    "border-2 border-gray-200 text-gray-400"
+                            }`}>
+                            {done ? <Check size={12} strokeWidth={3} /> : n}
+                        </div>
+                        {i < steps.length - 1 && (
+                            <div className={`h-0.5 flex-1 rounded-full transition ${done ? "bg-emerald-600" : "bg-gray-200"}`} />
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
 
 export default function OnboardingStep1() {
     const router = useRouter();
@@ -102,88 +98,69 @@ export default function OnboardingStep1() {
 
     return (
         <main className="min-h-screen bg-white">
-            {/* NAV */}
             <nav className="border-b border-gray-100 px-6 py-4">
                 <div className="mx-auto flex max-w-6xl items-center justify-between">
                     <Link href="/" className="text-lg font-bold tracking-tight">
                         FitHouse<span className="text-emerald-600">Africa</span>
                     </Link>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <span className="font-semibold text-emerald-600">Step 1</span>
-                        <span>/</span>
-                        <span>3</span>
-                    </div>
                 </div>
             </nav>
 
             <div className="mx-auto grid min-h-[calc(100vh-65px)] max-w-6xl md:grid-cols-[1fr_420px]">
-
-                {/* LEFT — Form */}
                 <div className="flex flex-col justify-center px-6 py-16 md:px-16">
+                    <StepTracker current={1} />
 
-                    {/* PROGRESS */}
-                    <div className="mb-10 flex gap-1.5">
-                        <div className="h-0.5 flex-1 rounded-full bg-emerald-600" />
-                        <div className="h-0.5 flex-1 rounded-full bg-gray-200" />
-                        <div className="h-0.5 flex-1 rounded-full bg-gray-200" />
-                    </div>
-
-                    {/* HEADLINE */}
                     <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-emerald-600">
                         About you
                     </p>
-                    <h1 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-                        What best describes your work?
+                    <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-gray-900">
+                        What best describes{" "}
+                        <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+                            your work?
+                        </span>
                     </h1>
                     <p className="mb-8 text-sm text-gray-500">
                         We'll use this to personalise your dashboard and storefront.
                     </p>
 
-                    {/* BUSINESS TYPE — single column list */}
-                    <div className="mb-8 space-y-2">
+                    <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
                         {BUSINESS_TYPES.map((type) => {
                             const selected = businessType === type.value;
                             return (
                                 <button
                                     key={type.value}
                                     onClick={() => setBusinessType(type.value)}
-                                    className={`flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left transition ${selected
-                                            ? "border-emerald-600 bg-emerald-50"
-                                            : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                                    className={`relative flex flex-col gap-2 rounded-2xl border p-4 text-left transition ${selected
+                                            ? "border-emerald-500 bg-emerald-50 shadow-sm ring-1 ring-emerald-500/20"
+                                            : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
                                         }`}
                                 >
-                                    <span className="text-xl">{type.emoji}</span>
-                                    <div className="flex-1 min-w-0">
-                                        <p className={`text-sm font-semibold ${selected ? "text-emerald-700" : "text-gray-800"}`}>
+                                    {selected && (
+                                        <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600">
+                                            <Check size={11} className="text-white" strokeWidth={3} />
+                                        </div>
+                                    )}
+                                    <span className="text-2xl">{type.emoji}</span>
+                                    <div>
+                                        <p className={`text-sm font-bold ${selected ? "text-emerald-700" : "text-gray-800"}`}>
                                             {type.label}
                                         </p>
-                                        <p className="text-xs text-gray-400 mt-0.5">
-                                            {type.desc}
-                                        </p>
-                                    </div>
-                                    <div className={`h-4 w-4 flex-shrink-0 rounded-full border-2 flex items-center justify-center transition ${selected
-                                            ? "border-emerald-600 bg-emerald-600"
-                                            : "border-gray-300"
-                                        }`}>
-                                        {selected && <Check size={10} className="text-white" strokeWidth={3} />}
+                                        <p className="mt-0.5 text-xs text-gray-400">{type.desc}</p>
                                     </div>
                                 </button>
                             );
                         })}
                     </div>
 
-                    {/* EXPERIENCE — horizontal pills */}
                     <div className="mb-8">
-                        <p className="mb-3 text-sm font-semibold text-gray-700">
-                            Years of experience
-                        </p>
+                        <p className="mb-3 text-sm font-semibold text-gray-700">Years of experience</p>
                         <div className="flex gap-2">
                             {EXPERIENCE_OPTIONS.map((opt) => (
                                 <button
                                     key={opt.value}
                                     onClick={() => setYearsExperience(opt.value)}
-                                    className={`flex-1 rounded-lg border py-2.5 text-sm font-medium transition ${yearsExperience === opt.value
-                                            ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+                                    className={`flex-1 rounded-xl border py-3 text-sm font-semibold transition ${yearsExperience === opt.value
+                                            ? "border-emerald-500 bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500/20"
                                             : "border-gray-200 text-gray-600 hover:border-gray-300"
                                         }`}
                                 >
@@ -193,7 +170,6 @@ export default function OnboardingStep1() {
                         </div>
                     </div>
 
-                    {/* LOCATION */}
                     <div className="mb-8">
                         <label className="mb-2 block text-sm font-semibold text-gray-700">
                             Where are you based?
@@ -229,52 +205,26 @@ export default function OnboardingStep1() {
                     </button>
                 </div>
 
-                {/* RIGHT — Context */}
-                <div className="hidden flex-col justify-between bg-gray-900 px-10 py-16 md:flex">
-                    <div>
-                        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400">
-                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                            Setup · Step 1 of 3
-                        </div>
-
-                        <h2 className="mb-3 text-xl font-bold text-white">
-                            Your setup takes under 3 minutes.
-                        </h2>
-                        <p className="mb-10 text-sm leading-relaxed text-gray-400">
-                            Answer 3 questions and your store goes live instantly. No technical knowledge needed.
-                        </p>
-
-                        <div className="space-y-4">
-                            {[
-                                { step: "01", title: "About you", desc: "Business type & location", active: true, done: false },
-                                { step: "02", title: "Your brand", desc: "Name, store URL & bio", active: false, done: false },
-                                { step: "03", title: "Go live", desc: "Your store launches instantly", active: false, done: false },
-                            ].map((item) => (
-                                <div key={item.step} className="flex items-start gap-3">
-                                    <div className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${item.active
-                                            ? "bg-emerald-600 text-white"
-                                            : "border border-gray-700 text-gray-600"
-                                        }`}>
-                                        {item.step}
-                                    </div>
-                                    <div>
-                                        <p className={`text-sm font-semibold ${item.active ? "text-white" : "text-gray-600"}`}>
-                                            {item.title}
-                                        </p>
-                                        <p className="text-xs text-gray-500">{item.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                <div className="hidden flex-col justify-center bg-gray-900 px-10 py-16 md:flex">
+                    <div className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-400">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                        Setup · Step 1 of 3
                     </div>
 
-                    <div className="mt-10 rounded-xl border border-gray-700 bg-gray-800 p-5">
-                        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
-                            Why we ask
-                        </p>
-                        <p className="text-sm leading-relaxed text-gray-400">
-                            Your business type determines how your storefront is configured — from measurement workflows to order pipeline defaults. It takes 30 seconds and saves hours later.
-                        </p>
+                    <h2 className="mb-3 text-xl font-bold text-white">
+                        This is what you're walking into.
+                    </h2>
+                    <p className="mb-8 text-sm leading-relaxed text-gray-400">
+                        Your real dashboard — orders, measurements, storefront, all in one place.
+                    </p>
+
+                    <div className="relative mx-auto max-w-[220px]">
+                        <div className="absolute -inset-6 rounded-full bg-emerald-500/10 blur-3xl" />
+                        <img
+                            src="/images/dashboard-preview.png"
+                            alt="FitHouseAfrica dashboard preview"
+                            className="relative w-full drop-shadow-2xl"
+                        />
                     </div>
                 </div>
             </div>
