@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageSquarePlus, Wallet, Clock, Ruler, Bell as BellIcon } from "lucide-react";
+import { ArrowLeft, MessageSquarePlus, Wallet, Clock, Ruler, Bell as BellIcon, PartyPopper, AlertCircle } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Notification = {
@@ -21,6 +21,8 @@ const TYPE_ICON: Record<string, any> = {
     payment_received: Wallet,
     job_due_soon: Clock,
     measurement_submitted: Ruler,
+    approval: PartyPopper,
+    rejection: AlertCircle,
 };
 
 const TYPE_COLOR: Record<string, string> = {
@@ -28,6 +30,9 @@ const TYPE_COLOR: Record<string, string> = {
     payment_received: "bg-emerald-50 text-emerald-600",
     job_due_soon: "bg-amber-50 text-amber-600",
     measurement_submitted: "bg-purple-50 text-purple-600",
+    approval: "bg-emerald-50 text-emerald-600",
+    rejection: "bg-red-50 text-red-600",
+    trial_ending: "bg-amber-50 text-amber-600",
 };
 
 function timeAgo(dateStr: string) {

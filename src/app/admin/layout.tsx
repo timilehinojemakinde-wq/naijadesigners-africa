@@ -21,7 +21,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     useEffect(() => {
         const checkAccess = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) { router.push("/auth"); return; }
+            if (!user) { router.push("/admin/login"); return; }
 
             const { data: profile } = await supabase
                 .from("profiles")
@@ -30,7 +30,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 .single();
 
             if (profile?.role !== "admin") {
-                router.push("/designer-dashboard");
+                await supabase.auth.signOut();
+                router.push("/admin/login");
                 return;
             }
 

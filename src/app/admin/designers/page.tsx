@@ -74,12 +74,56 @@ function DesignersContent() {
 
     const handleDecision = async (id: string, decision: "approved" | "rejected") => {
         setActingOn(id);
-        await supabase
+
+        // Open a blank window NOW (synchronously) so browsers don't block it as a popup later
+        const whatsappWindow = decision === "approved" ? window.open("", "_blank") : null;
+
+        const designer = designers.find((d) => d.id === id);
+
+        const { error } = await supabase
             .from("designers")
             .update({ approval_status: decision, approved: decision === "approved" })
             .eq("id", id);
 
+        if (error) {
+            alert("Failed to update designer: " + error.message);
+            whatsappWindow?.close();
+            setActingOn(null);
+            return;
+        }
+
         await logAction(decision === "approved" ? "approved_designer" : "rejected_designer", id);
+
+        // Notify the designer — in-app notification + web push, safely via API route
+        await fetch("/api/notify-designer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                designerId: id,
+                title: decision === "approved" ? "You're approved! 🎉" : "Update on your application",
+                body: decision === "approved"
+                    ? "Your FitHouseAfrica account is live. Start setting up your catalogue and taking orders."
+                    : "We couldn't verify your profile this time. Reach out to support if you'd like us to take another look.",
+                link: decision === "approved" ? "/designer-dashboard" : "/designer-dashboard",
+                type: decision === "approved" ? "approval" : "rejection",
+            }),
+        }).catch((err) => console.error("Failed to send notification:", err));
+
+        if (decision === "approved" && whatsappWindow) {
+            if (designer?.phone) {
+                const message = encodeURIComponent(
+                    `Hi ${designer.brand_name ?? "there"}! 🎉 Your FitHouseAfrica account has been approved.\n\n` +
+                    `You can now log in and start setting up your catalogue: ${window.location.origin}/auth\n\n` +
+                    `Your 14-day free trial has started. After that, choose between our ₦5,000 or ₦10,000 monthly plans — full details are in your dashboard.\n\n` +
+                    `Need help getting started? Reach our support lead Getrude anytime at +234 706 663 3446.\n\n` +
+                    `Welcome aboard! 🙌`
+                );
+                whatsappWindow.location.href = `https://wa.me/${designer.phone.replace(/\D/g, "")}?text=${message}`;
+            } else {
+                whatsappWindow.close();
+                alert("Designer approved, but no phone number on file — couldn't open WhatsApp.");
+            }
+        }
 
         setDesigners((prev) => prev.filter((d) => d.id !== id));
         setActingOn(null);

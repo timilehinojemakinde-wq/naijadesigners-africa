@@ -70,7 +70,7 @@ function RequestForm() {
     useEffect(() => {
         const load = async () => {
             const { data: designerData } = await supabase
-                .from("designers")
+                .from("public_designer_profiles")
                 .select("id, brand_name")
                 .eq("slug", slug)
                 .single();

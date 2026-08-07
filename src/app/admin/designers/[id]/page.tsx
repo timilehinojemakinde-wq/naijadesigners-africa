@@ -79,8 +79,42 @@ export default function DesignerDetailPage() {
 
     const handleDecision = async (decision: "approved" | "rejected") => {
         setActing(true);
+
+        const whatsappWindow = decision === "approved" ? window.open("", "_blank") : null;
+
         await supabase.from("designers").update({ approval_status: decision, approved: decision === "approved" }).eq("id", designerId);
         await logAction(decision === "approved" ? "approved_designer" : "rejected_designer");
+
+        await fetch("/api/notify-designer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                designerId,
+                title: decision === "approved" ? "You're approved! 🎉" : "Update on your application",
+                body: decision === "approved"
+                    ? "Your FitHouseAfrica account is live. Start setting up your catalogue and taking orders."
+                    : "We couldn't verify your profile this time. Reach out to support if you'd like us to take another look.",
+                link: "/designer-dashboard",
+                type: decision === "approved" ? "approval" : "rejection",
+            }),
+        }).catch((err) => console.error("Failed to send notification:", err));
+
+        if (decision === "approved" && whatsappWindow) {
+            if (designer?.phone) {
+                const message = encodeURIComponent(
+                    `Hi ${designer.brand_name ?? "there"}! 🎉 Your FitHouseAfrica account has been approved.\n\n` +
+                    `You can now log in and start setting up your catalogue: ${window.location.origin}/auth\n\n` +
+                    `Your 14-day free trial has started. After that, choose between our ₦5,000 or ₦10,000 monthly plans — full details are in your dashboard.\n\n` +
+                    `Need help getting started? Reach our support lead Getrude anytime at +234 706 663 3446.\n\n` +
+                    `Welcome aboard! 🙌`
+                );
+                whatsappWindow.location.href = `https://wa.me/${designer.phone.replace(/\D/g, "")}?text=${message}`;
+            } else {
+                whatsappWindow.close();
+                alert("Designer approved, but no phone number on file — couldn't open WhatsApp.");
+            }
+        }
+
         await load();
         setActing(false);
     };
@@ -134,7 +168,7 @@ export default function DesignerDetailPage() {
                     <div className="flex items-center gap-2">
                         <h1 className="text-lg font-bold text-gray-900">{designer.brand_name ?? "Unnamed Brand"}</h1>
                         <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold capitalize ${designer.approval_status === "approved" ? "bg-emerald-100 text-emerald-700" :
-                                designer.approval_status === "rejected" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                            designer.approval_status === "rejected" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
                             }`}>
                             {designer.approval_status ?? "pending"}
                         </span>

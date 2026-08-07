@@ -12,7 +12,7 @@ export default async function PublicCataloguePage({ params }: Props) {
     const { slug } = await params;
 
     const { data: designer, error: designerError } = await supabase
-        .from("designers")
+        .from("public_designer_profiles")
         .select("id, brand_name, profile_image, banner_image_url, business_location, bio, slug")
         .eq("slug", slug)
         .single();

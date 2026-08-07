@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import BottomNav from "@/components/dashboard/BottomNav";
+import DashboardTour from "@/components/dashboard/DashboardTour";
 import NotificationPrompt from "@/components/NotificationPrompt";
 
 type Designer = {
@@ -97,6 +98,11 @@ export default function DashboardHome() {
     const [clientMap, setClientMap] = useState<ClientMap>({});
     const [loading, setLoading] = useState(true);
     const [firstName, setFirstName] = useState("Designer");
+    const [showTour, setShowTour] = useState(false);
+    const newJobRef = useRef<HTMLAnchorElement>(null);
+    const catalogueRef = useRef<HTMLAnchorElement>(null);
+    const clientsRef = useRef<HTMLAnchorElement>(null);
+    const storeRef = useRef<HTMLAnchorElement>(null);
 
     const greeting = () => {
         const hour = new Date().getHours();
@@ -123,7 +129,7 @@ export default function DashboardHome() {
             const [{ data: designerData }, { data: jobsData }] = await Promise.all([
                 supabase
                     .from("designers")
-                    .select("brand_name, profile_image, approval_status")
+                    .select("brand_name, profile_image, approval_status, has_seen_tour")
                     .eq("id", user.id)
                     .single(),
                 supabase
@@ -139,6 +145,9 @@ export default function DashboardHome() {
             setFirstName(first);
 
             setDesigner(designerData);
+            if (designerData?.approval_status === "approved" && designerData?.has_seen_tour === false) {
+                setTimeout(() => setShowTour(true), 400);
+            }
             // Fire-and-forget — don't block the UI on this
             supabase.from("designers").update({ last_seen_at: new Date().toISOString() }).eq("id", user.id).then();
 
@@ -364,6 +373,7 @@ export default function DashboardHome() {
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                         <Link
+                            ref={newJobRef}
                             href="/designer-dashboard/jobs/new"
                             className="flex items-center gap-3 rounded-2xl bg-gray-900 p-4 text-white"
                         >
@@ -379,6 +389,7 @@ export default function DashboardHome() {
                         </Link>
 
                         <Link
+                            ref={catalogueRef}
                             href="/designer-dashboard/style-library"
                             className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4"
                         >
@@ -396,6 +407,7 @@ export default function DashboardHome() {
                         </Link>
 
                         <Link
+                            ref={clientsRef}
                             href="/designer-dashboard/clients"
                             className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4"
                         >
@@ -413,6 +425,7 @@ export default function DashboardHome() {
                         </Link>
 
                         <Link
+                            ref={storeRef}
                             href="/designer-dashboard/store"
                             className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4"
                         >
@@ -557,6 +570,24 @@ export default function DashboardHome() {
 
             <BottomNav />
             <NotificationPrompt />
+
+            {showTour && (
+                <DashboardTour
+                    steps={[
+                        { ref: newJobRef, title: "Create a Job", desc: "Whenever a client wants something made, start here — track it from inquiry all the way to delivery." },
+                        { ref: catalogueRef, title: "Build Your Catalogue", desc: "Upload your styles so clients can browse and pick exactly what they want." },
+                        { ref: clientsRef, title: "Manage Clients", desc: "Every client's measurements and details live here, ready whenever you need them." },
+                        { ref: storeRef, title: "Your Public Store", desc: "Share this link so clients can shop your ready-made pieces directly." },
+                    ]}
+                    onComplete={async () => {
+                        setShowTour(false);
+                        const { data: { user } } = await supabase.auth.getUser();
+                        if (user) {
+                            await supabase.from("designers").update({ has_seen_tour: true }).eq("id", user.id);
+                        }
+                    }}
+                />
+            )}
         </main>
     );
 }
